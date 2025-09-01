@@ -27,3 +27,22 @@ logs:
 rebuild:
 	docker-compose up -d --build --force-recreate
 
+.PHONY: migrate migrate-generate migrate-revert
+
+# Run pending migrations
+migrate:
+	docker-compose exec backend npm run migration:run
+
+# Generate a new migration interactively
+migrate-generate:
+	@read -p "Enter migration name: " NAME; \
+	if [ -z "$$NAME" ]; then \
+		echo "Migration name cannot be empty"; \
+		exit 1; \
+	fi; \
+	docker-compose exec backend npm run migration:generate -- ./src/migrations/$$NAME
+
+
+# Revert last migration
+migrate-revert:
+	docker-compose exec backend npm run migration:revert

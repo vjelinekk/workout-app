@@ -7,15 +7,28 @@ all: up
 up:
 	docker-compose up -d --build
 	@echo ""
-	@echo "🎉 Docker containers are up!"
+	@echo "🎉 Docker containers are up! They are running in detached mode."
 	@echo "Frontend: http://localhost:3000"
 	@echo "Backend:  http://localhost:3001"
+	@echo ""
+	@echo "To view logs, run: make logs"
+	@echo "To stop containers, run: make down"
 	@echo ""
 
 # Stop and remove containers
 .PHONY: down
 down:
 	docker-compose down
+
+# Stop containers and remove volumes
+.PHONY: down-v
+down-v:
+	docker-compose down -v
+
+# Bring everything down and prune dangling volumes
+.PHONY: clean
+clean: down-v
+	docker volume prune -f
 
 # View logs
 .PHONY: logs

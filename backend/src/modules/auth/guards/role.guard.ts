@@ -6,7 +6,7 @@ import { JwtAuthenticatedUser } from '../types/jwt-authenticated-user.type';
 
 @Injectable()
 export class RoleGuard implements CanActivate {
-    constructor(private reflector: Reflector) { }
+    constructor(private reflector: Reflector) {}
 
     canActivate(context: ExecutionContext): boolean {
         const requiredRoles = this.reflector.getAllAndOverride<number[]>(
@@ -18,7 +18,9 @@ export class RoleGuard implements CanActivate {
             return true; // No roles defined, allow access
         }
 
-        const request = context.switchToHttp().getRequest<{ user: JwtAuthenticatedUser }>();
+        const request = context
+            .switchToHttp()
+            .getRequest<{ user: JwtAuthenticatedUser }>();
         const user = request.user;
 
         if (!user || !user.roles) {

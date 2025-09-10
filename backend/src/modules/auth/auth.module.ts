@@ -23,7 +23,13 @@ import { RoleGuard } from './guards/role.guard';
             }),
         }),
     ],
-    providers: [AuthService, LocalStrategy, JwtStrategy, GoogleStrategy, RoleGuard],
+    providers: [
+        AuthService,
+        LocalStrategy,
+        JwtStrategy,
+        GoogleStrategy,
+        RoleGuard,
+    ],
     controllers: [AuthController],
     exports: [AuthService, RoleGuard],
 })

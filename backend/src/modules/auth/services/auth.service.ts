@@ -29,8 +29,12 @@ export class AuthService {
 
     login(user: UserEntity): LoginResponseDto {
         const roles = user.roles.map((role) => role.id);
-        
-        const payload: JwtPayload = { nickname: user.nickname, sub: user.id, roles };
+
+        const payload: JwtPayload = {
+            nickname: user.nickname,
+            sub: user.id,
+            roles,
+        };
 
         return {
             access_token: this.jwtService.sign(payload),

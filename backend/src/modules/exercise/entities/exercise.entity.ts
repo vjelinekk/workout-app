@@ -1,10 +1,8 @@
 import { BaseEntity } from 'src/common/entities/base.entity';
 import { UserEntity } from 'src/modules/user/entities/user.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { ExerciseCategoryEntity } from './exercise-category.entity';
 import { BodyPartEnum } from '../enums/body-part.enum';
-import { WorkoutSessionPlanExerciseEntity } from 'src/modules/workout/entities/workout-session-plan-exercise.entity';
-import { WorkoutSessionExerciseEntity } from 'src/modules/workout/entities/workout-session-exercise.entity';
 
 @Entity('exercise')
 export class ExerciseEntity extends BaseEntity {
@@ -12,9 +10,17 @@ export class ExerciseEntity extends BaseEntity {
     @JoinColumn({ name: 'created_by' })
     createdBy: UserEntity;
 
-    @ManyToOne(() => ExerciseCategoryEntity, (category) => category.exercises)
+    @Column({ name: 'created_by', nullable: true })
+    createdById: number;
+
+    @ManyToOne(() => ExerciseCategoryEntity, (category) => category.exercises, {
+        nullable: true,
+    })
     @JoinColumn({ name: 'category_id' })
-    category: ExerciseCategoryEntity;
+    category?: ExerciseCategoryEntity;
+
+    @Column({ name: 'category_id', nullable: true })
+    categoryId?: number;
 
     @Column({ comment: 'Name of the exercise' })
     name: string;
@@ -57,10 +63,4 @@ export class ExerciseEntity extends BaseEntity {
         comment: 'Whether the exercise is approved (visible to all users)',
     })
     isApproved: boolean;
-
-    @OneToMany(() => WorkoutSessionPlanExerciseEntity, (wspe) => wspe.exercise)
-    workoutSessionPlanExercises: WorkoutSessionPlanExerciseEntity[];
-
-    @OneToMany(() => WorkoutSessionExerciseEntity, (wse) => wse.exercise)
-    workoutSessionExercises: WorkoutSessionExerciseEntity[];
 }

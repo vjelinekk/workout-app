@@ -1,21 +1,7 @@
-import {
-    Column,
-    Entity,
-    JoinColumn,
-    JoinTable,
-    ManyToMany,
-    ManyToOne,
-    OneToMany,
-} from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
 import { RoleEntity } from './role.entity';
 import { Exclude } from 'class-transformer';
 import { BaseEntity } from 'src/common/entities/base.entity';
-import { TrainingSplitEntity } from 'src/modules/training-split/entities/training-split.entity';
-import { ExerciseEntity } from 'src/modules/exercise/entities/exercise.entity';
-import { WorkoutSessionPlanEntity } from 'src/modules/workout/entities/workout-session-plan.entity';
-import { WorkoutSessionEntity } from 'src/modules/workout/entities/workout-session.entity';
-import { TrainerTraineeEntity } from './trainer-trainee.entity';
-import { TrainingSplitAssignmentEntity } from 'src/modules/training-split/entities/training-split-assignment.entity';
 
 @Entity('user')
 export class UserEntity extends BaseEntity {

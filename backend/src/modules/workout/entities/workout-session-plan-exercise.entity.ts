@@ -9,10 +9,7 @@ export class WorkoutSessionPlanExerciseEntity extends BaseEntity {
     @JoinColumn({ name: 'workout_session_plan_id' })
     workoutSessionPlan: WorkoutSessionPlanEntity;
 
-    @ManyToOne(
-        () => ExerciseEntity,
-        (exercise) => exercise.workoutSessionPlanExercises,
-    )
+    @ManyToOne(() => ExerciseEntity)
     @JoinColumn({ name: 'exercise_id' })
     exercise: ExerciseEntity;
 

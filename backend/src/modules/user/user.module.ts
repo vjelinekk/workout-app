@@ -9,7 +9,13 @@ import { UserController } from './controllers/user.controller';
 import { TrainerTraineeEntity } from './entities/trainer-trainee.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([UserEntity, RoleEntity, TrainerTraineeEntity])],
+    imports: [
+        TypeOrmModule.forFeature([
+            UserEntity,
+            RoleEntity,
+            TrainerTraineeEntity,
+        ]),
+    ],
     controllers: [UserController],
     exports: [UserService],
     providers: [UserService, UserRepository, RoleRepository],

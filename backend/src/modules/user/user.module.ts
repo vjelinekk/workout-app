@@ -6,9 +6,10 @@ import { RoleEntity } from './entities/role.entity';
 import { UserRepository } from './repositories/user.repository';
 import { RoleRepository } from './repositories/role.repository';
 import { UserController } from './controllers/user.controller';
+import { TrainerTraineeEntity } from './entities/trainer-trainee.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([UserEntity, RoleEntity])],
+    imports: [TypeOrmModule.forFeature([UserEntity, RoleEntity, TrainerTraineeEntity])],
     controllers: [UserController],
     exports: [UserService],
     providers: [UserService, UserRepository, RoleRepository],

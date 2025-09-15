@@ -1,0 +1,16 @@
+export enum BodyPartEnum {
+    CHEST = 'Chest',
+    TRAPS = 'Traps',
+    BACK = 'Back',
+    SHOULDERS = 'Shoulders',
+    BICEPS = 'Biceps',
+    TRICEPS = 'Triceps',
+    FOREARMS = 'Forearms',
+    QUADRICEPS = 'Quadriceps',
+    HAMSTRINGS = 'Hamstrings',
+    GLUTES = 'Glutes',
+    CALVES = 'Calves',
+    ABS = 'Abs',
+    CORE = 'Core',
+    FULL_BODY = 'Full Body',
+}

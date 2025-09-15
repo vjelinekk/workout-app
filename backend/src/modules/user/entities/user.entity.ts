@@ -32,6 +32,8 @@ export class UserEntity extends BaseEntity {
     @Column({ comment: 'Hashed password of the user' })
     password: string;
 
+    // Relations
+
     @ManyToMany(() => RoleEntity, (role) => role.users)
     @JoinTable({
         name: 'user_roles',

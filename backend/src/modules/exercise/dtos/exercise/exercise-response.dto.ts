@@ -9,8 +9,9 @@ import {
 } from 'class-validator';
 import { BodyPartEnum } from '../../enums/body-part.enum';
 import { ApiProperty } from '@nestjs/swagger';
+import { BaseResponseDto } from 'src/common/dtos/base-response.dto';
 
-export class ExerciseResponseDto {
+export class ExerciseResponseDto extends BaseResponseDto {
     @ApiProperty({
         example: 'Push Up',
         description: 'The name of the exercise',
@@ -68,20 +69,6 @@ export class ExerciseResponseDto {
     })
     @IsBoolean()
     is_approved: boolean;
-
-    @ApiProperty({
-        example: 'true',
-        description: 'When was the exercise created',
-    })
-    @IsDate()
-    created_at: Date;
-
-    @ApiProperty({
-        example: 'true',
-        description: 'When was the exercise last updated',
-    })
-    @IsDate()
-    updated_at: Date;
 
     @ApiProperty({
         example: 'true',

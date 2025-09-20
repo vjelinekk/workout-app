@@ -48,7 +48,7 @@ export class ExerciseController {
         @Body() createExerciseDto: ExerciseCreateDto,
         @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<ExerciseResponseDto> {
-        return await this.exerciseService.createExercise(
+        return await this.exerciseService.createMapped(
             createExerciseDto,
             user.userId,
         );
@@ -125,7 +125,7 @@ export class ExerciseController {
         description: 'Unauthorized',
     })
     async deleteExercise(@Param('id', ParseIntPipe) id: number) {
-        await this.exerciseService.deleteExercise(id);
+        await this.exerciseService.delete(id);
     }
 
     @Get(':id')
@@ -146,7 +146,7 @@ export class ExerciseController {
     async getExerciseById(
         @Param('id', ParseIntPipe) id: number,
     ): Promise<ExerciseResponseDto> {
-        return await this.exerciseService.getExerciseById(id);
+        return await this.exerciseService.findOneMapped(id);
     }
 
     @Get()
@@ -162,6 +162,6 @@ export class ExerciseController {
         description: 'Invalid request',
     })
     async getAllExercises(): Promise<ExerciseResponseDto[]> {
-        return await this.exerciseService.getAllExercises();
+        return await this.exerciseService.findAllMapped();
     }
 }

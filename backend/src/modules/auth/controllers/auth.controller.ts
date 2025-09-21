@@ -1,17 +1,14 @@
-import {
-    Controller,
-    Post,
-    UseGuards,
-    Request,
-    Get,
-    HttpStatus,
-    Body,
-} from '@nestjs/common';
+import { Controller, Post, UseGuards, Get } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { GoogleAuthGuard } from '../guards/google-auth.guard';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { Public } from 'src/common/decorators/public.decorator';
-import { ApiBody, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import {
+    ApiBody,
+    ApiOkResponse,
+    ApiOperation,
+    ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { LoginDto } from '../dtos/login.dto';
 import { LoginResponseDto } from '../dtos/login-response.dto';
 import { UserEntity } from 'src/modules/user/entities/user.entity';
@@ -26,13 +23,11 @@ export class AuthController {
     @UseGuards(LocalAuthGuard)
     @ApiOperation({ summary: 'Login with email and password' })
     @ApiBody({ type: LoginDto, description: 'Login credentials' })
-    @ApiResponse({
-        status: HttpStatus.OK,
+    @ApiOkResponse({
         description: 'Successful login',
         type: LoginResponseDto,
     })
-    @ApiResponse({
-        status: HttpStatus.UNAUTHORIZED,
+    @ApiUnauthorizedResponse({
         description: 'Invalid credentials',
     })
     login(@AuthenticatedUser() user: UserEntity) {

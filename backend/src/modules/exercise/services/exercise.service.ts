@@ -71,8 +71,6 @@ export class ExerciseService extends MappedCrudService<
             );
         }
 
-        exercise.updatedAt = new Date();
-
         Object.assign(exercise, exerciseDto);
 
         return this.updateMapped(id, exerciseDto);

@@ -171,11 +171,13 @@ export abstract class BaseRepository<
      *
      * @param id Entity primary key.
      */
-    async softDeleteById(id: number): Promise<void> {
-        await this.update(
+    async softDeleteById(id: number): Promise<boolean> {
+        const updateResult = await this.update(
             { id } as unknown as FindOptionsWhere<T>,
             { isDeleted: true } as unknown as QueryDeepPartialEntity<T>,
         );
+
+        return (updateResult.affected ?? 0) > 0;
     }
 
     /**
@@ -185,11 +187,13 @@ export abstract class BaseRepository<
      *
      * @param id Entity primary key.
      */
-    async restoreById(id: number): Promise<void> {
-        await this.update(
+    async restoreById(id: number): Promise<boolean> {
+        const updateResult = await this.update(
             { id } as unknown as FindOptionsWhere<T>,
             { isDeleted: false } as unknown as QueryDeepPartialEntity<T>,
         );
+
+        return (updateResult.affected ?? 0) > 0;
     }
 
     /**
@@ -197,7 +201,11 @@ export abstract class BaseRepository<
      *
      * @param id Entity primary key.
      */
-    async hardDeleteById(id: number): Promise<void> {
-        await this.delete({ id } as unknown as FindOptionsWhere<T>);
+    async hardDeleteById(id: number): Promise<boolean> {
+        const deleteResult = await this.delete({
+            id,
+        } as unknown as FindOptionsWhere<T>);
+
+        return (deleteResult.affected ?? 0) > 0;
     }
 }

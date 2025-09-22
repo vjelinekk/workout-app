@@ -17,6 +17,7 @@ import {
     ApiOkResponse,
     ApiOperation,
     ApiParam,
+    ApiTags,
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { ExerciseCategoryCreateDto } from '../dtos/exercise-category/exercise-category-create.dto';
@@ -25,6 +26,7 @@ import { ExerciseCategoryService } from '../services/exercise-category.service';
 import { ExerciseCategoryPatchDto } from '../dtos/exercise-category/exercise-category-patch.dto';
 import { ExerciseCategoryUpdateDto } from '../dtos/exercise-category/exercise-category-update.dto';
 
+@ApiTags('Exercise Categories')
 @Controller('exercise-categories')
 export class ExerciseCategoryController {
     constructor(

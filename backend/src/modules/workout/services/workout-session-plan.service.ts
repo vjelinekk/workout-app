@@ -13,6 +13,7 @@ import {
 import { DeepPartial } from 'typeorm';
 import { FindAllScopes } from 'src/common/enums/find-all-scopes.enum';
 import { RoleEnum } from 'src/modules/user/enums/role.enum';
+import { PublicEntityPermissionUtil } from 'src/common/utils/public-entity-permission.util';
 
 @Injectable()
 export class WorkoutSessionPlanService extends MappedCrudService<
@@ -71,7 +72,7 @@ export class WorkoutSessionPlanService extends MappedCrudService<
         scope: FindAllScopes,
         id?: number,
     ): Promise<WorkoutSessionPlanEntity[] | WorkoutSessionPlanEntity | null> {
-        const isAdmin = userRoles.includes(RoleEnum.ADMIN);
+        const isAdmin = PublicEntityPermissionUtil.isAdmin(userRoles);
 
         // Admin can access everything
         if (isAdmin) {
@@ -79,11 +80,11 @@ export class WorkoutSessionPlanService extends MappedCrudService<
         }
 
         // Non-admin trying to access ALL scope
-        if (!isAdmin && scope === FindAllScopes.ALL) {
-            throw new UnauthorizedException(
-                'Only admins can access all workout session plans.',
-            );
-        }
+        PublicEntityPermissionUtil.validateEntityAccess(
+            userRoles,
+            scope,
+            'workout session plans',
+        );
 
         // Route to appropriate repository method
         switch (scope) {
@@ -184,20 +185,13 @@ export class WorkoutSessionPlanService extends MappedCrudService<
             throw new NotFoundException('Workout session plan not found');
         }
 
-        const isAdmin = userRoles.includes(RoleEnum.ADMIN);
-        const isOwner = entity.createdById === userId;
-
-        if (!isAdmin && !isOwner) {
-            throw new UnauthorizedException(
-                'You do not have permission to update this workout session plan.',
-            );
-        }
-
-        if (entity.isPublic && entity.isApproved) {
-            throw new UnauthorizedException(
-                'Cannot update an approved public workout session plan.',
-            );
-        }
+        PublicEntityPermissionUtil.validateModificationPermission(
+            entity,
+            userId,
+            userRoles,
+            'update',
+            'workout session plan',
+        );
 
         Object.assign(entity, dto);
 
@@ -225,20 +219,13 @@ export class WorkoutSessionPlanService extends MappedCrudService<
             throw new NotFoundException('Workout session plan not found');
         }
 
-        const isAdmin = userRoles.includes(RoleEnum.ADMIN);
-        const isOwner = entity.createdById === userId;
-
-        if (!isAdmin && !isOwner) {
-            throw new UnauthorizedException(
-                'You do not have permission to delete this workout session plan.',
-            );
-        }
-
-        if (entity.isPublic && entity.isApproved) {
-            throw new UnauthorizedException(
-                'Cannot delete an approved public workout session plan.',
-            );
-        }
+        PublicEntityPermissionUtil.validateModificationPermission(
+            entity,
+            userId,
+            userRoles,
+            'delete',
+            'workout session plan',
+        );
 
         return this.deleteMapped(id);
     }
@@ -264,14 +251,13 @@ export class WorkoutSessionPlanService extends MappedCrudService<
             throw new NotFoundException('Workout session plan not found');
         }
 
-        const isAdmin = userRoles.includes(RoleEnum.ADMIN);
-        const isOwner = entity.createdById === userId;
-
-        if (!isAdmin && !isOwner) {
-            throw new UnauthorizedException(
-                'You do not have permission to restore this workout session plan.',
-            );
-        }
+        PublicEntityPermissionUtil.validateModificationPermission(
+            entity,
+            userId,
+            userRoles,
+            'restore',
+            'workout session plan',
+        );
 
         return await this.restoreMapped(id);
     }

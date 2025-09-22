@@ -22,6 +22,13 @@ export abstract class MappedCrudService<
     ): DeepPartial<Entity>;
     protected abstract toResponseDto(entity: Entity): ResponseDto;
 
+    /**
+     * Creates a new entity from the provided DTO and returns it as a response DTO.
+     *
+     * @param dto Data to create the entity from
+     * @param loggedInUserId ID of the logged-in user (optional)
+     * @returns Created entity as response DTO
+     */
     async createMapped(
         dto: CreateDto,
         loggedInUserId?: number,

@@ -5,6 +5,8 @@ import { AuthModule } from './modules/auth/auth.module';
 import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { ExerciseModule } from './modules/exercise/exercise.module';
+import { WorkoutModule } from './modules/workout/workout.module';
+import { TrainingSplitModule } from './modules/training-split/training-split.module';
 
 @Module({
     imports: [
@@ -27,6 +29,8 @@ import { ExerciseModule } from './modules/exercise/exercise.module';
         }),
         AuthModule,
         ExerciseModule,
+        WorkoutModule,
+        TrainingSplitModule,
     ],
     providers: [
         {

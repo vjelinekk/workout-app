@@ -5,7 +5,6 @@ import { UserEntity } from './entities/user.entity';
 import { RoleEntity } from './entities/role.entity';
 import { UserRepository } from './repositories/user.repository';
 import { RoleRepository } from './repositories/role.repository';
-import { UserController } from './controllers/user.controller';
 import { TrainerTraineeEntity } from './entities/trainer-trainee.entity';
 
 @Module({
@@ -16,7 +15,7 @@ import { TrainerTraineeEntity } from './entities/trainer-trainee.entity';
             TrainerTraineeEntity,
         ]),
     ],
-    controllers: [UserController],
+    controllers: [],
     exports: [UserService],
     providers: [UserService, UserRepository, RoleRepository],
 })

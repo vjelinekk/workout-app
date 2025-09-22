@@ -21,6 +21,9 @@ export class WorkoutSessionPlanEntity extends BaseEntity {
     @JoinColumn({ name: 'created_by' })
     createdBy: UserEntity;
 
+    @Column({ name: 'created_by', nullable: true })
+    createdById: number;
+
     @Column({
         name: 'is_public',
         default: false,

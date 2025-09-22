@@ -8,6 +8,7 @@ import {
     Patch,
     Post,
     Put,
+    Query,
 } from '@nestjs/common';
 import {
     ApiBadRequestResponse,
@@ -17,6 +18,7 @@ import {
     ApiOkResponse,
     ApiOperation,
     ApiParam,
+    ApiQuery,
     ApiTags,
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -27,6 +29,7 @@ import { JwtUser } from 'src/modules/auth/decorators/jwt-user.decorator';
 import type { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
 import { WorkoutSessionPlanPatchDto } from '../dtos/workout-session-plan/workout-session-plan-patch.dto';
 import { WorkoutSessionPlanUpdateDto } from '../dtos/workout-session-plan/workout-session-plan-update.dto';
+import { FindAllScopes } from 'src/common/enums/find-all-scopes.enum';
 
 @ApiTags('Workout Session Plans')
 @Controller('workout-session-plans')
@@ -57,7 +60,7 @@ export class WorkoutSessionPlanController {
     ): Promise<WorkoutSessionPlanResponseDto> {
         return await this.workoutSessionPlanService.createMapped(
             createWorkoutSessionPlanDto,
-            user.userId,
+            user.id,
         );
     }
 
@@ -84,10 +87,13 @@ export class WorkoutSessionPlanController {
     async patchWorkoutSessionPlan(
         @Param('id', ParseIntPipe) workoutSessionPlanId: number,
         @Body() patchWorkoutSessionPlanDto: WorkoutSessionPlanPatchDto,
+        @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<WorkoutSessionPlanResponseDto> {
-        return await this.workoutSessionPlanService.updateMapped(
+        return await this.workoutSessionPlanService.updateMappedForUser(
             workoutSessionPlanId,
             patchWorkoutSessionPlanDto,
+            user.id,
+            user.roles,
         );
     }
 
@@ -114,10 +120,13 @@ export class WorkoutSessionPlanController {
     async updateWorkoutSessionPlan(
         @Param('id', ParseIntPipe) id: number,
         @Body() updateWorkoutSessionPlanDto: WorkoutSessionPlanUpdateDto,
+        @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<WorkoutSessionPlanResponseDto> {
-        return await this.workoutSessionPlanService.updateMapped(
+        return await this.workoutSessionPlanService.updateMappedForUser(
             id,
             updateWorkoutSessionPlanDto,
+            user.id,
+            user.roles,
         );
     }
 
@@ -130,12 +139,13 @@ export class WorkoutSessionPlanController {
     })
     @ApiOkResponse({
         description: 'The workout session plan has been successfully deleted.',
+        type: WorkoutSessionPlanResponseDto,
     })
     @ApiUnauthorizedResponse({
         description: 'Unauthorized',
     })
     async deleteWorkoutSessionPlan(@Param('id', ParseIntPipe) id: number) {
-        await this.workoutSessionPlanService.delete(id);
+        return await this.workoutSessionPlanService.deleteMapped(id);
     }
 
     @Get(':id')
@@ -161,6 +171,16 @@ export class WorkoutSessionPlanController {
 
     @Get()
     @ApiOperation({ summary: 'Get all workout session plans' })
+    @ApiQuery({
+        name: 'scope',
+        description: 'Scope of workout session plans to retrieve',
+        required: false,
+        schema: {
+            type: 'string',
+            enum: Object.values(FindAllScopes),
+            default: FindAllScopes.AVAILABLE,
+        },
+    })
     @ApiOkResponse({
         description: 'List of all workout session plans',
         type: [WorkoutSessionPlanResponseDto],
@@ -171,9 +191,45 @@ export class WorkoutSessionPlanController {
     @ApiBadRequestResponse({
         description: 'Invalid request',
     })
-    async getAllWorkoutSessionPlans(): Promise<
-        WorkoutSessionPlanResponseDto[]
-    > {
-        return await this.workoutSessionPlanService.findAllMapped();
+    async getAllWorkoutSessionPlans(
+        @JwtUser() user: JwtAuthenticatedUser,
+        @Query('scope') scope: FindAllScopes = FindAllScopes.AVAILABLE,
+    ): Promise<WorkoutSessionPlanResponseDto[]> {
+        return await this.workoutSessionPlanService.findAllAvailableForUser(
+            user.id,
+            user.roles,
+            scope,
+        );
+    }
+
+    @Post('restore/:id')
+    @ApiOperation({ summary: 'Restore a deleted workout session plan' })
+    @ApiParam({
+        name: 'id',
+        type: Number,
+        description: 'The ID of the workout session plan to restore',
+    })
+    @ApiOkResponse({
+        description: 'The workout session plan has been successfully restored.',
+        type: WorkoutSessionPlanResponseDto,
+    })
+    @ApiNotFoundResponse({
+        description: 'Workout session plan not found',
+    })
+    @ApiUnauthorizedResponse({
+        description: 'Unauthorized',
+    })
+    @ApiBadRequestResponse({
+        description: 'Invalid request',
+    })
+    async restoreWorkoutSessionPlan(
+        @Param('id', ParseIntPipe) id: number,
+        @JwtUser() user: JwtAuthenticatedUser,
+    ): Promise<WorkoutSessionPlanResponseDto> {
+        return await this.workoutSessionPlanService.restoreMappedForUser(
+            id,
+            user.id,
+            user.roles,
+        );
     }
 }

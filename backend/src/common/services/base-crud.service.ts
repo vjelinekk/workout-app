@@ -11,32 +11,93 @@ export abstract class BaseCrudService<
 > {
     constructor(protected readonly repository: Repo) {}
 
+    /**
+     * Creates a new entity from the provided partial entity data.
+     *
+     * @param entity Entity to create
+     * @returns Created entity
+     */
     async create(entity: DeepPartial<Entity>): Promise<Entity> {
         return this.repository.save(entity);
     }
 
+    /**
+     * Retrieves all entities.
+     *
+     * @returns All entities
+     */
     async findAll(): Promise<Entity[]> {
         return this.repository.findActive();
     }
 
+    /**
+     * Retrieves an entity by its ID.
+     *
+     * @param id ID of entity to retrieve
+     * @returns Entity
+     * @throws NotFoundException if the entity with the given ID does not exist
+     */
     async findOne(id: number): Promise<Entity> {
         const entity = await this.repository.findByIdActive(id);
 
         if (!entity) {
-            throw new NotFoundException('Entity not found');
+            throw new NotFoundException(`Entity with ID ${id} not found`);
         }
 
         return entity;
     }
 
+    /**
+     * Updates an entity by its ID using the provided DTO (either full update or partial update).
+     *
+     * @param id ID of entity to update
+     * @param dto Data to update the entity with
+     * @returns Updated entity
+     * @throws NotFoundException if the entity with the given ID does not exist
+     */
     async update(id: number, dto: UpdateDto | PatchDto): Promise<Entity> {
         const entity = await this.findOne(id);
+
+        if (!entity) {
+            throw new NotFoundException(
+                `Entity with ID ${id} not found for update`,
+            );
+        }
+
         entity.updatedAt = new Date();
         Object.assign(entity, dto);
         return this.repository.save(entity);
     }
 
+    /**
+     * Deletes an entity by its ID.
+     *
+     * @param id ID of entity to delete
+     * @throws NotFoundException if the entity with the given ID does not exist
+     */
     async delete(id: number): Promise<void> {
-        await this.repository.softDeleteById(id);
+        const success = await this.repository.softDeleteById(id);
+
+        if (!success) {
+            throw new NotFoundException(
+                `Entity with ID ${id} not found for deletion`,
+            );
+        }
+    }
+
+    /**
+     * Restores a soft-deleted entity by its ID.
+     *
+     * @param id ID of entity to restore
+     * @throws NotFoundException if the entity with the given ID does not exist
+     */
+    async restore(id: number): Promise<void> {
+        const success = await this.repository.restoreById(id);
+
+        if (!success) {
+            throw new NotFoundException(
+                `Entity with ID ${id} not found for restoration`,
+            );
+        }
     }
 }

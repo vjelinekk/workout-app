@@ -50,7 +50,7 @@ export class ExerciseController {
     ): Promise<ExerciseResponseDto> {
         return await this.exerciseService.createMapped(
             createExerciseDto,
-            user.userId,
+            user.id,
         );
     }
 

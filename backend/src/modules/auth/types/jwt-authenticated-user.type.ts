@@ -1,5 +1,5 @@
 export interface JwtAuthenticatedUser {
-    userId: number;
+    id: number;
     nickname: string;
     roles: number[];
 }

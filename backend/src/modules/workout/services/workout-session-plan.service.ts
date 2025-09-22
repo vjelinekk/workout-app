@@ -245,7 +245,7 @@ export class WorkoutSessionPlanService extends MappedCrudService<
 
     /**
      * Restores a deleted workout session plan for a user.
-     * 
+     *
      * @param id ID of the workout session plan to restore
      * @param userId ID of the user making the request
      * @param userRoles Roles of the user making the request

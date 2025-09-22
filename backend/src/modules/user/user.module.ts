@@ -16,7 +16,7 @@ import { TrainerTraineeEntity } from './entities/trainer-trainee.entity';
         ]),
     ],
     controllers: [],
-    exports: [UserService],
+    exports: [UserService, UserRepository],
     providers: [UserService, UserRepository, RoleRepository],
 })
 export class UserModule {}

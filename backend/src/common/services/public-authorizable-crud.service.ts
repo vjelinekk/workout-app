@@ -54,71 +54,15 @@ export abstract class PublicAuthorizableCrudService<
         return entity.createdById === userId;
     }
 
-    validateEntityAccess<T extends PublicAuthorizableEntity>(
-        entity: T | null,
-        userId: number,
-        userRoles: RoleEnum[],
-        scope: FindAllScopes,
-    ): void {
-        if (!entity) {
-            return;
-        }
-
-        // Admins have access to all entities
-        if (this.isAdmin(userRoles)) {
-            return;
-        }
-
-        switch (scope) {
-            case FindAllScopes.PUBLIC:
-                if (!entity.isPublic || !entity.isApproved) {
-                    throw new UnauthorizedException(
-                        `You do not have access to this ${this.getEntityName()}.`,
-                    );
-                }
-                break;
-
-            case FindAllScopes.MY:
-                if (!this.isOwner(entity, userId)) {
-                    throw new UnauthorizedException(
-                        `You do not have access to this ${this.getEntityName()}.`,
-                    );
-                }
-                break;
-
-            case FindAllScopes.ALL:
-            case FindAllScopes.AVAILABLE:
-                if (
-                    (!entity.isPublic || !entity.isApproved) &&
-                    !this.isOwner(entity, userId)
-                ) {
-                    throw new UnauthorizedException(
-                        `You do not have access to this ${this.getEntityName()}.`,
-                    );
-                }
-                break;
-
-            case FindAllScopes.DELETED:
-                if (!this.isOwner(entity, userId)) {
-                    throw new UnauthorizedException(
-                        `You do not have access to this ${this.getEntityName()}.`,
-                    );
-                }
-                break;
-
-            default:
-                if (
-                    (!entity.isPublic || !entity.isApproved) &&
-                    !this.isOwner(entity, userId)
-                ) {
-                    throw new UnauthorizedException(
-                        `You do not have access to this ${this.getEntityName()}.`,
-                    );
-                }
-                break;
-        }
-    }
-
+    /**
+     * 
+     * @param entity Entity to validate 
+     * @param userId ID of the user making the request
+     * @param userRoles Roles of the user making the request
+     * @param action The action being performed (update, delete, restore)
+     * @throws ForbiddenException if the entity is public and approved
+     * @throws UnauthorizedException if the user is not the owner or an admin
+     */
     validateModificationPermission<T extends PublicAuthorizableEntity>(
         entity: T,
         userId: number,
@@ -230,7 +174,7 @@ export abstract class PublicAuthorizableCrudService<
      * @returns Array of response DTOs representing the entities
      * @throws NotFoundException if no entities are found
      */
-    async findAllAvailableForUser(
+    async findAllAvailableAuthorized(
         userId: number,
         userRoles: RoleEnum[],
         scope: FindAllScopes,
@@ -258,7 +202,7 @@ export abstract class PublicAuthorizableCrudService<
      * @returns The entity as a response DTO
      * @throws NotFoundException if the entity is not found or the user does not have permission to access it
      */
-    async findOneAvailableForUser(
+    async findOneAvailableAuthorized(
         userId: number,
         userRoles: RoleEnum[],
         scope: FindAllScopes,
@@ -289,7 +233,7 @@ export abstract class PublicAuthorizableCrudService<
      * @throws NotFoundException if the entity is not found
      * @throws UnauthorizedException if the user does not have permission to update the entity
      */
-    async updateMappedForUser(
+    async updateMappedAuthorized(
         id: number,
         dto: UpdateDto | PatchDto,
         userId: number,
@@ -323,7 +267,7 @@ export abstract class PublicAuthorizableCrudService<
      * @throws NotFoundException if the entity is not found
      * @throws UnauthorizedException if the user does not have permission to delete the entity
      */
-    async deleteMappedForUser(
+    async deleteMappedAuthorized(
         id: number,
         userId: number,
         userRoles: RoleEnum[],
@@ -354,7 +298,7 @@ export abstract class PublicAuthorizableCrudService<
      * @throws NotFoundException if the entity is not found
      * @throws UnauthorizedException if the user does not have permission to restore the entity
      */
-    async restoreMappedForUser(
+    async restoreMappedAuthorized(
         id: number,
         userId: number,
         userRoles: RoleEnum[],

@@ -13,8 +13,9 @@ export abstract class PublicAuthorizableBaseRepository<
 {
     async findAllPrivate(userId: number, isAdmin: boolean): Promise<T[]> {
         let where = { createdById: userId } as FindManyOptions<T>['where'];
-        if (!isAdmin) {
-            where = {};
+        if (isAdmin) {
+            // Admin can see all private entities (from all users)
+            where = undefined; // No filtering by createdById
         }
 
         return this.findActive({
@@ -28,7 +29,8 @@ export abstract class PublicAuthorizableBaseRepository<
         isAdmin: boolean,
     ): Promise<T | null> {
         let where = { createdById: userId, id } as FindManyOptions<T>['where'];
-        if (!isAdmin) {
+        if (isAdmin) {
+            // Admin can access any entity by ID (regardless of creator)
             where = { id } as FindManyOptions<T>['where'];
         }
 
@@ -44,8 +46,8 @@ export abstract class PublicAuthorizableBaseRepository<
         ] as FindManyOptions<T>['where'];
 
         if (isAdmin) {
-            // To admin are all workout plans available
-            where = [] as FindManyOptions<T>['where'];
+            // To admin are all workout plans available (no additional filtering)
+            where = undefined; // Let withActiveWhere handle isDeleted: false only
         }
 
         return this.findActive({
@@ -65,7 +67,7 @@ export abstract class PublicAuthorizableBaseRepository<
 
         if (isAdmin) {
             where = [
-                { isPublic: true, isApproved: true, id } as Partial<T>,
+                { id } as Partial<T>,
             ] as FindManyOptions<T>['where'];
         }
 
@@ -103,7 +105,8 @@ export abstract class PublicAuthorizableBaseRepository<
         ] as FindManyOptions<T>['where'];
 
         if (isAdmin) {
-            where = [] as FindManyOptions<T>['where'];
+            // Admin can see all entities (including deleted ones)
+            where = undefined; // No filtering except what's handled by find() method
         }
 
         return this.find({

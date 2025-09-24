@@ -8,6 +8,7 @@ import {
     Patch,
     Post,
     Put,
+    Query,
 } from '@nestjs/common';
 import {
     ApiBadRequestResponse,
@@ -17,6 +18,7 @@ import {
     ApiOkResponse,
     ApiOperation,
     ApiParam,
+    ApiQuery,
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { ExerciseService } from '../services/exercise.service';
@@ -26,6 +28,7 @@ import { JwtUser } from 'src/modules/auth/decorators/jwt-user.decorator';
 import type { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
 import { ExercisePatchDto } from '../dtos/exercise/exercise-patch.dto';
 import { ExerciseUpdateDto } from '../dtos/exercise/exercise-update.dto';
+import { FindAllScopes } from 'src/common/enums/find-all-scopes.enum';
 
 @Controller('exercises')
 export class ExerciseController {
@@ -65,6 +68,9 @@ export class ExerciseController {
         description: 'The exercise has been successfully patched.',
         type: ExerciseResponseDto,
     })
+    @ApiNotFoundResponse({
+        description: 'Exercise not found',
+    })
     @ApiUnauthorizedResponse({
         description: 'Unauthorized',
     })
@@ -79,7 +85,7 @@ export class ExerciseController {
         @Body() patchExerciseDto: ExercisePatchDto,
         @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<ExerciseResponseDto> {
-        return await this.exerciseService.updateMappedForUser(
+        return await this.exerciseService.updateMappedAuthorized(
             exerciseId,
             patchExerciseDto,
             user.id,
@@ -98,6 +104,9 @@ export class ExerciseController {
         description: 'The exercise has been successfully updated.',
         type: ExerciseResponseDto,
     })
+    @ApiNotFoundResponse({
+        description: 'Exercise not found',
+    })
     @ApiUnauthorizedResponse({
         description: 'Unauthorized',
     })
@@ -112,7 +121,7 @@ export class ExerciseController {
         @Body() updateExerciseDto: ExerciseUpdateDto,
         @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<ExerciseResponseDto> {
-        return await this.exerciseService.updateMappedForUser(
+        return await this.exerciseService.updateMappedAuthorized(
             id,
             updateExerciseDto,
             user.id,
@@ -130,6 +139,9 @@ export class ExerciseController {
     @ApiOkResponse({
         description: 'The exercise has been successfully deleted.',
     })
+    @ApiNotFoundResponse({
+        description: 'Exercise not found',
+    })
     @ApiUnauthorizedResponse({
         description: 'Unauthorized',
     })
@@ -137,7 +149,7 @@ export class ExerciseController {
         @Param('id', ParseIntPipe) id: number,
         @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<ExerciseResponseDto> {
-        return await this.exerciseService.deleteMappedForUser(
+        return await this.exerciseService.deleteMappedAuthorized(
             id,
             user.id,
             user.roles,
@@ -146,6 +158,16 @@ export class ExerciseController {
 
     @Get(':id')
     @ApiOperation({ summary: 'Get exercise by ID' })
+    @ApiQuery({
+        name: 'scope',
+        description: 'Scope of workout session plans to retrieve',
+        required: false,
+        schema: {
+            type: 'string',
+            enum: Object.values(FindAllScopes),
+            default: FindAllScopes.AVAILABLE,
+        },
+    })
     @ApiOkResponse({
         description: 'The exercise with the specified ID',
         type: ExerciseResponseDto,
@@ -161,12 +183,29 @@ export class ExerciseController {
     })
     async getExerciseById(
         @Param('id', ParseIntPipe) id: number,
+        @Query('scope') scope: FindAllScopes = FindAllScopes.AVAILABLE,
+        @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<ExerciseResponseDto> {
-        return await this.exerciseService.findOneActiveMapped(id);
+        return await this.exerciseService.findOneAvailableAuthorized(
+            user.id,
+            user.roles,
+            scope,
+            id,
+        );
     }
 
     @Get()
     @ApiOperation({ summary: 'Get all exercises' })
+    @ApiQuery({
+        name: 'scope',
+        description: 'Scope of workout session plans to retrieve',
+        required: false,
+        schema: {
+            type: 'string',
+            enum: Object.values(FindAllScopes),
+            default: FindAllScopes.AVAILABLE,
+        },
+    })
     @ApiOkResponse({
         description: 'List of all exercises',
         type: [ExerciseResponseDto],
@@ -180,8 +219,15 @@ export class ExerciseController {
     @ApiBadRequestResponse({
         description: 'Invalid request',
     })
-    async getAllExercises(): Promise<ExerciseResponseDto[]> {
-        return await this.exerciseService.findAllActiveMapped();
+    async getAllExercises(
+        @JwtUser() user: JwtAuthenticatedUser,
+        @Query('scope') scope: FindAllScopes = FindAllScopes.AVAILABLE,
+    ): Promise<ExerciseResponseDto[]> {
+        return await this.exerciseService.findAllAvailableAuthorized(
+            user.id,
+            user.roles,
+            scope,
+        );
     }
 
     @Post('/:id/restore')
@@ -208,7 +254,7 @@ export class ExerciseController {
         @Param('id', ParseIntPipe) id: number,
         @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<ExerciseResponseDto> {
-        return await this.exerciseService.restoreMappedForUser(
+        return await this.exerciseService.restoreMappedAuthorized(
             id,
             user.id,
             user.roles,

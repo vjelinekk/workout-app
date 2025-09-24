@@ -89,7 +89,7 @@ export class WorkoutSessionPlanController {
         @Body() patchWorkoutSessionPlanDto: WorkoutSessionPlanPatchDto,
         @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<WorkoutSessionPlanResponseDto> {
-        return await this.workoutSessionPlanService.updateMappedForUser(
+        return await this.workoutSessionPlanService.updateMappedAuthorized(
             workoutSessionPlanId,
             patchWorkoutSessionPlanDto,
             user.id,
@@ -122,7 +122,7 @@ export class WorkoutSessionPlanController {
         @Body() updateWorkoutSessionPlanDto: WorkoutSessionPlanUpdateDto,
         @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<WorkoutSessionPlanResponseDto> {
-        return await this.workoutSessionPlanService.updateMappedForUser(
+        return await this.workoutSessionPlanService.updateMappedAuthorized(
             id,
             updateWorkoutSessionPlanDto,
             user.id,
@@ -148,7 +148,7 @@ export class WorkoutSessionPlanController {
         @Param('id', ParseIntPipe) id: number,
         @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<WorkoutSessionPlanResponseDto> {
-        return await this.workoutSessionPlanService.deleteMappedForUser(
+        return await this.workoutSessionPlanService.deleteMappedAuthorized(
             id,
             user.id,
             user.roles,
@@ -157,6 +157,16 @@ export class WorkoutSessionPlanController {
 
     @Get(':id')
     @ApiOperation({ summary: 'Get workout session plan by ID' })
+    @ApiQuery({
+        name: 'scope',
+        description: 'Scope of workout session plans to retrieve',
+        required: false,
+        schema: {
+            type: 'string',
+            enum: Object.values(FindAllScopes),
+            default: FindAllScopes.AVAILABLE,
+        },
+    })
     @ApiOkResponse({
         description: 'The workout session plan with the specified ID',
         type: WorkoutSessionPlanResponseDto,
@@ -175,7 +185,7 @@ export class WorkoutSessionPlanController {
         @Query('scope') scope: FindAllScopes = FindAllScopes.AVAILABLE,
         @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<WorkoutSessionPlanResponseDto> {
-        return await this.workoutSessionPlanService.findOneAvailableForUser(
+        return await this.workoutSessionPlanService.findOneAvailableAuthorized(
             user.id,
             user.roles,
             scope,
@@ -212,7 +222,7 @@ export class WorkoutSessionPlanController {
         @JwtUser() user: JwtAuthenticatedUser,
         @Query('scope') scope: FindAllScopes = FindAllScopes.AVAILABLE,
     ): Promise<WorkoutSessionPlanResponseDto[]> {
-        return await this.workoutSessionPlanService.findAllAvailableForUser(
+        return await this.workoutSessionPlanService.findAllAvailableAuthorized(
             user.id,
             user.roles,
             scope,
@@ -243,7 +253,7 @@ export class WorkoutSessionPlanController {
         @Param('id', ParseIntPipe) id: number,
         @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<WorkoutSessionPlanResponseDto> {
-        return await this.workoutSessionPlanService.restoreMappedForUser(
+        return await this.workoutSessionPlanService.restoreMappedAuthorized(
             id,
             user.id,
             user.roles,

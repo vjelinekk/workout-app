@@ -66,9 +66,7 @@ export abstract class PublicAuthorizableBaseRepository<
         ] as FindManyOptions<T>['where'];
 
         if (isAdmin) {
-            where = [
-                { id } as Partial<T>,
-            ] as FindManyOptions<T>['where'];
+            where = [{ id } as Partial<T>] as FindManyOptions<T>['where'];
         }
 
         return this.findOneActive({

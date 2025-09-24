@@ -10,14 +10,14 @@ export class UserEntity extends BaseEntity {
 
     @Column({
         name: 'first_name',
-        unique: true,
+        unique: false,
         comment: 'First name of the user',
     })
     firstName: string;
 
     @Column({
         name: 'last_name',
-        unique: true,
+        unique: false,
         comment: 'Last name of the user',
     })
     lastName: string;

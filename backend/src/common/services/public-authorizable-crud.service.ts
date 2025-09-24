@@ -55,8 +55,8 @@ export abstract class PublicAuthorizableCrudService<
     }
 
     /**
-     * 
-     * @param entity Entity to validate 
+     *
+     * @param entity Entity to validate
      * @param userId ID of the user making the request
      * @param userRoles Roles of the user making the request
      * @param action The action being performed (update, delete, restore)

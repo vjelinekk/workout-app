@@ -1,4 +1,4 @@
-import { DeepPartial } from 'typeorm';
+import { DeepPartial, FindOptionsWhere } from 'typeorm';
 import { BaseEntity } from '../entities/base.entity';
 import { BaseRepository } from '../repositories/base.repository';
 import { BaseCrudService } from './base-crud.service';
@@ -61,8 +61,20 @@ export abstract class MappedCrudService<
      * @returns Entity as response DTO
      * @throws NotFoundException if the entity with the given ID does not exist
      */
+    async findOneActiveMapped(id: number): Promise<ResponseDto> {
+        const entity = await this.findOneActive(id);
+
+        if (!entity) {
+            throw new NotFoundException(`Entity with ID ${id} not found`);
+        }
+
+        return this.toResponseDto(entity);
+    }
+
     async findOneMapped(id: number): Promise<ResponseDto> {
-        const entity = await this.findOne(id);
+        const entity = await this.repository.findOneBy({
+            id,
+        } as FindOptionsWhere<Entity>);
 
         if (!entity) {
             throw new NotFoundException(`Entity with ID ${id} not found`);
@@ -72,12 +84,34 @@ export abstract class MappedCrudService<
     }
 
     /**
+     * Finds all entities.
+     *
+     * @returns All entities as response DTOs
+     * @throws NotFoundException if no entities are found
+     */
+    async findAllMapped(): Promise<ResponseDto[]> {
+        const entities = await this.repository.find();
+
+        if (entities.length === 0) {
+            throw new NotFoundException('No entities found');
+        }
+
+        return entities.map((entity) => this.toResponseDto(entity));
+    }
+
+    /**
      * Retrieves all entities and returns them as response DTOs.
      *
      * @returns All entities as response DTOs
+     * @throws NotFoundException if no entities are found
      */
-    async findAllMapped(): Promise<ResponseDto[]> {
-        const entities = await this.findAll();
+    async findAllActiveMapped(): Promise<ResponseDto[]> {
+        const entities = await this.findAllActive();
+
+        if (entities.length === 0) {
+            throw new NotFoundException('No entities found');
+        }
+
         return entities.map((entity) => this.toResponseDto(entity));
     }
 
@@ -89,13 +123,17 @@ export abstract class MappedCrudService<
      * @throws NotFoundException if the entity with the given ID does not exist
      */
     async deleteMapped(id: number): Promise<ResponseDto> {
-        const entity = await this.findOne(id);
+        const entity = await this.findOneActive(id);
 
         if (!entity) {
             throw new NotFoundException(`Entity with ID ${id} not found`);
         }
 
         await this.delete(id);
+
+        // Hack so that we do not have to make another DB call to get the deleted entity
+        entity.isDeleted = true;
+
         return this.toResponseDto(entity);
     }
 
@@ -107,7 +145,7 @@ export abstract class MappedCrudService<
      * @throws NotFoundException if the entity with the given ID does not exist
      */
     async restoreMapped(id: number): Promise<ResponseDto> {
-        const entity = await this.findOne(id);
+        const entity = await this.findOneInDeleted(id);
 
         if (!entity) {
             throw new NotFoundException(`Entity with ID ${id} not found`);

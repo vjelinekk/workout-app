@@ -1,0 +1,190 @@
+import { BaseRepository } from './base.repository';
+import {
+    PublicAuthorizableEntity,
+    PublicAuthorizableRepository,
+} from '../interfaces/public-authorizable-repository.interface';
+import { FindManyOptions } from 'typeorm';
+
+export abstract class PublicAuthorizableBaseRepository<
+        T extends PublicAuthorizableEntity,
+    >
+    extends BaseRepository<T>
+    implements PublicAuthorizableRepository<T>
+{
+    async findAllPrivate(userId: number, isAdmin: boolean): Promise<T[]> {
+        let where = { createdById: userId } as FindManyOptions<T>['where'];
+        if (!isAdmin) {
+            where = {};
+        }
+
+        return this.findActive({
+            where,
+        });
+    }
+
+    async findOnePrivate(
+        userId: number,
+        id: number,
+        isAdmin: boolean,
+    ): Promise<T | null> {
+        let where = { createdById: userId, id } as FindManyOptions<T>['where'];
+        if (!isAdmin) {
+            where = { id } as FindManyOptions<T>['where'];
+        }
+
+        return this.findOneActive({
+            where,
+        });
+    }
+
+    async findAllAvailable(userId: number, isAdmin: boolean): Promise<T[]> {
+        let where = [
+            { isPublic: true, isApproved: true } as Partial<T>,
+            { createdById: userId } as Partial<T>,
+        ] as FindManyOptions<T>['where'];
+
+        if (isAdmin) {
+            // To admin are all workout plans available
+            where = [] as FindManyOptions<T>['where'];
+        }
+
+        return this.findActive({
+            where,
+        });
+    }
+
+    async findOneAvailable(
+        userId: number,
+        id: number,
+        isAdmin: boolean,
+    ): Promise<T | null> {
+        let where = [
+            { isPublic: true, isApproved: true, id } as Partial<T>,
+            { createdById: userId, id } as Partial<T>,
+        ] as FindManyOptions<T>['where'];
+
+        if (isAdmin) {
+            where = [
+                { isPublic: true, isApproved: true, id } as Partial<T>,
+            ] as FindManyOptions<T>['where'];
+        }
+
+        return this.findOneActive({
+            where,
+        });
+    }
+
+    async findAllPublicAndApproved(): Promise<T[]> {
+        return this.findActive({
+            where: {
+                isPublic: true,
+                isApproved: true,
+            } as FindManyOptions<T>['where'],
+        });
+    }
+
+    async findOnePublicAndApproved(id: number): Promise<T | null> {
+        return this.findOneActive({
+            where: {
+                isPublic: true,
+                isApproved: true,
+                id,
+            } as FindManyOptions<T>['where'],
+        });
+    }
+
+    async findAllAvailableIncludingDeleted(
+        userId: number,
+        isAdmin: boolean,
+    ): Promise<T[]> {
+        let where = [
+            { isPublic: true, isApproved: true } as Partial<T>,
+            { createdById: userId } as Partial<T>,
+        ] as FindManyOptions<T>['where'];
+
+        if (isAdmin) {
+            where = [] as FindManyOptions<T>['where'];
+        }
+
+        return this.find({
+            where,
+        });
+    }
+
+    async findOneAvailableIncludingDeleted(
+        userId: number,
+        id: number,
+        isAdmin: boolean,
+    ): Promise<T | null> {
+        let where = [
+            { isPublic: true, isApproved: true, id } as Partial<T>,
+            { createdById: userId, id } as Partial<T>,
+        ] as FindManyOptions<T>['where'];
+
+        if (isAdmin) {
+            // To admin are all workout plans available
+            where = [{ id } as Partial<T>] as FindManyOptions<T>['where'];
+        }
+
+        return this.findOne({
+            where,
+        });
+    }
+
+    async findAllDeletedAvailable(
+        userId: number,
+        isAdmin: boolean,
+    ): Promise<T[]> {
+        let where = [
+            {
+                isPublic: true,
+                isApproved: true,
+                isDeleted: true,
+            } as Partial<T>,
+            { createdById: userId, isDeleted: true } as Partial<T>,
+        ] as FindManyOptions<T>['where'];
+
+        if (isAdmin) {
+            where = [
+                {
+                    isPublic: true,
+                    isApproved: true,
+                    isDeleted: true,
+                } as Partial<T>,
+            ] as FindManyOptions<T>['where'];
+        }
+
+        return this.find({
+            where,
+        });
+    }
+
+    async findOneDeletedAvailable(
+        userId: number,
+        id: number,
+        isAdmin: boolean,
+    ): Promise<T | null> {
+        let where = [
+            {
+                isPublic: true,
+                isApproved: true,
+                isDeleted: true,
+                id,
+            } as Partial<T>,
+            { createdById: userId, isDeleted: true, id } as Partial<T>,
+        ] as FindManyOptions<T>['where'];
+
+        if (isAdmin) {
+            where = [
+                {
+                    isDeleted: true,
+                    id,
+                } as Partial<T>,
+            ] as FindManyOptions<T>['where'];
+        }
+
+        return this.findOne({
+            where,
+        });
+    }
+}

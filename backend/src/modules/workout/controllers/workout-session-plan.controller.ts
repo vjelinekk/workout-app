@@ -144,8 +144,15 @@ export class WorkoutSessionPlanController {
     @ApiUnauthorizedResponse({
         description: 'Unauthorized',
     })
-    async deleteWorkoutSessionPlan(@Param('id', ParseIntPipe) id: number) {
-        return await this.workoutSessionPlanService.deleteMapped(id);
+    async deleteWorkoutSessionPlan(
+        @Param('id', ParseIntPipe) id: number,
+        @JwtUser() user: JwtAuthenticatedUser,
+    ): Promise<WorkoutSessionPlanResponseDto> {
+        return await this.workoutSessionPlanService.deleteMappedForUser(
+            id,
+            user.id,
+            user.roles,
+        );
     }
 
     @Get(':id')
@@ -165,8 +172,15 @@ export class WorkoutSessionPlanController {
     })
     async getWorkoutSessionPlanById(
         @Param('id', ParseIntPipe) id: number,
+        @Query('scope') scope: FindAllScopes = FindAllScopes.AVAILABLE,
+        @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<WorkoutSessionPlanResponseDto> {
-        return await this.workoutSessionPlanService.findOneMapped(id);
+        return await this.workoutSessionPlanService.findOneAvailableForUser(
+            user.id,
+            user.roles,
+            scope,
+            id,
+        );
     }
 
     @Get()
@@ -185,6 +199,9 @@ export class WorkoutSessionPlanController {
         description: 'List of all workout session plans',
         type: [WorkoutSessionPlanResponseDto],
     })
+    @ApiNotFoundResponse({
+        description: 'No workout session plans found',
+    })
     @ApiUnauthorizedResponse({
         description: 'Unauthorized',
     })
@@ -202,7 +219,7 @@ export class WorkoutSessionPlanController {
         );
     }
 
-    @Post('restore/:id')
+    @Post('/:id/restore')
     @ApiOperation({ summary: 'Restore a deleted workout session plan' })
     @ApiParam({
         name: 'id',

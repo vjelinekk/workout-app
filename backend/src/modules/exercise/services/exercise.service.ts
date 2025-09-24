@@ -1,15 +1,15 @@
-import { ForbiddenException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { ExerciseRepository } from '../repositories/exercise.repository';
 import { ExerciseCreateDto } from '../dtos/exercise/exercise-create.dto';
 import { ExerciseEntity } from '../entities/exercise.entity';
 import { ExerciseResponseDto } from '../dtos/exercise/exercise-response.dto';
 import { ExercisePatchDto } from '../dtos/exercise/exercise-patch.dto';
 import { ExerciseUpdateDto } from '../dtos/exercise/exercise-update.dto';
-import { MappedCrudService } from 'src/common/services/mapped-crud.service';
 import { DeepPartial } from 'typeorm';
+import { PublicAuthorizableCrudService } from 'src/common/services/public-authorizable-crud.service';
 
 @Injectable()
-export class ExerciseService extends MappedCrudService<
+export class ExerciseService extends PublicAuthorizableCrudService<
     ExerciseEntity,
     ExerciseCreateDto,
     ExerciseUpdateDto,
@@ -19,6 +19,10 @@ export class ExerciseService extends MappedCrudService<
 > {
     constructor(protected readonly exerciseRepository: ExerciseRepository) {
         super(exerciseRepository);
+    }
+
+    protected getEntityName(): string {
+        return 'Exercise';
     }
 
     protected toEntity(
@@ -51,28 +55,7 @@ export class ExerciseService extends MappedCrudService<
             created_at: entity.createdAt,
             updated_at: entity.updatedAt,
             created_by: entity.createdById,
+            is_deleted: entity.isDeleted,
         };
-    }
-
-    /**
-     * @param id ID of exercise to update
-     * @param exerciseDto DTO with the updated data
-     * @returns DTO containing the updated row
-     */
-    async updateExercise(
-        id: number,
-        exerciseDto: ExercisePatchDto | ExerciseUpdateDto,
-    ): Promise<ExerciseResponseDto> {
-        const exercise = await this.findOne(id);
-
-        if (exercise.isPublic && exercise.isApproved) {
-            throw new ForbiddenException(
-                'Cannot update exercise that is publicly visible to other users',
-            );
-        }
-
-        Object.assign(exercise, exerciseDto);
-
-        return this.updateMapped(id, exerciseDto);
     }
 }

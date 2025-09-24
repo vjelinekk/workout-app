@@ -1,4 +1,4 @@
-import { DeepPartial } from 'typeorm';
+import { DeepPartial, FindOptionsWhere } from 'typeorm';
 import { BaseEntity } from '../entities/base.entity';
 import { BaseRepository } from '../repositories/base.repository';
 import { NotFoundException } from '@nestjs/common';
@@ -25,9 +25,16 @@ export abstract class BaseCrudService<
      * Retrieves all entities.
      *
      * @returns All entities
+     * @throws NotFoundException if no entities are found
      */
-    async findAll(): Promise<Entity[]> {
-        return this.repository.findActive();
+    async findAllActive(): Promise<Entity[]> {
+        const entities = await this.repository.findActive();
+
+        if (entities.length === 0) {
+            throw new NotFoundException('No entities found');
+        }
+
+        return entities;
     }
 
     /**
@@ -37,7 +44,7 @@ export abstract class BaseCrudService<
      * @returns Entity
      * @throws NotFoundException if the entity with the given ID does not exist
      */
-    async findOne(id: number): Promise<Entity> {
+    async findOneActive(id: number): Promise<Entity> {
         const entity = await this.repository.findByIdActive(id);
 
         if (!entity) {
@@ -45,6 +52,37 @@ export abstract class BaseCrudService<
         }
 
         return entity;
+    }
+
+    async findOneInDeleted(id: number): Promise<Entity> {
+        const entity = await this.repository.findOneBy({
+            id,
+            isDeleted: true,
+        } as FindOptionsWhere<Entity>);
+
+        if (!entity) {
+            throw new NotFoundException(`Entity with ID ${id} not found`);
+        }
+
+        return entity;
+    }
+
+    /**
+     * Finds all deleted entities.
+     *
+     * @returns Array of all deleted entities
+     * @throws NotFoundException if no deleted entities are found
+     */
+    async findAllDeleted(): Promise<Entity[]> {
+        const entities = await this.repository.findBy({
+            isDeleted: true,
+        } as FindOptionsWhere<Entity>);
+
+        if (entities.length === 0) {
+            throw new NotFoundException('No deleted entities found');
+        }
+
+        return entities;
     }
 
     /**
@@ -56,7 +94,7 @@ export abstract class BaseCrudService<
      * @throws NotFoundException if the entity with the given ID does not exist
      */
     async update(id: number, dto: UpdateDto | PatchDto): Promise<Entity> {
-        const entity = await this.findOne(id);
+        const entity = await this.findOneActive(id);
 
         if (!entity) {
             throw new NotFoundException(

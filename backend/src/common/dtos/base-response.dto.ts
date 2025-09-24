@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsDate, IsNumber } from 'class-validator';
+import { IsBoolean, IsDate, IsNumber } from 'class-validator';
 
 export abstract class BaseResponseDto {
     @ApiProperty({
@@ -22,4 +22,11 @@ export abstract class BaseResponseDto {
     })
     @IsDate()
     updated_at: Date;
+
+    @ApiProperty({
+        example: 'false',
+        description: 'Whether the resource is soft-deleted',
+    })
+    @IsBoolean()
+    is_deleted: boolean;
 }

@@ -40,6 +40,7 @@ export class ExerciseCategoryService extends MappedCrudService<
             description: entity.description,
             created_at: entity.createdAt,
             updated_at: entity.updatedAt,
+            is_deleted: entity.isDeleted,
         };
     }
 }

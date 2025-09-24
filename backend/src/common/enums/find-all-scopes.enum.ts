@@ -3,4 +3,5 @@ export enum FindAllScopes {
     MY = 'my',
     PUBLIC = 'public',
     AVAILABLE = 'available',
+    DELETED = 'deleted',
 }

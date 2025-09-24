@@ -77,10 +77,13 @@ export class ExerciseController {
     async patchExercise(
         @Param('id', ParseIntPipe) exerciseId: number,
         @Body() patchExerciseDto: ExercisePatchDto,
+        @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<ExerciseResponseDto> {
-        return await this.exerciseService.updateExercise(
+        return await this.exerciseService.updateMappedForUser(
             exerciseId,
             patchExerciseDto,
+            user.id,
+            user.roles,
         );
     }
 
@@ -107,8 +110,14 @@ export class ExerciseController {
     async updateExercise(
         @Param('id') id: number,
         @Body() updateExerciseDto: ExerciseUpdateDto,
+        @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<ExerciseResponseDto> {
-        return await this.exerciseService.updateExercise(id, updateExerciseDto);
+        return await this.exerciseService.updateMappedForUser(
+            id,
+            updateExerciseDto,
+            user.id,
+            user.roles,
+        );
     }
 
     @Delete(':id')
@@ -124,8 +133,15 @@ export class ExerciseController {
     @ApiUnauthorizedResponse({
         description: 'Unauthorized',
     })
-    async deleteExercise(@Param('id', ParseIntPipe) id: number) {
-        await this.exerciseService.delete(id);
+    async deleteExercise(
+        @Param('id', ParseIntPipe) id: number,
+        @JwtUser() user: JwtAuthenticatedUser,
+    ): Promise<ExerciseResponseDto> {
+        return await this.exerciseService.deleteMappedForUser(
+            id,
+            user.id,
+            user.roles,
+        );
     }
 
     @Get(':id')
@@ -146,7 +162,7 @@ export class ExerciseController {
     async getExerciseById(
         @Param('id', ParseIntPipe) id: number,
     ): Promise<ExerciseResponseDto> {
-        return await this.exerciseService.findOneMapped(id);
+        return await this.exerciseService.findOneActiveMapped(id);
     }
 
     @Get()
@@ -155,6 +171,9 @@ export class ExerciseController {
         description: 'List of all exercises',
         type: [ExerciseResponseDto],
     })
+    @ApiNotFoundResponse({
+        description: 'No exercises found',
+    })
     @ApiUnauthorizedResponse({
         description: 'Unauthorized',
     })
@@ -162,6 +181,37 @@ export class ExerciseController {
         description: 'Invalid request',
     })
     async getAllExercises(): Promise<ExerciseResponseDto[]> {
-        return await this.exerciseService.findAllMapped();
+        return await this.exerciseService.findAllActiveMapped();
+    }
+
+    @Post('/:id/restore')
+    @ApiOperation({ summary: 'Restore a deleted exercise' })
+    @ApiParam({
+        name: 'id',
+        type: Number,
+        description: 'The ID of the exercise to restore',
+    })
+    @ApiOkResponse({
+        description: 'The exercise has been successfully restored.',
+        type: ExerciseResponseDto,
+    })
+    @ApiUnauthorizedResponse({
+        description: 'Unauthorized',
+    })
+    @ApiNotFoundResponse({
+        description: 'Exercise not found',
+    })
+    @ApiForbiddenResponse({
+        description: 'Cannot perform this restoration',
+    })
+    async restoreExercise(
+        @Param('id', ParseIntPipe) id: number,
+        @JwtUser() user: JwtAuthenticatedUser,
+    ): Promise<ExerciseResponseDto> {
+        return await this.exerciseService.restoreMappedForUser(
+            id,
+            user.id,
+            user.roles,
+        );
     }
 }

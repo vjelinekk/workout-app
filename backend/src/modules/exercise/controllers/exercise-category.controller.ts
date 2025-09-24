@@ -152,7 +152,7 @@ export class ExerciseCategoryController {
     async getExerciseCategoryById(
         @Param('id', ParseIntPipe) id: number,
     ): Promise<ExerciseCategoryResponseDto> {
-        return this.exerciseCategoryService.findOneMapped(id);
+        return this.exerciseCategoryService.findOneActiveMapped(id);
     }
 
     @Get()
@@ -161,6 +161,9 @@ export class ExerciseCategoryController {
         description: 'List of all exercise categories',
         type: [ExerciseCategoryResponseDto],
     })
+    @ApiNotFoundResponse({
+        description: 'No exercise categories found',
+    })
     @ApiUnauthorizedResponse({
         description: 'Unauthorized',
     })
@@ -168,6 +171,6 @@ export class ExerciseCategoryController {
         description: 'Invalid request',
     })
     async getAllExerciseCategories(): Promise<ExerciseCategoryResponseDto[]> {
-        return this.exerciseCategoryService.findAllMapped();
+        return this.exerciseCategoryService.findAllActiveMapped();
     }
 }

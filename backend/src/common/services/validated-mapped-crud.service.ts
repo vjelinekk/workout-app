@@ -36,7 +36,7 @@ export abstract class ValidatedMappedCrudService<
     protected abstract validateEntityAccess(
         entity: Entity,
         user: JwtAuthenticatedUser,
-    ): void;
+    ): Promise<void> | void;
 
     /**
      * Validates the data and user permissions before creating a new entity.
@@ -50,10 +50,10 @@ export abstract class ValidatedMappedCrudService<
      * @param user Optional authenticated user making the request (may be undefined for public endpoints)
      * @throws Should throw an appropriate exception if validation fails
      */
-    protected abstract validateBeforeCreate(
+    protected abstract beforeCreate(
         dto: CreateDto,
         user: JwtAuthenticatedUser,
-    ): void;
+    ): Promise<void> | void;
 
     /**
      * Validates the data and user permissions before updating an existing entity.
@@ -69,11 +69,11 @@ export abstract class ValidatedMappedCrudService<
      * @param user Optional authenticated user making the request (may be undefined for public endpoints)
      * @throws Should throw an appropriate exception if validation fails
      */
-    protected abstract validateBeforeUpdate(
+    protected abstract beforeUpdate(
         dto: UpdateDto | PatchDto,
         entity: Entity,
         user: JwtAuthenticatedUser,
-    ): void;
+    ): Promise<void> | void;
 
     /**
      * Validates user permissions and business rules before soft-deleting an entity.
@@ -88,10 +88,10 @@ export abstract class ValidatedMappedCrudService<
      * @param user Optional authenticated user making the request (may be undefined for public endpoints)
      * @throws Should throw an appropriate exception if deletion is not allowed
      */
-    protected abstract validateBeforeDelete(
+    protected abstract beforeDelete(
         entity: Entity,
         user: JwtAuthenticatedUser,
-    ): void;
+    ): Promise<void> | void;
 
     /**
      * Validates user permissions and business rules before restoring a soft-deleted entity.
@@ -106,10 +106,10 @@ export abstract class ValidatedMappedCrudService<
      * @param user Optional authenticated user making the request (may be undefined for public endpoints)
      * @throws Should throw an appropriate exception if restoration is not allowed
      */
-    protected abstract validateBeforeRestore(
+    protected abstract beforeRestore(
         entity: Entity,
         user: JwtAuthenticatedUser,
-    ): void;
+    ): Promise<void> | void;
 
     /**
      * Creates a new entity with validation and access control.
@@ -123,7 +123,7 @@ export abstract class ValidatedMappedCrudService<
         dto: CreateDto,
         user: JwtAuthenticatedUser,
     ): Promise<ResponseDto> {
-        this.validateBeforeCreate(dto, user);
+        await this.beforeCreate(dto, user);
 
         const entity = this.toEntity(dto);
         entity.createdById = user.id;
@@ -149,8 +149,8 @@ export abstract class ValidatedMappedCrudService<
     ): Promise<ResponseDto> {
         const entity = await this.findOneActive(id);
 
-        this.validateEntityAccess(entity, user);
-        this.validateBeforeUpdate(dto, entity, user);
+        await this.validateEntityAccess(entity, user);
+        await this.beforeUpdate(dto, entity, user);
 
         return this.updateMapped(id, dto, user.id);
     }
@@ -209,8 +209,8 @@ export abstract class ValidatedMappedCrudService<
     ): Promise<ResponseDto> {
         const entity = await this.findOneActive(id);
 
-        this.validateEntityAccess(entity, user);
-        this.validateBeforeDelete(entity, user);
+        await this.validateEntityAccess(entity, user);
+        await this.beforeDelete(entity, user);
 
         const updateResult = await this.repository.update(
             { id } as unknown as FindOptionsWhere<Entity>,
@@ -247,8 +247,8 @@ export abstract class ValidatedMappedCrudService<
     ): Promise<ResponseDto> {
         const entity = await this.findOneInDeleted(id);
 
-        this.validateEntityAccess(entity, user);
-        this.validateBeforeRestore(entity, user);
+        await this.validateEntityAccess(entity, user);
+        await this.beforeRestore(entity, user);
 
         await this.restore(id);
         return this.toResponseDto(entity);
@@ -264,12 +264,12 @@ export abstract class ValidatedMappedCrudService<
      * @throws NotFoundException if entity not found
      * @throws ForbiddenException if user doesn't have access (via validateEntityAccess)
      */
-    async findOneActiveValidated(
+    async findByIdActiveValidated(
         id: number,
         user: JwtAuthenticatedUser,
     ): Promise<ResponseDto> {
         const entity = await this.findOneActive(id);
-        this.validateEntityAccess(entity, user);
+        await this.validateEntityAccess(entity, user);
         return this.toResponseDto(entity);
     }
 
@@ -282,7 +282,7 @@ export abstract class ValidatedMappedCrudService<
      * @throws NotFoundException if entity not found
      * @throws ForbiddenException if user doesn't have access (via validateEntityAccess)
      */
-    async findOneValidated(
+    async findByIdValidated(
         id: number,
         user: JwtAuthenticatedUser,
     ): Promise<ResponseDto> {
@@ -294,7 +294,7 @@ export abstract class ValidatedMappedCrudService<
             throw new NotFoundException(`Entity with ID ${id} not found`);
         }
 
-        this.validateEntityAccess(entity, user);
+        await this.validateEntityAccess(entity, user);
 
         return this.toResponseDto(entity);
     }

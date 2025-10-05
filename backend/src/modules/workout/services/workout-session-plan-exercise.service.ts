@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { WorkoutSessionPlanExerciseEntity } from '../entities/workout-session-plan-exercise.entity';
 import { WorkoutSessionPlanExerciseCreateDto } from '../dtos/workout-session-plan-exercise/workout-session-plan-exercise-create.dto';
 import { WorkoutSessionPlanExerciseUpdateDto } from '../dtos/workout-session-plan-exercise/workout-session-plan-exercise-update.dto';
@@ -9,6 +9,8 @@ import { DeepPartial } from 'typeorm';
 import { PlannedRepsSetsMismatchException } from '../exceptions/workout-session-plan-exercise/planned-reps-sets-mismatch.exception';
 import { ValidatedMappedCrudService } from 'src/common/services/validated-mapped-crud.service';
 import { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
+import { WorkoutSessionPlanRepository } from '../repositories/workout-session-plan.repository';
+import { RoleEnum } from 'src/modules/user/enums/role.enum';
 
 @Injectable()
 export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudService<
@@ -21,6 +23,7 @@ export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudServic
 > {
     constructor(
         protected readonly workoutSessionPlanExerciseRepository: WorkoutSessionPlanExerciseRepository,
+        protected readonly workoutSessionPlanRepository: WorkoutSessionPlanRepository,
     ) {
         super(workoutSessionPlanExerciseRepository);
     }
@@ -85,15 +88,33 @@ export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudServic
         };
     }
 
-    protected validateEntityAccess(
+    /**
+     * @inheritdoc
+     * @throws {NotFoundException} if the associated workout session plan does not exist
+     * @throws {ForbiddenException} if the user does not have access to the associated workout session plan
+     */
+    protected async validateEntityAccess(
         entity: WorkoutSessionPlanExerciseEntity,
         user: JwtAuthenticatedUser,
-    ): void {
-        void entity;
-        void user;
+    ): Promise<void> {
+        const planId = entity.workoutSessionPlanId;
+        const plan = await this.workoutSessionPlanRepository.findByIdActive(planId);
+
+        if (!plan) {
+            throw new NotFoundException(`Workout session plan with ID ${planId} not found`);
+        }
+
+        if (user.roles.includes(RoleEnum.ADMIN)) {
+            // Admins have access to all resources
+            return;
+        }
+
+        if (plan?.createdById !== user.id) {
+            throw new ForbiddenException('Access to resource denied');
+        }
     }
 
-    protected validateBeforeCreate(
+    protected beforeCreate(
         dto: WorkoutSessionPlanExerciseCreateDto,
     ): void {
         this.validatePlannedRepsPerSet(
@@ -102,7 +123,11 @@ export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudServic
         );
     }
 
-    protected validateBeforeUpdate(
+    /**
+     * @inheritdoc
+     * @throws {PlannedRepsSetsMismatchException} if the lengths of planned sets and planned reps per set do not match
+     */
+    protected beforeUpdate(
         dto:
             | WorkoutSessionPlanExerciseUpdateDto
             | WorkoutSessionPlanExercisePatchDto,
@@ -128,14 +153,15 @@ export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudServic
             );
         }
     }
-    protected validateBeforeDelete(
+    protected beforeDelete(
         entity: WorkoutSessionPlanExerciseEntity,
         user: JwtAuthenticatedUser,
     ): void {
         void entity;
         void user;
     }
-    protected validateBeforeRestore(
+
+    protected beforeRestore(
         entity: WorkoutSessionPlanExerciseEntity,
         user: JwtAuthenticatedUser,
     ): void {

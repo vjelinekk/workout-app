@@ -172,7 +172,7 @@ export abstract class MappedCrudService<
      * @returns Entity as response DTO
      * @throws NotFoundException if the entity with the given ID does not exist
      */
-    async findOneActiveMapped(id: number): Promise<ResponseDto> {
+    async findByIdActiveMapped(id: number): Promise<ResponseDto> {
         const entity = await this.findOneActive(id);
         return this.toResponseDto(entity);
     }
@@ -184,7 +184,7 @@ export abstract class MappedCrudService<
      * @returns Entity as response DTO
      * @throws NotFoundException if the entity with the given ID does not exist
      */
-    async findOneMapped(id: number): Promise<ResponseDto> {
+    async findByIdMapped(id: number): Promise<ResponseDto> {
         const entity = await this.repository.findOneBy({
             id,
         } as FindOptionsWhere<Entity>);

@@ -58,9 +58,9 @@ export class WorkoutSessionPlanExerciseController {
         @Body() createDto: WorkoutSessionPlanExerciseCreateDto,
         @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<WorkoutSessionPlanExerciseResponseDto> {
-        return this.workoutSessionPlanExerciseService.createMapped(
+        return this.workoutSessionPlanExerciseService.createValidated(
             createDto,
-            user.id,
+            user,
         );
     }
 
@@ -90,10 +90,10 @@ export class WorkoutSessionPlanExerciseController {
         @Body() patchDto: WorkoutSessionPlanExercisePatchDto,
         @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<WorkoutSessionPlanExerciseResponseDto> {
-        return this.workoutSessionPlanExerciseService.patchMapped(
+        return this.workoutSessionPlanExerciseService.patchValidated(
             id,
             patchDto,
-            user.id,
+            user,
         );
     }
 
@@ -123,10 +123,10 @@ export class WorkoutSessionPlanExerciseController {
         @Body() updateDto: WorkoutSessionPlanExerciseUpdateDto,
         @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<WorkoutSessionPlanExerciseResponseDto> {
-        return this.workoutSessionPlanExerciseService.putMapped(
+        return this.workoutSessionPlanExerciseService.putValidated(
             id,
             updateDto,
-            user.id,
+            user,
         );
     }
 
@@ -149,9 +149,9 @@ export class WorkoutSessionPlanExerciseController {
         @Param('id', ParseIntPipe) id: number,
         @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<WorkoutSessionPlanExerciseResponseDto> {
-        return await this.workoutSessionPlanExerciseService.deleteMapped(
+        return await this.workoutSessionPlanExerciseService.deleteValidated(
             id,
-            user.id,
+            user,
         );
     }
 
@@ -172,8 +172,9 @@ export class WorkoutSessionPlanExerciseController {
     })
     async getById(
         @Param('id', ParseIntPipe) id: number,
+        @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<WorkoutSessionPlanExerciseResponseDto> {
-        return this.workoutSessionPlanExerciseService.findOneActiveMapped(id);
+        return this.workoutSessionPlanExerciseService.findByIdActiveValidated(id, user);
     }
 
     @Get()

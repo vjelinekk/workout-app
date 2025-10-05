@@ -89,7 +89,7 @@ export class ExerciseService extends PublicAuthorizableCrudService<
         };
     }
 
-    protected validateBeforeCreate(
+    protected beforeCreate(
         dto: ExerciseCreateDto,
         user: JwtAuthenticatedUser,
     ): void {
@@ -97,7 +97,7 @@ export class ExerciseService extends PublicAuthorizableCrudService<
         void user;
     }
 
-    protected validateBeforeUpdate(
+    protected beforeUpdate(
         dto: ExerciseUpdateDto | ExercisePatchDto,
         entity: ExerciseEntity,
         user: JwtAuthenticatedUser,
@@ -107,7 +107,7 @@ export class ExerciseService extends PublicAuthorizableCrudService<
         void user;
     }
 
-    protected validateBeforeDelete(
+    protected beforeDelete(
         entity: ExerciseEntity,
         user: JwtAuthenticatedUser,
     ): void {
@@ -115,7 +115,7 @@ export class ExerciseService extends PublicAuthorizableCrudService<
         void user;
     }
 
-    protected validateBeforeRestore(
+    protected beforeRestore(
         entity: ExerciseEntity,
         user: JwtAuthenticatedUser,
     ): void {

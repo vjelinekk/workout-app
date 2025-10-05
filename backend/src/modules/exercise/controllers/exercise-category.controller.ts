@@ -160,7 +160,7 @@ export class ExerciseCategoryController {
     async getExerciseCategoryById(
         @Param('id', ParseIntPipe) id: number,
     ): Promise<ExerciseCategoryResponseDto> {
-        return this.exerciseCategoryService.findOneActiveMapped(id);
+        return this.exerciseCategoryService.findByIdActiveMapped(id);
     }
 
     @Get()

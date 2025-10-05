@@ -68,7 +68,7 @@ export class WorkoutSessionPlanService extends PublicAuthorizableCrudService<
         };
     }
 
-    protected validateBeforeCreate(
+    protected beforeCreate(
         dto: WorkoutSessionPlanCreateDto,
         user: JwtAuthenticatedUser,
     ): void {
@@ -76,7 +76,7 @@ export class WorkoutSessionPlanService extends PublicAuthorizableCrudService<
         void user;
     }
 
-    protected validateBeforeUpdate(
+    protected beforeUpdate(
         dto: WorkoutSessionPlanUpdateDto | WorkoutSessionPlanPatchDto,
         entity: WorkoutSessionPlanEntity,
         user: JwtAuthenticatedUser,
@@ -86,7 +86,7 @@ export class WorkoutSessionPlanService extends PublicAuthorizableCrudService<
         void user;
     }
 
-    protected validateBeforeDelete(
+    protected beforeDelete(
         entity: WorkoutSessionPlanEntity,
         user: JwtAuthenticatedUser,
     ): void {
@@ -94,7 +94,7 @@ export class WorkoutSessionPlanService extends PublicAuthorizableCrudService<
         void user;
     }
 
-    protected validateBeforeRestore(
+    protected beforeRestore(
         entity: WorkoutSessionPlanEntity,
         user: JwtAuthenticatedUser,
     ): void {

@@ -4,8 +4,6 @@ import { WorkoutSessionEntity } from './entities/workout-session.entity';
 import { WorkoutSessionExerciseEntity } from './entities/workout-session-exercise.entity';
 import { WorkoutSessionPlanEntity } from './entities/workout-session-plan.entity';
 import { WorkoutSessionPlanExerciseEntity } from './entities/workout-session-plan-exercise.entity';
-import { WorkoutSessionController } from './controllers/workout-session.controller';
-import { WorkoutSessionExerciseController } from './controllers/workout-session-exercise.controller';
 import { WorkoutSessionPlanController } from './controllers/workout-session-plan.controller';
 import { WorkoutSessionPlanExerciseController } from './controllers/workout-session-plan-exercise.controller';
 import { WorkoutSessionPlanRepository } from './repositories/workout-session-plan.repository';
@@ -23,8 +21,6 @@ import { WorkoutSessionPlanExerciseService } from './services/workout-session-pl
         ]),
     ],
     controllers: [
-        WorkoutSessionController,
-        WorkoutSessionExerciseController,
         WorkoutSessionPlanController,
         WorkoutSessionPlanExerciseController,
     ],

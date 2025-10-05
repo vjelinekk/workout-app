@@ -5,12 +5,11 @@ import { WorkoutSessionExerciseEntity } from './entities/workout-session-exercis
 import { WorkoutSessionPlanEntity } from './entities/workout-session-plan.entity';
 import { WorkoutSessionPlanExerciseEntity } from './entities/workout-session-plan-exercise.entity';
 import { WorkoutSessionController } from './controllers/workout-session.controller';
+import { WorkoutSessionExerciseController } from './controllers/workout-session-exercise.controller';
 import { WorkoutSessionPlanController } from './controllers/workout-session-plan.controller';
 import { WorkoutSessionPlanExerciseController } from './controllers/workout-session-plan-exercise.controller';
-import { WorkoutSessionRepository } from './repositories/workout-session.repository';
 import { WorkoutSessionPlanRepository } from './repositories/workout-session-plan.repository';
 import { WorkoutSessionPlanExerciseRepository } from './repositories/workout-session-plan-exercise.respository';
-import { WorkoutSessionService } from './services/workout-session.service';
 import { WorkoutSessionPlanService } from './services/workout-session-plan.service';
 import { WorkoutSessionPlanExerciseService } from './services/workout-session-plan-exercise.service';
 
@@ -25,12 +24,11 @@ import { WorkoutSessionPlanExerciseService } from './services/workout-session-pl
     ],
     controllers: [
         WorkoutSessionController,
+        WorkoutSessionExerciseController,
         WorkoutSessionPlanController,
         WorkoutSessionPlanExerciseController,
     ],
     providers: [
-        WorkoutSessionRepository,
-        WorkoutSessionService,
         WorkoutSessionPlanRepository,
         WorkoutSessionPlanService,
         WorkoutSessionPlanExerciseRepository,

@@ -1,9 +1,9 @@
 /**
  * Exercise Controller Integration Tests
- * 
+ *
  * Comprehensive end-to-end tests for the Exercise controller endpoints.
  * Tests cover authentication, authorization, CRUD operations, scopes, edge cases, and performance.
- * 
+ *
  * Test Status: 54 tests - all passing ✅
  * Coverage:
  * - POST /exercises: 11 tests (create with validation)
@@ -16,6 +16,11 @@
  * - Edge cases & security: 4 tests
  * - Performance: 2 tests
  */
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
@@ -135,7 +140,7 @@ describe('ExerciseController (e2e - Integration Tests)', () => {
         await dataSource.getRepository(RoleEntity).save(traineeRole);
 
         // Create admin user
-        const adminUser = await userRepository.create({
+        const adminUser = userRepository.create({
             email: 'admin@test.com',
             firstName: 'Admin',
             lastName: 'User',
@@ -147,7 +152,7 @@ describe('ExerciseController (e2e - Integration Tests)', () => {
         adminUserId = adminUser.id;
 
         // Create trainee user 1
-        const traineeUser = await userRepository.create({
+        const traineeUser = userRepository.create({
             email: 'trainee@test.com',
             firstName: 'Trainee',
             lastName: 'User',
@@ -159,7 +164,7 @@ describe('ExerciseController (e2e - Integration Tests)', () => {
         traineeUserId = traineeUser.id;
 
         // Create trainee user 2 (for ownership tests)
-        const trainee2User = await userRepository.create({
+        const trainee2User = userRepository.create({
             email: 'trainee2@test.com',
             firstName: 'Trainee2',
             lastName: 'User',
@@ -529,9 +534,7 @@ describe('ExerciseController (e2e - Integration Tests)', () => {
         });
 
         it('should return 401 without authentication', async () => {
-            await request(app.getHttpServer())
-                .get('/exercises')
-                .expect(401);
+            await request(app.getHttpServer()).get('/exercises').expect(401);
         });
 
         it('should get exercises with scope=my', async () => {

@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
@@ -8,7 +13,6 @@ import { AuthModule } from '../src/modules/auth/auth.module';
 import { UserModule } from '../src/modules/user/user.module';
 import { UserRepository } from '../src/modules/user/repositories/user.repository';
 import { RoleEntity } from '../src/modules/user/entities/role.entity';
-import { UserEntity } from '../src/modules/user/entities/user.entity';
 import { DataSource } from 'typeorm';
 import { hash } from 'bcrypt';
 import { RoleEnum } from '../src/modules/user/enums/role.enum';
@@ -288,7 +292,7 @@ describe('AuthController (e2e - Integration Tests)', () => {
 
             // All tokens should be valid (they may be similar due to same timestamp)
             const tokens = responses.map((r) => r.body.access_token);
-            tokens.forEach(token => {
+            tokens.forEach((token) => {
                 expect(token).toBeDefined();
                 expect(token.length).toBeGreaterThan(0);
             });

@@ -174,7 +174,10 @@ export class WorkoutSessionPlanExerciseController {
         @Param('id', ParseIntPipe) id: number,
         @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<WorkoutSessionPlanExerciseResponseDto> {
-        return this.workoutSessionPlanExerciseService.findByIdActiveValidated(id, user);
+        return this.workoutSessionPlanExerciseService.findByIdActiveValidated(
+            id,
+            user,
+        );
     }
 
     @Get()

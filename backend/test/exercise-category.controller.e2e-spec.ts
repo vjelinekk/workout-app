@@ -1,3 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unsafe-argument */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-call */
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
 import request from 'supertest';
@@ -114,7 +119,7 @@ describe('ExerciseCategoryController (e2e - Integration Tests)', () => {
         }
 
         // Create admin user
-        const adminUser = await userRepository.create({
+        const adminUser = userRepository.create({
             email: 'admin@test.com',
             firstName: 'Admin',
             lastName: 'User',
@@ -130,7 +135,7 @@ describe('ExerciseCategoryController (e2e - Integration Tests)', () => {
         }
 
         // Create trainee user
-        const traineeUser = await userRepository.create({
+        const traineeUser = userRepository.create({
             email: 'trainee@test.com',
             firstName: 'Trainee',
             lastName: 'User',
@@ -323,8 +328,9 @@ describe('ExerciseCategoryController (e2e - Integration Tests)', () => {
 
         it('should handle special characters in name and description', async () => {
             const createDto: ExerciseCategoryCreateDto = {
-                name: "Test & <Category> with 'quotes' and \"double quotes\"",
-                description: 'Description with special chars: !@#$%^&*()_+-=[]{}|;:,.<>?',
+                name: 'Test & <Category> with \'quotes\' and "double quotes"',
+                description:
+                    'Description with special chars: !@#$%^&*()_+-=[]{}|;:,.<>?',
             };
 
             const response = await request(app.getHttpServer())

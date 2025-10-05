@@ -1,4 +1,8 @@
-import { ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+    ForbiddenException,
+    Injectable,
+    NotFoundException,
+} from '@nestjs/common';
 import { WorkoutSessionPlanExerciseEntity } from '../entities/workout-session-plan-exercise.entity';
 import { WorkoutSessionPlanExerciseCreateDto } from '../dtos/workout-session-plan-exercise/workout-session-plan-exercise-create.dto';
 import { WorkoutSessionPlanExerciseUpdateDto } from '../dtos/workout-session-plan-exercise/workout-session-plan-exercise-update.dto';
@@ -98,10 +102,13 @@ export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudServic
         user: JwtAuthenticatedUser,
     ): Promise<void> {
         const planId = entity.workoutSessionPlanId;
-        const plan = await this.workoutSessionPlanRepository.findByIdActive(planId);
+        const plan =
+            await this.workoutSessionPlanRepository.findByIdActive(planId);
 
         if (!plan) {
-            throw new NotFoundException(`Workout session plan with ID ${planId} not found`);
+            throw new NotFoundException(
+                `Workout session plan with ID ${planId} not found`,
+            );
         }
 
         if (user.roles.includes(RoleEnum.ADMIN)) {
@@ -114,9 +121,7 @@ export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudServic
         }
     }
 
-    protected beforeCreate(
-        dto: WorkoutSessionPlanExerciseCreateDto,
-    ): void {
+    protected beforeCreate(dto: WorkoutSessionPlanExerciseCreateDto): void {
         this.validatePlannedRepsPerSet(
             dto.planned_sets,
             dto.planned_reps_per_set,

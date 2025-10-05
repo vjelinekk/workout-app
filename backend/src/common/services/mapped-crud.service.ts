@@ -1,11 +1,12 @@
 import { DeepPartial, FindOptionsWhere } from 'typeorm';
-import { BaseEntity } from '../entities/base.entity';
 import { BaseRepository } from '../repositories/base.repository';
 import { BaseCrudService } from './base-crud.service';
 import { NotFoundException } from '@nestjs/common';
+import { AuditableEntity } from '../entities/auditable.entity';
+import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
 
 export abstract class MappedCrudService<
-    Entity extends BaseEntity,
+    Entity extends AuditableEntity,
     CreateDto,
     UpdateDto,
     PatchDto,
@@ -16,42 +17,152 @@ export abstract class MappedCrudService<
         super(repository);
     }
 
-    protected abstract toEntity(
-        dto: CreateDto,
-        loggedInUserId?: number,
-    ): DeepPartial<Entity>;
+    /**
+     * Maps create DTO fields to entity fields for creation operations.
+     * This method should handle the mapping between DTO field names and entity field names,
+     * and can include additional logic like setting the creator ID.
+     *
+     * @param dto Create DTO containing the data for entity creation
+     * @param loggedInUserId Optional ID of the currently logged-in user
+     * @returns Partial entity with properly mapped fields ready for creation
+     */
+    protected abstract toEntity(dto: CreateDto): DeepPartial<Entity>;
+
+    /**
+     * Maps entity fields to response DTO fields for API responses.
+     * This method should handle the mapping between entity field names and response DTO field names,
+     * ensuring that the API response format matches the expected contract.
+     *
+     * @param entity Entity instance to be converted to response format
+     * @returns Response DTO with properly mapped fields
+     */
     protected abstract toResponseDto(entity: Entity): ResponseDto;
+
+    /**
+     * Maps update/patch DTO fields to entity fields.
+     * This method should handle the mapping between DTO field names and entity field names.
+     *
+     * @param dto Update or patch DTO
+     * @returns Partial entity with properly mapped fields
+     */
+    protected abstract toEntityUpdate(
+        dto: UpdateDto | PatchDto,
+    ): Partial<Entity>;
 
     /**
      * Creates a new entity from the provided DTO and returns it as a response DTO.
      *
      * @param dto Data to create the entity from
-     * @param loggedInUserId ID of the logged-in user (optional)
      * @returns Created entity as response DTO
      */
-    async createMapped(
-        dto: CreateDto,
-        loggedInUserId?: number,
-    ): Promise<ResponseDto> {
-        const entity = this.toEntity(dto, loggedInUserId);
+    async createMapped(dto: CreateDto, userId: number): Promise<ResponseDto> {
+        const entity = this.toEntity(dto);
+        entity.createdById = userId;
         const createdEntity = await this.create(entity);
         return this.toResponseDto(createdEntity);
     }
 
     /**
-     * Updates an entity by its ID using the provided DTO (either full update or partial update).
+     * Core update method that handles DTO-to-entity field mapping.
+     * This method is protected and should be called by putMapped or patchMapped.
      *
      * @param id ID of entity to update
      * @param dto Data to update the entity with
      * @returns Updated entity as response DTO
      * @throws NotFoundException if the entity with the given ID does not exist
      */
-    async updateMapped(
+    protected async updateMapped(
         id: number,
         dto: UpdateDto | PatchDto,
+        userId: number,
     ): Promise<ResponseDto> {
-        const updatedEntity = await this.update(id, dto);
+        const entity = await this.findOneActive(id);
+
+        // Map DTO fields to entity fields
+        const mappedFields = this.toEntityUpdate(dto);
+
+        // Update timestamp and apply mapped fields
+        entity.updatedAt = new Date();
+        entity.updatedById = userId;
+        Object.assign(entity, mappedFields);
+
+        // Save and return as response DTO
+        const updatedEntity = await this.repository.save(entity);
         return this.toResponseDto(updatedEntity);
+    }
+
+    /**
+     * Performs a full update (PUT operation) of an entity by its ID.
+     * This operation is intended to replace the entire resource.
+     *
+     * @param id ID of entity to update
+     * @param dto Complete update data
+     * @returns Updated entity as response DTO
+     * @throws NotFoundException if the entity with the given ID does not exist
+     */
+    async putMapped(
+        id: number,
+        dto: UpdateDto,
+        userId: number,
+    ): Promise<ResponseDto> {
+        return this.updateMapped(id, dto, userId);
+    }
+
+    /**
+     * Performs a partial update (PATCH operation) of an entity by its ID.
+     * This operation only modifies the provided fields.
+     *
+     * @param id ID of entity to patch
+     * @param dto Partial update data
+     * @returns Updated entity as response DTO
+     * @throws NotFoundException if the entity with the given ID does not exist
+     */
+    async patchMapped(
+        id: number,
+        dto: PatchDto,
+        userId: number,
+    ): Promise<ResponseDto> {
+        return this.updateMapped(id, dto, userId);
+    }
+
+    /**
+     * Deletes an entity by its ID and returns the deleted entity as a response DTO.
+     *
+     * @param id ID of entity to delete
+     * @returns Deleted entity as response DTO
+     * @throws NotFoundException if the entity with the given ID does not exist
+     */
+    async deleteMapped(id: number, userId: number): Promise<ResponseDto> {
+        const entity = await this.findOneActive(id);
+
+        const updateResult = await this.repository.update(
+            { id } as unknown as FindOptionsWhere<Entity>,
+            {
+                isDeleted: true,
+                deletedById: userId,
+            } as unknown as QueryDeepPartialEntity<Entity>,
+        );
+
+        if (updateResult.affected === 0) {
+            throw new NotFoundException(`Entity with ID ${id} not found`);
+        }
+
+        entity.isDeleted = true;
+        entity.deletedById = userId;
+        return this.toResponseDto(entity);
+    }
+
+    /**
+     * Restores a soft-deleted entity by its ID and returns it as a response DTO.
+     *
+     * @param id ID of entity to restore
+     * @returns Restored entity as response DTO
+     * @throws NotFoundException if the entity with the given ID does not exist
+     */
+    async restoreMapped(id: number): Promise<ResponseDto> {
+        const entity = await this.findOneInDeleted(id);
+        await this.restore(id);
+        return this.toResponseDto(entity);
     }
 
     /**
@@ -63,14 +174,16 @@ export abstract class MappedCrudService<
      */
     async findOneActiveMapped(id: number): Promise<ResponseDto> {
         const entity = await this.findOneActive(id);
-
-        if (!entity) {
-            throw new NotFoundException(`Entity with ID ${id} not found`);
-        }
-
         return this.toResponseDto(entity);
     }
 
+    /**
+     * Retrieves any entity (including soft-deleted) by ID.
+     *
+     * @param id ID of entity to retrieve
+     * @returns Entity as response DTO
+     * @throws NotFoundException if the entity with the given ID does not exist
+     */
     async findOneMapped(id: number): Promise<ResponseDto> {
         const entity = await this.repository.findOneBy({
             id,
@@ -91,11 +204,6 @@ export abstract class MappedCrudService<
      */
     async findAllMapped(): Promise<ResponseDto[]> {
         const entities = await this.repository.find();
-
-        if (entities.length === 0) {
-            throw new NotFoundException('No entities found');
-        }
-
         return entities.map((entity) => this.toResponseDto(entity));
     }
 
@@ -107,51 +215,6 @@ export abstract class MappedCrudService<
      */
     async findAllActiveMapped(): Promise<ResponseDto[]> {
         const entities = await this.findAllActive();
-
-        if (entities.length === 0) {
-            throw new NotFoundException('No entities found');
-        }
-
         return entities.map((entity) => this.toResponseDto(entity));
-    }
-
-    /**
-     * Deletes an entity by its ID and returns the deleted entity as a response DTO.
-     *
-     * @param id ID of entity to delete
-     * @returns Deleted entity as response DTO
-     * @throws NotFoundException if the entity with the given ID does not exist
-     */
-    async deleteMapped(id: number): Promise<ResponseDto> {
-        const entity = await this.findOneActive(id);
-
-        if (!entity) {
-            throw new NotFoundException(`Entity with ID ${id} not found`);
-        }
-
-        await this.delete(id);
-
-        // Hack so that we do not have to make another DB call to get the deleted entity
-        entity.isDeleted = true;
-
-        return this.toResponseDto(entity);
-    }
-
-    /**
-     * Restores a soft-deleted entity by its ID and returns it as a response DTO.
-     *
-     * @param id ID of entity to restore
-     * @returns Restored entity as response DTO
-     * @throws NotFoundException if the entity with the given ID does not exist
-     */
-    async restoreMapped(id: number): Promise<ResponseDto> {
-        const entity = await this.findOneInDeleted(id);
-
-        if (!entity) {
-            throw new NotFoundException(`Entity with ID ${id} not found`);
-        }
-
-        await this.restore(id);
-        return this.toResponseDto(entity);
     }
 }

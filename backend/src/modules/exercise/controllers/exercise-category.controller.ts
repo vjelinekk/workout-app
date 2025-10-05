@@ -25,6 +25,8 @@ import { ExerciseCategoryResponseDto } from '../dtos/exercise-category/exercise-
 import { ExerciseCategoryService } from '../services/exercise-category.service';
 import { ExerciseCategoryPatchDto } from '../dtos/exercise-category/exercise-category-patch.dto';
 import { ExerciseCategoryUpdateDto } from '../dtos/exercise-category/exercise-category-update.dto';
+import { JwtUser } from 'src/modules/auth/decorators/jwt-user.decorator';
+import type { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
 
 @ApiTags('Exercise Categories')
 @Controller('exercise-categories')
@@ -51,9 +53,11 @@ export class ExerciseCategoryController {
     })
     async createExerciseCategory(
         @Body() createExerciseCategory: ExerciseCategoryCreateDto,
+        @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<ExerciseCategoryResponseDto> {
         return this.exerciseCategoryService.createMapped(
             createExerciseCategory,
+            user.id,
         );
     }
 
@@ -80,10 +84,12 @@ export class ExerciseCategoryController {
     async patchExerciseCategory(
         @Param('id', ParseIntPipe) exerciseCategoryId: number,
         @Body() patchExerciseCategoryDto: ExerciseCategoryPatchDto,
+        @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<ExerciseCategoryResponseDto> {
-        return this.exerciseCategoryService.updateMapped(
+        return this.exerciseCategoryService.patchMapped(
             exerciseCategoryId,
             patchExerciseCategoryDto,
+            user.id,
         );
     }
 
@@ -110,10 +116,12 @@ export class ExerciseCategoryController {
     async updateExerciseCategory(
         @Param('id', ParseIntPipe) id: number,
         @Body() updateExerciseCategoryDto: ExerciseCategoryUpdateDto,
+        @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<ExerciseCategoryResponseDto> {
-        return this.exerciseCategoryService.updateMapped(
+        return this.exerciseCategoryService.putMapped(
             id,
             updateExerciseCategoryDto,
+            user.id,
         );
     }
 

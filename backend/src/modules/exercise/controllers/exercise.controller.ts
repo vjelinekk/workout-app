@@ -85,11 +85,10 @@ export class ExerciseController {
         @Body() patchExerciseDto: ExercisePatchDto,
         @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<ExerciseResponseDto> {
-        return await this.exerciseService.updateMappedAuthorized(
+        return await this.exerciseService.patchValidated(
             exerciseId,
             patchExerciseDto,
-            user.id,
-            user.roles,
+            user,
         );
     }
 
@@ -121,11 +120,10 @@ export class ExerciseController {
         @Body() updateExerciseDto: ExerciseUpdateDto,
         @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<ExerciseResponseDto> {
-        return await this.exerciseService.updateMappedAuthorized(
+        return await this.exerciseService.putValidated(
             id,
             updateExerciseDto,
-            user.id,
-            user.roles,
+            user,
         );
     }
 
@@ -149,11 +147,7 @@ export class ExerciseController {
         @Param('id', ParseIntPipe) id: number,
         @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<ExerciseResponseDto> {
-        return await this.exerciseService.deleteMappedAuthorized(
-            id,
-            user.id,
-            user.roles,
-        );
+        return await this.exerciseService.deleteValidated(id, user);
     }
 
     @Get(':id')
@@ -254,10 +248,6 @@ export class ExerciseController {
         @Param('id', ParseIntPipe) id: number,
         @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<ExerciseResponseDto> {
-        return await this.exerciseService.restoreMappedAuthorized(
-            id,
-            user.id,
-            user.roles,
-        );
+        return await this.exerciseService.restoreValidated(id, user);
     }
 }

@@ -1,7 +1,7 @@
-import { BaseEntity } from '../entities/base.entity';
+import { AuditableEntity } from '../entities/auditable.entity';
 import { BaseRepository } from '../repositories/base.repository';
 
-export interface PublicAuthorizableEntity extends BaseEntity {
+export interface PublicAuthorizableEntity extends AuditableEntity {
     id: number;
     createdById: number;
     isPublic: boolean;

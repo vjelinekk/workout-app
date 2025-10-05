@@ -1,18 +1,10 @@
-import { BaseEntity } from 'src/common/entities/base.entity';
-import { UserEntity } from 'src/modules/user/entities/user.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { ExerciseCategoryEntity } from './exercise-category.entity';
 import { BodyPartEnum } from '../enums/body-part.enum';
+import { AuditableEntity } from 'src/common/entities/auditable.entity';
 
 @Entity('exercise')
-export class ExerciseEntity extends BaseEntity {
-    @ManyToOne(() => UserEntity, { nullable: true })
-    @JoinColumn({ name: 'created_by' })
-    createdBy: UserEntity;
-
-    @Column({ name: 'created_by', nullable: true })
-    createdById: number;
-
+export class ExerciseEntity extends AuditableEntity {
     @ManyToOne(() => ExerciseCategoryEntity, (category) => category.exercises, {
         nullable: true,
     })

@@ -93,7 +93,10 @@ export abstract class BaseCrudService<
      * @returns Updated entity
      * @throws NotFoundException if the entity with the given ID does not exist
      */
-    async update(id: number, dto: UpdateDto | PatchDto): Promise<Entity> {
+    protected async update(
+        id: number,
+        dto: UpdateDto | PatchDto,
+    ): Promise<Entity> {
         const entity = await this.findOneActive(id);
 
         if (!entity) {
@@ -105,6 +108,32 @@ export abstract class BaseCrudService<
         entity.updatedAt = new Date();
         Object.assign(entity, dto);
         return this.repository.save(entity);
+    }
+
+    /**
+     * Performs a full update (PUT operation) of an entity by its ID.
+     * This operation is intended to replace the entire resource.
+     *
+     * @param id ID of entity to update
+     * @param dto Complete update data
+     * @returns Updated entity
+     * @throws NotFoundException if the entity with the given ID does not exist
+     */
+    async put(id: number, dto: UpdateDto): Promise<Entity> {
+        return this.update(id, dto);
+    }
+
+    /**
+     * Performs a partial update (PATCH operation) of an entity by its ID.
+     * This operation only modifies the provided fields.
+     *
+     * @param id ID of entity to patch
+     * @param dto Partial update data
+     * @returns Updated entity
+     * @throws NotFoundException if the entity with the given ID does not exist
+     */
+    async patch(id: number, dto: PatchDto): Promise<Entity> {
+        return this.update(id, dto);
     }
 
     /**

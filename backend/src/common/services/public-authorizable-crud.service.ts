@@ -1,6 +1,5 @@
 import { RoleEnum } from 'src/modules/user/enums/role.enum';
 import { FindAllScopes } from '../enums/find-all-scopes.enum';
-import { MappedCrudService } from './mapped-crud.service';
 import {
     ForbiddenException,
     NotFoundException,
@@ -8,7 +7,8 @@ import {
 } from '@nestjs/common';
 import { PublicAuthorizableEntity } from '../interfaces/public-authorizable-repository.interface';
 import { PublicAuthorizableBaseRepository } from '../repositories/public-authorizable-base.repository';
-import { isArray } from 'class-validator';
+import { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
+import { ValidatedMappedCrudService } from './validated-mapped-crud.service';
 
 export abstract class PublicAuthorizableCrudService<
     Entity extends PublicAuthorizableEntity,
@@ -17,7 +17,7 @@ export abstract class PublicAuthorizableCrudService<
     PatchDto,
     ResponseDto,
     Repository extends PublicAuthorizableBaseRepository<Entity>,
-> extends MappedCrudService<
+> extends ValidatedMappedCrudService<
     Entity,
     CreateDto,
     UpdateDto,
@@ -54,114 +54,112 @@ export abstract class PublicAuthorizableCrudService<
         return entity.createdById === userId;
     }
 
-    /**
-     *
-     * @param entity Entity to validate
-     * @param userId ID of the user making the request
-     * @param userRoles Roles of the user making the request
-     * @param action The action being performed (update, delete, restore)
-     * @throws ForbiddenException if the entity is public and approved
-     * @throws UnauthorizedException if the user is not the owner or an admin
-     */
-    validateModificationPermission<T extends PublicAuthorizableEntity>(
-        entity: T,
-        userId: number,
-        userRoles: RoleEnum[],
-        action: 'update' | 'delete' | 'restore',
+    protected validateEntityAccess(
+        entity: PublicAuthorizableEntity,
+        user: JwtAuthenticatedUser,
     ): void {
         if (entity.isPublic && entity.isApproved) {
             throw new ForbiddenException(
-                `Cannot ${action} ${this.getEntityName()} that is publicly visible to other users`,
+                `Cannot access ${this.getEntityName()} that is publicly visible to other users`,
             );
         }
 
-        if (!this.isOwner(entity, userId) && !this.isAdmin(userRoles)) {
+        if (!this.isOwner(entity, user.id) && !this.isAdmin(user.roles)) {
             throw new UnauthorizedException(
-                `Only the owner or an admin can ${action} this ${this.getEntityName()}.`,
+                `Only the owner or an admin can access this ${this.getEntityName()}.`,
             );
         }
     }
 
     /**
-     * Validates if the user has access to the specified entity.
+     * Finds all entities based on the specified scope.
      *
      * @param userId ID of the user making the request
      * @param userRoles Array of roles the user has
      * @param scope The scope of access being requested
-     * @param id (Optional) ID of the specific entity to retrieve
-     * @returns The entity or entities if found, otherwise null
+     * @returns Array of entities matching the scope
      */
-    private async findByScope(
+    private async findAllByScope(
         userId: number,
         userRoles: RoleEnum[],
         scope: FindAllScopes,
-        id?: number,
-    ): Promise<Entity | Entity[] | null> {
+    ): Promise<Entity[]> {
+        const isAdmin = this.isAdmin(userRoles);
+
         switch (scope) {
             case FindAllScopes.AVAILABLE:
-                return id
-                    ? await this.repository.findOneAvailable(
-                          userId,
-                          id,
-                          this.isAdmin(userRoles),
-                      )
-                    : await this.repository.findAllAvailable(
-                          userId,
-                          this.isAdmin(userRoles),
-                      );
+                return this.repository.findAllAvailable(userId, isAdmin);
 
             case FindAllScopes.MY:
-                return id
-                    ? await this.repository.findOnePrivate(
-                          userId,
-                          id,
-                          this.isAdmin(userRoles),
-                      )
-                    : await this.repository.findAllPrivate(
-                          userId,
-                          this.isAdmin(userRoles),
-                      );
+                return this.repository.findAllPrivate(userId, isAdmin);
 
             case FindAllScopes.PUBLIC:
-                return id
-                    ? await this.repository.findOnePublicAndApproved(id)
-                    : await this.repository.findAllPublicAndApproved();
+                return this.repository.findAllPublicAndApproved();
 
             case FindAllScopes.ALL:
-                return id
-                    ? await this.repository.findOneAvailableIncludingDeleted(
-                          userId,
-                          id,
-                          this.isAdmin(userRoles),
-                      )
-                    : await this.repository.findAllAvailableIncludingDeleted(
-                          userId,
-                          this.isAdmin(userRoles),
-                      );
+                return this.repository.findAllAvailableIncludingDeleted(
+                    userId,
+                    isAdmin,
+                );
 
             case FindAllScopes.DELETED:
-                return id
-                    ? await this.repository.findOneDeletedAvailable(
-                          userId,
-                          id,
-                          this.isAdmin(userRoles),
-                      )
-                    : await this.repository.findAllDeletedAvailable(
-                          userId,
-                          this.isAdmin(userRoles),
-                      );
+                return this.repository.findAllDeletedAvailable(userId, isAdmin);
 
             default:
-                return id
-                    ? await this.repository.findOneAvailableIncludingDeleted(
-                          userId,
-                          id,
-                          this.isAdmin(userRoles),
-                      )
-                    : await this.repository.findAllAvailableIncludingDeleted(
-                          userId,
-                          this.isAdmin(userRoles),
-                      );
+                return this.repository.findAllAvailableIncludingDeleted(
+                    userId,
+                    isAdmin,
+                );
+        }
+    }
+
+    /**
+     * Finds a single entity based on the specified scope.
+     *
+     * @param userId ID of the user making the request
+     * @param userRoles Array of roles the user has
+     * @param scope The scope of access being requested
+     * @param id ID of the entity to retrieve
+     * @returns The entity if found, null otherwise
+     */
+    private async findOneByScope(
+        userId: number,
+        userRoles: RoleEnum[],
+        scope: FindAllScopes,
+        id: number,
+    ): Promise<Entity | null> {
+        const isAdmin = this.isAdmin(userRoles);
+
+        switch (scope) {
+            case FindAllScopes.AVAILABLE:
+                return this.repository.findOneAvailable(userId, id, isAdmin);
+
+            case FindAllScopes.MY:
+                return this.repository.findOnePrivate(userId, id, isAdmin);
+
+            case FindAllScopes.PUBLIC:
+                return this.repository.findOnePublicAndApproved(id);
+
+            case FindAllScopes.ALL:
+                return this.repository.findOneAvailableIncludingDeleted(
+                    userId,
+                    id,
+                    isAdmin,
+                );
+
+            case FindAllScopes.DELETED:
+                return this.repository.findOneDeletedAvailable(
+                    userId,
+                    id,
+                    isAdmin,
+                );
+
+            default:
+                return this.repository.findOneAvailableIncludingDeleted(
+                    userId,
+                    id,
+                    isAdmin,
+                );
         }
     }
 
@@ -172,28 +170,18 @@ export abstract class PublicAuthorizableCrudService<
      * @param userRoles Array of roles the user has
      * @param scope The scope of access being requested
      * @returns Array of response DTOs representing the entities
-     * @throws NotFoundException if no entities are found
      */
     async findAllAvailableAuthorized(
         userId: number,
         userRoles: RoleEnum[],
         scope: FindAllScopes,
     ): Promise<ResponseDto[]> {
-        const entities = (await this.findByScope(
-            userId,
-            userRoles,
-            scope,
-        )) as Entity[];
-
-        if (!entities || (isArray(entities) && entities.length === 0)) {
-            throw new NotFoundException(`No ${this.getEntityName()} found`);
-        }
-
+        const entities = await this.findAllByScope(userId, userRoles, scope);
         return entities.map((entity) => this.toResponseDto(entity));
     }
 
     /**
-     * Finds a entity based on the user's role, the specified scope, and the plan ID.
+     * Finds a single entity based on the user's role, the specified scope, and the entity ID.
      *
      * @param userId The ID of the user making the request
      * @param userRoles The roles of the user making the request
@@ -208,114 +196,12 @@ export abstract class PublicAuthorizableCrudService<
         scope: FindAllScopes,
         id: number,
     ): Promise<ResponseDto> {
-        const entity = (await this.findByScope(
-            userId,
-            userRoles,
-            scope,
-            id,
-        )) as Entity | null;
+        const entity = await this.findOneByScope(userId, userRoles, scope, id);
 
         if (!entity) {
             throw new NotFoundException(`${this.getEntityName()} not found`);
         }
 
         return this.toResponseDto(entity);
-    }
-
-    /**
-     * Finds a entity based on the user's role, the specified scope, and the plan ID.
-     *
-     * @param id The ID of the entity to update
-     * @param dto The data to update the entity with
-     * @param userId ID of the user making the request
-     * @param userRoles Roles of the user making the request
-     * @returns The updated entity as a response DTO
-     * @throws NotFoundException if the entity is not found
-     * @throws UnauthorizedException if the user does not have permission to update the entity
-     */
-    async updateMappedAuthorized(
-        id: number,
-        dto: UpdateDto | PatchDto,
-        userId: number,
-        userRoles: RoleEnum[],
-    ): Promise<ResponseDto> {
-        const entity = await this.findOneActive(id);
-
-        if (!entity) {
-            throw new NotFoundException(`${this.getEntityName()} not found`);
-        }
-
-        this.validateModificationPermission(
-            entity,
-            userId,
-            userRoles,
-            'update',
-        );
-
-        Object.assign(entity, dto);
-
-        return this.updateMapped(id, dto);
-    }
-
-    /**
-     * Deletes an entity with user permission validation.
-     *
-     * @param id The ID of the entity to delete
-     * @param userId The ID of the user making the request
-     * @param userRoles The roles of the user making the request
-     * @returns The deleted entity as a response DTO
-     * @throws NotFoundException if the entity is not found
-     * @throws UnauthorizedException if the user does not have permission to delete the entity
-     */
-    async deleteMappedAuthorized(
-        id: number,
-        userId: number,
-        userRoles: RoleEnum[],
-    ): Promise<ResponseDto> {
-        const entity = await this.findOneActive(id);
-
-        if (!entity) {
-            throw new NotFoundException(`${this.getEntityName()} not found`);
-        }
-
-        this.validateModificationPermission(
-            entity,
-            userId,
-            userRoles,
-            'delete',
-        );
-
-        return this.deleteMapped(id);
-    }
-
-    /**
-     * Restores a deleted entity for a user.
-     *
-     * @param id ID of the entity to restore
-     * @param userId ID of the user making the request
-     * @param userRoles Roles of the user making the request
-     * @returns The restored entity as a response DTO
-     * @throws NotFoundException if the entity is not found
-     * @throws UnauthorizedException if the user does not have permission to restore the entity
-     */
-    async restoreMappedAuthorized(
-        id: number,
-        userId: number,
-        userRoles: RoleEnum[],
-    ): Promise<ResponseDto> {
-        const entity = await this.findOneInDeleted(id);
-
-        if (!entity) {
-            throw new NotFoundException(`${this.getEntityName()} not found`);
-        }
-
-        this.validateModificationPermission(
-            entity,
-            userId,
-            userRoles,
-            'restore',
-        );
-
-        return await this.restoreMapped(id);
     }
 }

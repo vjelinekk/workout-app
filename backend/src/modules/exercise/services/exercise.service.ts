@@ -7,6 +7,7 @@ import { ExercisePatchDto } from '../dtos/exercise/exercise-patch.dto';
 import { ExerciseUpdateDto } from '../dtos/exercise/exercise-update.dto';
 import { DeepPartial } from 'typeorm';
 import { PublicAuthorizableCrudService } from 'src/common/services/public-authorizable-crud.service';
+import { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
 
 @Injectable()
 export class ExerciseService extends PublicAuthorizableCrudService<
@@ -25,10 +26,7 @@ export class ExerciseService extends PublicAuthorizableCrudService<
         return 'Exercise';
     }
 
-    protected toEntity(
-        dto: ExerciseCreateDto,
-        loggedInUserId?: number,
-    ): DeepPartial<ExerciseEntity> {
+    protected toEntity(dto: ExerciseCreateDto): DeepPartial<ExerciseEntity> {
         return {
             name: dto.name,
             bodyPart: dto.body_part,
@@ -37,8 +35,40 @@ export class ExerciseService extends PublicAuthorizableCrudService<
             imageUrl: dto.image_url,
             isPublic: dto.is_public,
             isApproved: dto.is_approved,
-            createdById: loggedInUserId,
         };
+    }
+
+    protected toEntityUpdate(
+        dto: ExerciseUpdateDto | ExercisePatchDto,
+    ): Partial<ExerciseEntity> {
+        const entityFields: Partial<ExerciseEntity> = {};
+
+        if ('name' in dto && dto.name !== undefined) {
+            entityFields.name = dto.name;
+        }
+        if ('body_part' in dto && dto.body_part !== undefined) {
+            entityFields.bodyPart = dto.body_part;
+        }
+        if ('equipment' in dto && dto.equipment !== undefined) {
+            entityFields.equipment = dto.equipment;
+        }
+        if ('description' in dto && dto.description !== undefined) {
+            entityFields.description = dto.description;
+        }
+        if ('image_url' in dto && dto.image_url !== undefined) {
+            entityFields.imageUrl = dto.image_url;
+        }
+        if ('is_public' in dto && dto.is_public !== undefined) {
+            entityFields.isPublic = dto.is_public;
+        }
+        if ('is_approved' in dto && dto.is_approved !== undefined) {
+            entityFields.isApproved = dto.is_approved;
+        }
+        if ('category_id' in dto && dto.category_id !== undefined) {
+            entityFields.categoryId = dto.category_id;
+        }
+
+        return entityFields;
     }
 
     protected toResponseDto(entity: ExerciseEntity): ExerciseResponseDto {
@@ -57,5 +87,39 @@ export class ExerciseService extends PublicAuthorizableCrudService<
             created_by: entity.createdById,
             is_deleted: entity.isDeleted,
         };
+    }
+
+    protected validateBeforeCreate(
+        dto: ExerciseCreateDto,
+        user: JwtAuthenticatedUser,
+    ): void {
+        void dto;
+        void user;
+    }
+
+    protected validateBeforeUpdate(
+        dto: ExerciseUpdateDto | ExercisePatchDto,
+        entity: ExerciseEntity,
+        user: JwtAuthenticatedUser,
+    ): void {
+        void dto;
+        void entity;
+        void user;
+    }
+
+    protected validateBeforeDelete(
+        entity: ExerciseEntity,
+        user: JwtAuthenticatedUser,
+    ): void {
+        void entity;
+        void user;
+    }
+
+    protected validateBeforeRestore(
+        entity: ExerciseEntity,
+        user: JwtAuthenticatedUser,
+    ): void {
+        void entity;
+        void user;
     }
 }

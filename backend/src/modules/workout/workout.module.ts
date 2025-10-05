@@ -7,6 +7,9 @@ import { WorkoutSessionPlanExerciseEntity } from './entities/workout-session-pla
 import { WorkoutSessionPlanController } from './controllers/workout-session-plan.controller';
 import { WorkoutSessionPlanRepository } from './repositories/workout-session-plan.repository';
 import { WorkoutSessionPlanService } from './services/workout-session-plan.service';
+import { WorkoutSessionPlanExerciseController } from './controllers/workout-session-plan-exercise.controller';
+import { WorkoutSessionPlanExerciseRepository } from './repositories/workout-session-plan-exercise.respository';
+import { WorkoutSessionPlanExerciseService } from './services/workout-session-plan-exercise.service';
 
 @Module({
     imports: [
@@ -17,8 +20,16 @@ import { WorkoutSessionPlanService } from './services/workout-session-plan.servi
             WorkoutSessionPlanExerciseEntity,
         ]),
     ],
-    controllers: [WorkoutSessionPlanController],
-    providers: [WorkoutSessionPlanRepository, WorkoutSessionPlanService],
+    controllers: [
+        WorkoutSessionPlanController,
+        WorkoutSessionPlanExerciseController,
+    ],
+    providers: [
+        WorkoutSessionPlanRepository,
+        WorkoutSessionPlanService,
+        WorkoutSessionPlanExerciseRepository,
+        WorkoutSessionPlanExerciseService,
+    ],
     exports: [],
 })
 export class WorkoutModule {}

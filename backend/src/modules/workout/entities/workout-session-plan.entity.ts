@@ -1,12 +1,11 @@
-import { BaseEntity } from 'src/common/entities/base.entity';
-import { UserEntity } from 'src/modules/user/entities/user.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { WorkoutSessionPlanExerciseEntity } from './workout-session-plan-exercise.entity';
 import { TrainingSplitDayEntity } from 'src/modules/training-split/entities/training-split-day.entity';
 import { WorkoutSessionEntity } from './workout-session.entity';
+import { AuditableEntity } from 'src/common/entities/auditable.entity';
 
 @Entity('workout_session_plan')
-export class WorkoutSessionPlanEntity extends BaseEntity {
+export class WorkoutSessionPlanEntity extends AuditableEntity {
     @Column({ comment: 'Name of the workout session plan' })
     name: string;
 
@@ -16,13 +15,6 @@ export class WorkoutSessionPlanEntity extends BaseEntity {
         comment: 'Description of the workout session plan',
     })
     description: string;
-
-    @ManyToOne(() => UserEntity)
-    @JoinColumn({ name: 'created_by' })
-    createdBy: UserEntity;
-
-    @Column({ name: 'created_by', nullable: true })
-    createdById: number;
 
     @Column({
         name: 'is_public',

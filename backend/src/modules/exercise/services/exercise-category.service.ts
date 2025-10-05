@@ -31,6 +31,21 @@ export class ExerciseCategoryService extends MappedCrudService<
         };
     }
 
+    protected toEntityUpdate(
+        dto: ExerciseCategoryUpdateDto | ExerciseCategoryPatchDto,
+    ): Partial<ExerciseCategoryEntity> {
+        const entityFields: Partial<ExerciseCategoryEntity> = {};
+
+        if ('name' in dto && dto.name !== undefined) {
+            entityFields.name = dto.name;
+        }
+        if ('description' in dto && dto.description !== undefined) {
+            entityFields.description = dto.description;
+        }
+
+        return entityFields;
+    }
+
     protected toResponseDto(
         entity: ExerciseCategoryEntity,
     ): ExerciseCategoryResponseDto {

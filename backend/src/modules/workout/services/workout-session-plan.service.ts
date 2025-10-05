@@ -7,6 +7,7 @@ import { WorkoutSessionPlanRepository } from '../repositories/workout-session-pl
 import { Injectable } from '@nestjs/common';
 import { DeepPartial } from 'typeorm';
 import { PublicAuthorizableCrudService } from 'src/common/services/public-authorizable-crud.service';
+import { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
 
 @Injectable()
 export class WorkoutSessionPlanService extends PublicAuthorizableCrudService<
@@ -29,13 +30,26 @@ export class WorkoutSessionPlanService extends PublicAuthorizableCrudService<
 
     protected toEntity(
         dto: WorkoutSessionPlanCreateDto,
-        loggedInUserId?: number,
     ): DeepPartial<WorkoutSessionPlanEntity> {
         return {
             name: dto.name,
             description: dto.description,
-            createdById: loggedInUserId,
         };
+    }
+
+    protected toEntityUpdate(
+        dto: WorkoutSessionPlanUpdateDto | WorkoutSessionPlanPatchDto,
+    ): Partial<WorkoutSessionPlanEntity> {
+        const entityFields: Partial<WorkoutSessionPlanEntity> = {};
+
+        if ('name' in dto && dto.name !== undefined) {
+            entityFields.name = dto.name;
+        }
+        if ('description' in dto && dto.description !== undefined) {
+            entityFields.description = dto.description;
+        }
+
+        return entityFields;
     }
 
     protected toResponseDto(
@@ -52,5 +66,39 @@ export class WorkoutSessionPlanService extends PublicAuthorizableCrudService<
             is_approved: entity.isApproved,
             is_deleted: entity.isDeleted,
         };
+    }
+
+    protected validateBeforeCreate(
+        dto: WorkoutSessionPlanCreateDto,
+        user: JwtAuthenticatedUser,
+    ): void {
+        void dto;
+        void user;
+    }
+
+    protected validateBeforeUpdate(
+        dto: WorkoutSessionPlanUpdateDto | WorkoutSessionPlanPatchDto,
+        entity: WorkoutSessionPlanEntity,
+        user: JwtAuthenticatedUser,
+    ): void {
+        void dto;
+        void entity;
+        void user;
+    }
+
+    protected validateBeforeDelete(
+        entity: WorkoutSessionPlanEntity,
+        user: JwtAuthenticatedUser,
+    ): void {
+        void entity;
+        void user;
+    }
+
+    protected validateBeforeRestore(
+        entity: WorkoutSessionPlanEntity,
+        user: JwtAuthenticatedUser,
+    ): void {
+        void entity;
+        void user;
     }
 }

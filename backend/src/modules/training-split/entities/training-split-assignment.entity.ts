@@ -11,13 +11,22 @@ export class TrainingSplitAssignmentEntity extends AuditableEntity {
     @JoinColumn({ name: 'trainee_id' })
     trainee: UserEntity;
 
+    @Column({ name: 'trainee_id' })
+    traineeId: number;
+
     @ManyToOne(() => TrainingSplitEntity, (split) => split.assignments)
     @JoinColumn({ name: 'training_split_id' })
     trainingSplit: TrainingSplitEntity;
 
+    @Column({ name: 'training_split_id' })
+    trainingSplitId: number;
+
     @ManyToOne(() => UserEntity, { nullable: true })
     @JoinColumn({ name: 'assigned_by' })
     assignedBy?: UserEntity; // null = self-assigned
+
+    @Column({ name: 'assigned_by', nullable: true })
+    assignedById?: number; // null = self-assigned
 
     @Column({ type: 'enum', enum: TrainingSplitAssignmentStatusEnum })
     status: TrainingSplitAssignmentStatusEnum;

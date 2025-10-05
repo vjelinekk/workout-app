@@ -1,13 +1,13 @@
-import { BaseEntity } from 'src/common/entities/base.entity';
 import { UserEntity } from 'src/modules/user/entities/user.entity';
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { WorkoutSessionPlanEntity } from './workout-session-plan.entity';
 import { TrainingSplitEntity } from 'src/modules/training-split/entities/training-split.entity';
 import { WorkoutSessionStatusEnum } from '../enums/workout-session-status.enum';
 import { WorkoutSessionExerciseEntity } from './workout-session-exercise.entity';
+import { AuditableEntity } from 'src/common/entities/auditable.entity';
 
 @Entity('workout_session')
-export class WorkoutSessionEntity extends BaseEntity {
+export class WorkoutSessionEntity extends AuditableEntity {
     @ManyToOne(() => UserEntity)
     @JoinColumn({ name: 'user_id' })
     performedBy: UserEntity;

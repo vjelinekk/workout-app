@@ -1,16 +1,11 @@
-import { BaseEntity } from 'src/common/entities/base.entity';
-import { UserEntity } from 'src/modules/user/entities/user.entity';
-import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, OneToMany } from 'typeorm';
 import { TrainingSplitDayEntity } from './training-split-day.entity';
 import { TrainingSplitAssignmentEntity } from './training-split-assignment.entity';
 import { WorkoutSessionEntity } from 'src/modules/workout/entities/workout-session.entity';
+import { AuditableEntity } from 'src/common/entities/auditable.entity';
 
 @Entity('training_split')
-export class TrainingSplitEntity extends BaseEntity {
-    @ManyToOne(() => UserEntity)
-    @JoinColumn({ name: 'created_by' })
-    createdBy: UserEntity;
-
+export class TrainingSplitEntity extends AuditableEntity {
     @Column({
         type: 'text',
         nullable: false,

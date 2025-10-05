@@ -1,10 +1,10 @@
-import { BaseEntity } from 'src/common/entities/base.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { TrainingSplitEntity } from './training-split.entity';
 import { WorkoutSessionPlanEntity } from 'src/modules/workout/entities/workout-session-plan.entity';
+import { AuditableEntity } from 'src/common/entities/auditable.entity';
 
 @Entity('training_split_day')
-export class TrainingSplitDayEntity extends BaseEntity {
+export class TrainingSplitDayEntity extends AuditableEntity {
     @ManyToOne(() => TrainingSplitEntity, (split) => split.days)
     @JoinColumn({ name: 'training_split_id' })
     trainingSplit: TrainingSplitEntity;

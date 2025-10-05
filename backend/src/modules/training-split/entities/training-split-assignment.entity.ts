@@ -3,9 +3,10 @@ import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { TrainingSplitEntity } from './training-split.entity';
 import { TrainingSplitAssignmentStatusEnum } from '../enums/training-split-assignment-status.enum';
 import { BaseEntity } from 'src/common/entities/base.entity';
+import { AuditableEntity } from 'src/common/entities/auditable.entity';
 
 @Entity('training_split_assignment')
-export class TrainingSplitAssignmentEntity extends BaseEntity {
+export class TrainingSplitAssignmentEntity extends AuditableEntity {
     @ManyToOne(() => UserEntity)
     @JoinColumn({ name: 'trainee_id' })
     trainee: UserEntity;

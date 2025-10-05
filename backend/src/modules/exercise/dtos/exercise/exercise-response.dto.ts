@@ -71,9 +71,9 @@ export class ExerciseResponseDto extends BaseResponseDto {
     is_approved: boolean;
 
     @ApiProperty({
-        example: 'true',
-        description: 'When was the exercise last updated',
+        example: '1',
+        description: 'ID of the user who created the exercise',
     })
-    @IsDate()
+    @IsNumber()
     created_by: number;
 }

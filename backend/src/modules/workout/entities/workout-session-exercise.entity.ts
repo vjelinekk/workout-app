@@ -2,9 +2,10 @@ import { BaseEntity } from 'src/common/entities/base.entity';
 import { ExerciseEntity } from 'src/modules/exercise/entities/exercise.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { WorkoutSessionEntity } from './workout-session.entity';
+import { AuditableEntity } from 'src/common/entities/auditable.entity';
 
 @Entity('workout_session_exercise')
-export class WorkoutSessionExerciseEntity extends BaseEntity {
+export class WorkoutSessionExerciseEntity extends AuditableEntity {
     @ManyToOne(() => WorkoutSessionEntity, (session) => session.exercises)
     @JoinColumn({ name: 'workout_session_id' })
     workoutSession: WorkoutSessionEntity;

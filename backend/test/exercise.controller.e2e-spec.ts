@@ -1,21 +1,3 @@
-/**
- * Exercise Controller Integration Tests
- *
- * Comprehensive end-to-end tests for the Exercise controller endpoints.
- * Tests cover authentication, authorization, CRUD operations, scopes, edge cases, and performance.
- *
- * Test Status: 54 tests - all passing ✅
- * Coverage:
- * - POST /exercises: 11 tests (create with validation)
- * - GET /exercises/:id: 7 tests (retrieve single with scopes)
- * - GET /exercises: 5 tests (list with scope filters)
- * - PATCH /exercises/:id: 8 tests (partial updates)
- * - PUT /exercises/:id: 6 tests (full updates)
- * - DELETE /exercises/:id: 6 tests (soft delete)
- * - POST /exercises/:id/restore: 5 tests (restore deleted)
- * - Edge cases & security: 4 tests
- * - Performance: 2 tests
- */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */

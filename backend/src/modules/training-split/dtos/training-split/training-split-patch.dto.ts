@@ -1,4 +1,6 @@
-import { PartialType } from "@nestjs/swagger";
-import { TrainingSplitUpdateDto } from "./training-split-update.dto";
+import { PartialType } from '@nestjs/swagger';
+import { TrainingSplitUpdateDto } from './training-split-update.dto';
 
-export class TrainingSplitPatchDto extends PartialType(TrainingSplitUpdateDto) {}
+export class TrainingSplitPatchDto extends PartialType(
+    TrainingSplitUpdateDto,
+) {}

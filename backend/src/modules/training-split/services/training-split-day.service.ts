@@ -1,4 +1,8 @@
-import { BadRequestException, ForbiddenException, Injectable } from '@nestjs/common';
+import {
+    BadRequestException,
+    ForbiddenException,
+    Injectable,
+} from '@nestjs/common';
 import { ValidatedMappedCrudService } from 'src/common/services/validated-mapped-crud.service';
 import { TrainingSplitDayEntity } from '../entities/training-split-day.entity';
 import { TrainingSplitDayCreateDto } from '../dtos/training-split-day/training-split-day-create.dto';
@@ -44,7 +48,8 @@ export class TrainingSplitDayService extends ValidatedMappedCrudService<
             );
         }
 
-        const trainingSplit = await this.trainingSplitRepository.findByIdActive(trainingSplitId);
+        const trainingSplit =
+            await this.trainingSplitRepository.findByIdActive(trainingSplitId);
         if (trainingSplit === null) {
             throw new BadRequestException(
                 `Cannot validate access to Training Split Day because associated Training Split with ID ${trainingSplitId} does not exist.`,
@@ -64,14 +69,20 @@ export class TrainingSplitDayService extends ValidatedMappedCrudService<
             );
         }
 
-        const workoutSessionPlan = await this.workoutSessionPlanRepository.findByIdActive(workoutSessionPlanId);
+        const workoutSessionPlan =
+            await this.workoutSessionPlanRepository.findByIdActive(
+                workoutSessionPlanId,
+            );
         if (workoutSessionPlan === null) {
             throw new BadRequestException(
                 `Cannot validate access to Training Split Day because associated Workout Session Plan with ID ${workoutSessionPlanId} does not exist.`,
             );
         }
 
-        if (workoutSessionPlan.createdById !== user.id || (!workoutSessionPlan.isPublic && !workoutSessionPlan.isApproved)) {
+        if (
+            workoutSessionPlan.createdById !== user.id ||
+            (!workoutSessionPlan.isPublic && !workoutSessionPlan.isApproved)
+        ) {
             throw new ForbiddenException(
                 `You do not have permission to access Training Split Day with ID ${entity.id}.`,
             );

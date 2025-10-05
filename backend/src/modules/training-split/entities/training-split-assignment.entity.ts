@@ -2,7 +2,6 @@ import { UserEntity } from 'src/modules/user/entities/user.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { TrainingSplitEntity } from './training-split.entity';
 import { TrainingSplitAssignmentStatusEnum } from '../enums/training-split-assignment-status.enum';
-import { BaseEntity } from 'src/common/entities/base.entity';
 import { AuditableEntity } from 'src/common/entities/auditable.entity';
 
 @Entity('training_split_assignment')

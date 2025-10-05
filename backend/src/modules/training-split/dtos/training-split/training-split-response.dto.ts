@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsNumber, IsString } from 'class-validator';
-import { BaseResponseDto } from "src/common/dtos/base-response.dto";
+import { BaseResponseDto } from 'src/common/dtos/base-response.dto';
 
 export class TrainingSplitResponseDto extends BaseResponseDto {
     @ApiProperty({
@@ -11,7 +11,8 @@ export class TrainingSplitResponseDto extends BaseResponseDto {
     name: string;
 
     @ApiProperty({
-        example: 'A 3-day training split focusing on push, pull, and leg movements',
+        example:
+            'A 3-day training split focusing on push, pull, and leg movements',
         description: 'A brief description of the training split',
     })
     @IsString()

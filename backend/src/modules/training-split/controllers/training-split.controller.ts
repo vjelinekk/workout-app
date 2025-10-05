@@ -9,7 +9,7 @@ import {
     Post,
     Put,
     Query,
-} from "@nestjs/common";
+} from '@nestjs/common';
 import {
     ApiBadRequestResponse,
     ApiBody,
@@ -21,15 +21,15 @@ import {
     ApiQuery,
     ApiTags,
     ApiUnauthorizedResponse,
-} from "@nestjs/swagger";
-import { TrainingSplitService } from "../services/training-split.service";
-import { TrainingSplitCreateDto } from "../dtos/training-split/trainin-split-create.dto";
-import { TrainingSplitResponseDto } from "../dtos/training-split/training-split-response.dto";
-import { TrainingSplitPatchDto } from "../dtos/training-split/training-split-patch.dto";
-import { TrainingSplitUpdateDto } from "../dtos/training-split/training-split-update.dto";
-import { JwtUser } from "src/modules/auth/decorators/jwt-user.decorator";
-import type { JwtAuthenticatedUser } from "src/modules/auth/types/jwt-authenticated-user.type";
-import { FindAllScopes } from "src/common/enums/find-all-scopes.enum";
+} from '@nestjs/swagger';
+import { TrainingSplitService } from '../services/training-split.service';
+import { TrainingSplitCreateDto } from '../dtos/training-split/trainin-split-create.dto';
+import { TrainingSplitResponseDto } from '../dtos/training-split/training-split-response.dto';
+import { TrainingSplitPatchDto } from '../dtos/training-split/training-split-patch.dto';
+import { TrainingSplitUpdateDto } from '../dtos/training-split/training-split-update.dto';
+import { JwtUser } from 'src/modules/auth/decorators/jwt-user.decorator';
+import type { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
+import { FindAllScopes } from 'src/common/enums/find-all-scopes.enum';
 
 @ApiTags('Training Splits')
 @Controller('training-splits')
@@ -38,7 +38,10 @@ export class TrainingSplitController {
 
     @Post()
     @ApiOperation({ summary: 'Create a new training split' })
-    @ApiBody({ type: TrainingSplitCreateDto, description: 'Training split creation data' })
+    @ApiBody({
+        type: TrainingSplitCreateDto,
+        description: 'Training split creation data',
+    })
     @ApiOkResponse({
         description: 'The training split has been successfully created.',
         type: TrainingSplitResponseDto,
@@ -53,10 +56,7 @@ export class TrainingSplitController {
         @Body() createDto: TrainingSplitCreateDto,
         @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<TrainingSplitResponseDto> {
-        return await this.trainingSplitService.createMapped(
-            createDto,
-            user.id,
-        );
+        return await this.trainingSplitService.createMapped(createDto, user.id);
     }
 
     @Patch(':id')

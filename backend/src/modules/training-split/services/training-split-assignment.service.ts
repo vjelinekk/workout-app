@@ -100,19 +100,19 @@ export class TrainingSplitAssignmentService extends ValidatedMappedCrudService<
         const entityFields: Partial<TrainingSplitAssignmentEntity> = {};
 
         if ('trainee_id' in dto && dto.trainee_id !== undefined) {
-            entityFields.trainee = { id: dto.trainee_id } as any;
+            entityFields.traineeId = dto.trainee_id;
         }
         if ('training_split_id' in dto && dto.training_split_id !== undefined) {
-            entityFields.trainingSplit = { id: dto.training_split_id } as any;
-        }
-        if ('assigned_by_id' in dto && dto.assigned_by_id !== undefined) {
-            entityFields.assignedBy = { id: dto.assigned_by_id } as any;
+            entityFields.trainingSplitId = dto.training_split_id;
         }
 
         return entityFields;
     }
 
-    async createMapped(dto: TrainingSplitAssignmentCreateDto, userId: number): Promise<TrainingSplitAssignmentResponseDto> {
+    async createMapped(
+        dto: TrainingSplitAssignmentCreateDto,
+        userId: number,
+    ): Promise<TrainingSplitAssignmentResponseDto> {
         const entity = this.toEntity(dto);
         entity.createdById = userId;
         entity.status = TrainingSplitAssignmentStatusEnum.PENDING;

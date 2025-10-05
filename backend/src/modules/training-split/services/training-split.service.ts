@@ -1,13 +1,13 @@
-import { Injectable } from "@nestjs/common";
-import { PublicAuthorizableCrudService } from "src/common/services/public-authorizable-crud.service";
-import { TrainingSplitEntity } from "../entities/training-split.entity";
-import { TrainingSplitCreateDto } from "../dtos/training-split/trainin-split-create.dto";
-import { TrainingSplitUpdateDto } from "../dtos/training-split/training-split-update.dto";
-import { TrainingSplitPatchDto } from "../dtos/training-split/training-split-patch.dto";
-import { TrainingSplitResponseDto } from "../dtos/training-split/training-split-response.dto";
-import { TrainingSplitRepository } from "../repositories/training-split.repository";
-import { JwtAuthenticatedUser } from "src/modules/auth/types/jwt-authenticated-user.type";
-import { DeepPartial } from "typeorm";
+import { Injectable } from '@nestjs/common';
+import { PublicAuthorizableCrudService } from 'src/common/services/public-authorizable-crud.service';
+import { TrainingSplitEntity } from '../entities/training-split.entity';
+import { TrainingSplitCreateDto } from '../dtos/training-split/trainin-split-create.dto';
+import { TrainingSplitUpdateDto } from '../dtos/training-split/training-split-update.dto';
+import { TrainingSplitPatchDto } from '../dtos/training-split/training-split-patch.dto';
+import { TrainingSplitResponseDto } from '../dtos/training-split/training-split-response.dto';
+import { TrainingSplitRepository } from '../repositories/training-split.repository';
+import { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
+import { DeepPartial } from 'typeorm';
 
 @Injectable()
 export class TrainingSplitService extends PublicAuthorizableCrudService<
@@ -18,7 +18,9 @@ export class TrainingSplitService extends PublicAuthorizableCrudService<
     TrainingSplitResponseDto,
     TrainingSplitRepository
 > {
-    constructor(protected readonly trainingSplitRepository: TrainingSplitRepository) {
+    constructor(
+        protected readonly trainingSplitRepository: TrainingSplitRepository,
+    ) {
         super(trainingSplitRepository);
     }
 
@@ -26,37 +28,54 @@ export class TrainingSplitService extends PublicAuthorizableCrudService<
         return 'Training Split';
     }
 
-    protected beforeCreate(dto: TrainingSplitCreateDto, user: JwtAuthenticatedUser): Promise<void> | void {
+    protected beforeCreate(
+        dto: TrainingSplitCreateDto,
+        user: JwtAuthenticatedUser,
+    ): Promise<void> | void {
         void dto;
         void user;
     }
 
-    protected beforeUpdate(dto: TrainingSplitUpdateDto | TrainingSplitPatchDto, entity: TrainingSplitEntity, user: JwtAuthenticatedUser): Promise<void> | void {
+    protected beforeUpdate(
+        dto: TrainingSplitUpdateDto | TrainingSplitPatchDto,
+        entity: TrainingSplitEntity,
+        user: JwtAuthenticatedUser,
+    ): Promise<void> | void {
         void dto;
         void entity;
         void user;
     }
 
-    protected beforeDelete(entity: TrainingSplitEntity, user: JwtAuthenticatedUser): Promise<void> | void {
+    protected beforeDelete(
+        entity: TrainingSplitEntity,
+        user: JwtAuthenticatedUser,
+    ): Promise<void> | void {
         void entity;
         void user;
     }
 
-    protected beforeRestore(entity: TrainingSplitEntity, user: JwtAuthenticatedUser): Promise<void> | void {
+    protected beforeRestore(
+        entity: TrainingSplitEntity,
+        user: JwtAuthenticatedUser,
+    ): Promise<void> | void {
         void entity;
         void user;
     }
 
-    protected toEntity(dto: TrainingSplitCreateDto): DeepPartial<TrainingSplitEntity> {
+    protected toEntity(
+        dto: TrainingSplitCreateDto,
+    ): DeepPartial<TrainingSplitEntity> {
         return {
             name: dto.name,
             description: dto.description,
             isPublic: dto.is_public,
             isApproved: dto.is_approved,
-        }
+        };
     }
 
-    protected toResponseDto(entity: TrainingSplitEntity): TrainingSplitResponseDto {
+    protected toResponseDto(
+        entity: TrainingSplitEntity,
+    ): TrainingSplitResponseDto {
         return {
             id: entity.id,
             name: entity.name,
@@ -67,10 +86,12 @@ export class TrainingSplitService extends PublicAuthorizableCrudService<
             created_at: entity.createdAt,
             updated_at: entity.updatedAt,
             is_deleted: entity.isDeleted,
-        }
+        };
     }
 
-    protected toEntityUpdate(dto: TrainingSplitUpdateDto | TrainingSplitPatchDto): Partial<TrainingSplitEntity> {
+    protected toEntityUpdate(
+        dto: TrainingSplitUpdateDto | TrainingSplitPatchDto,
+    ): Partial<TrainingSplitEntity> {
         const entityFields: Partial<TrainingSplitEntity> = {};
 
         if ('name' in dto && dto.name !== undefined) {

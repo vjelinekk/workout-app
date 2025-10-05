@@ -201,9 +201,7 @@ export class TrainingSplitAssignmentController {
     @ApiBadRequestResponse({
         description: 'Invalid request',
     })
-    async getAll(
-        @JwtUser() user: JwtAuthenticatedUser,
-    ): Promise<TrainingSplitAssignmentResponseDto[]> {
+    async getAll(): Promise<TrainingSplitAssignmentResponseDto[]> {
         return await this.trainingSplitAssignmentService.findAllActiveMapped();
     }
 

@@ -1,4 +1,3 @@
-import { BaseEntity } from 'src/common/entities/base.entity';
 import { ExerciseEntity } from 'src/modules/exercise/entities/exercise.entity';
 import { Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
 import { WorkoutSessionEntity } from './workout-session.entity';

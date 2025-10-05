@@ -11,7 +11,8 @@ export class TrainingSplitCreateDto {
     name: string;
 
     @ApiProperty({
-        example: 'A 3-day training split focusing on push, pull, and leg movements',
+        example:
+            'A 3-day training split focusing on push, pull, and leg movements',
         description: 'A brief description of the training split',
     })
     @IsString()

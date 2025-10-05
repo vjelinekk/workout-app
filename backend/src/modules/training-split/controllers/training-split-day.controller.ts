@@ -194,9 +194,7 @@ export class TrainingSplitDayController {
     @ApiBadRequestResponse({
         description: 'Invalid request',
     })
-    async getAll(
-        @JwtUser() user: JwtAuthenticatedUser,
-    ): Promise<TrainingSplitDayResponseDto[]> {
+    async getAll(): Promise<TrainingSplitDayResponseDto[]> {
         return await this.trainingSplitDayService.findAllActiveMapped();
     }
 

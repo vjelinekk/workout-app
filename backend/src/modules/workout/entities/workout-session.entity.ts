@@ -9,12 +9,18 @@ import { AuditableEntity } from 'src/common/entities/auditable.entity';
 @Entity('workout_session')
 export class WorkoutSessionEntity extends AuditableEntity {
     @ManyToOne(() => UserEntity)
-    @JoinColumn({ name: 'user_id' })
+    @JoinColumn({ name: 'performed_by_id' })
     performedBy: UserEntity;
+
+    @Column({ name: 'performed_by_id', nullable: true })
+    performedById: number;
 
     @ManyToOne(() => WorkoutSessionPlanEntity, (plan) => plan.workoutSessions)
     @JoinColumn({ name: 'workout_session_plan_id' })
     workoutSessionPlan: WorkoutSessionPlanEntity;
+
+    @Column({ name: 'workout_session_plan_id' })
+    workoutSessionPlanId: number;
 
     @ManyToOne(() => TrainingSplitEntity, (split) => split.workoutSessions, {
         nullable: true,
@@ -22,12 +28,8 @@ export class WorkoutSessionEntity extends AuditableEntity {
     @JoinColumn({ name: 'training_split_id' })
     trainingSplit?: TrainingSplitEntity;
 
-    @Column({
-        name: 'performed_date',
-        type: 'timestamp',
-        comment: 'Date when the workout session was performed',
-    })
-    performedDate: Date;
+    @Column({ name: 'training_split_id', nullable: true })
+    trainingSplitId?: number;
 
     @Column({
         type: 'enum',

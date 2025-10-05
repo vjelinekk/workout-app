@@ -116,7 +116,7 @@ export class ExerciseController {
         description: 'Cannot preform this update',
     })
     async updateExercise(
-        @Param('id') id: number,
+        @Param('id', ParseIntPipe) id: number,
         @Body() updateExerciseDto: ExerciseUpdateDto,
         @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<ExerciseResponseDto> {

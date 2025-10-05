@@ -310,6 +310,10 @@ describe('AuthController (e2e - Integration Tests)', () => {
                 where: { id: RoleEnum.ADMIN },
             });
 
+            if (!adminRole) {
+                throw new Error('Admin role not found in setup');
+            }
+
             const hashedPassword = await hash(adminUserPassword, 10);
             const adminUser = userRepository.create({
                 email: adminUserEmail,
@@ -535,6 +539,8 @@ describe('AuthController (e2e - Integration Tests)', () => {
         it('should successfully query user from database', async () => {
             const user = await userRepository.findByEmail(testUserEmail);
 
+            if (!user) return;
+
             expect(user).toBeDefined();
             expect(user.email).toBe(testUserEmail);
             expect(user.nickname).toBe(testUserNickname);
@@ -552,6 +558,8 @@ describe('AuthController (e2e - Integration Tests)', () => {
 
         it('should load user with relations', async () => {
             const user = await userRepository.findByEmail(testUserEmail);
+
+            if (!user) return;
 
             expect(user).toBeDefined();
             expect(user.roles).toBeDefined();

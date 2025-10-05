@@ -109,6 +109,10 @@ describe('ExerciseCategoryController (e2e - Integration Tests)', () => {
         });
         await dataSource.getRepository(RoleEntity).save(traineeRole);
 
+        if (!adminRole) {
+            throw new Error('Admin role not found in setup');
+        }
+
         // Create admin user
         const adminUser = await userRepository.create({
             email: 'admin@test.com',
@@ -116,10 +120,14 @@ describe('ExerciseCategoryController (e2e - Integration Tests)', () => {
             lastName: 'User',
             nickname: 'adminuser',
             password: await hash('admin123', 10),
-            roleId: RoleEnum.ADMIN,
+            roles: [adminRole],
         });
         await userRepository.save(adminUser);
         adminUserId = adminUser.id;
+
+        if (!traineeRole) {
+            throw new Error('Trainee role not found in setup');
+        }
 
         // Create trainee user
         const traineeUser = await userRepository.create({
@@ -128,7 +136,7 @@ describe('ExerciseCategoryController (e2e - Integration Tests)', () => {
             lastName: 'User',
             nickname: 'traineeuser',
             password: await hash('trainee123', 10),
-            roleId: RoleEnum.TRAINEE,
+            roles: [traineeRole],
         });
         await userRepository.save(traineeUser);
         traineeUserId = traineeUser.id;
@@ -137,13 +145,13 @@ describe('ExerciseCategoryController (e2e - Integration Tests)', () => {
         adminToken = jwtService.sign({
             sub: adminUserId,
             email: adminUser.email,
-            roleId: adminUser.roleId,
+            roles: adminUser.roles.map((role) => role.id),
         });
 
         traineeToken = jwtService.sign({
             sub: traineeUserId,
             email: traineeUser.email,
-            roleId: traineeUser.roleId,
+            roles: traineeUser.roles.map((role) => role.id),
         });
 
         // Create test categories for various test scenarios

@@ -30,6 +30,8 @@ import { WorkoutSessionPlanExerciseService } from './services/workout-session-pl
         WorkoutSessionPlanExerciseRepository,
         WorkoutSessionPlanExerciseService,
     ],
-    exports: [],
+    exports: [
+        WorkoutSessionPlanRepository,
+    ],
 })
 export class WorkoutModule {}

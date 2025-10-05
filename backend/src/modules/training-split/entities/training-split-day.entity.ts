@@ -9,9 +9,15 @@ export class TrainingSplitDayEntity extends AuditableEntity {
     @JoinColumn({ name: 'training_split_id' })
     trainingSplit: TrainingSplitEntity;
 
+    @Column({ name: 'training_split_id' })
+    trainingSplitId: number;
+
     @ManyToOne(() => WorkoutSessionPlanEntity, (plan) => plan.trainingSplitDays)
     @JoinColumn({ name: 'workout_session_plan_id' })
     workoutSessionPlan: WorkoutSessionPlanEntity;
+
+    @Column({ name: 'workout_session_plan_id' })
+    workoutSessionPlanId: number;
 
     @Column({
         name: 'day_of_week',

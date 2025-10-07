@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import axios from 'axios';
 import { ApiErrorResponse } from '@/types/api';
+import { Button } from '@/components/ui/button';
 
 export default function LoginPage() {
     const { login, loginWithGoogle, isAuthenticated, isGoogleLoading } =
@@ -110,13 +111,13 @@ export default function LoginPage() {
                     )}
 
                     <div>
-                        <button
+                        <Button
+                            variant='outline'
                             type="submit"
                             disabled={isLoading}
-                            className="w-full rounded-md bg-blue-600 px-4 py-2 text-white hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isLoading ? 'Signing in...' : 'Sign in'}
-                        </button>
+                        </Button>
                     </div>
 
                     <div className="relative">
@@ -131,11 +132,11 @@ export default function LoginPage() {
                     </div>
 
                     <div>
-                        <button
+                        <Button
                             type="button"
+                            variant='outline'
                             onClick={handleGoogleLogin}
                             disabled={isGoogleLoading}
-                            className="w-full flex items-center justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             {isGoogleLoading ? (
                                 'Opening Google login...'
@@ -165,7 +166,7 @@ export default function LoginPage() {
                                     Sign in with Google
                                 </>
                             )}
-                        </button>
+                        </Button>
                     </div>
                 </form>
             </div>

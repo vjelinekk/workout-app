@@ -96,3 +96,27 @@ test-e2e-watch: test-db-up
 test-e2e-cov: test-db-up
 	@echo "🧪 Running E2E integration tests with coverage..."
 	cd backend && npm run test:e2e:cov
+
+# shadcn/ui commands
+.PHONY: ui-add ui-install
+
+# Add shadcn/ui component(s)
+# Usage: make ui-add COMPONENT="button card input"
+ui-add:
+	@if [ -z "$(COMPONENT)" ]; then \
+		echo "❌ Error: COMPONENT is required"; \
+		echo "Usage: make ui-add COMPONENT=\"button card input\""; \
+		exit 1; \
+	fi; \
+	echo "📦 Adding shadcn/ui component(s): $(COMPONENT)"; \
+	cd frontend && npx shadcn@latest add $(COMPONENT); \
+	echo "🔄 Installing dependencies in Docker container..."; \
+	docker-compose exec frontend npm install; \
+	echo "✅ Component(s) added and dependencies installed!"
+
+# Install frontend dependencies in Docker container
+ui-install:
+	@echo "🔄 Installing frontend dependencies in Docker container..."
+	docker-compose exec frontend npm install
+	@echo "✅ Dependencies installed!"
+

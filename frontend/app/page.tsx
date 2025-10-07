@@ -1,27 +1,27 @@
-"use client";
+'use client';
 
-import { fetchTestData, TEST_QUERY_KEY } from "@/api/queries/test";
-import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function HomePage() {
-    const { data, isLoading, error } = useQuery({
-        queryKey: [TEST_QUERY_KEY],
-        queryFn: fetchTestData,
-    });
+    const { isAuthenticated, isLoading } = useAuth();
+    const router = useRouter();
 
-    if (isLoading) {
-        return <p>Loading...</p>;
-    }
+    useEffect(() => {
+        if (!isLoading) {
+            if (isAuthenticated) {
+                router.push('/dashboard');
+            } else {
+                router.push('/login');
+            }
+        }
+    }, [isAuthenticated, isLoading, router]);
 
-    if (error) {
-        return <p>Error: {error.message}</p>;
-    }
-
+    // Show loading state while checking authentication
     return (
-        <main className="p-6">
-            <h1 className="text-xl font-bold">Frontend → Backend test</h1>
-            <p>Response: {data}</p>
-        </main>
+        <div className="flex min-h-screen items-center justify-center">
+            <p>Loading...</p>
+        </div>
     );
 }

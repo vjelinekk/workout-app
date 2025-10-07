@@ -39,6 +39,11 @@ export class AuthService {
         return {
             access_token: this.jwtService.sign(payload),
             user_id: user.id,
+            user_first_name: user.firstName,
+            user_last_name: user.lastName,
+            user_nickname: user.nickname,
+            user_email: user.email,
+            roles: user.roles.map((role) => role.id),
         };
     }
 }

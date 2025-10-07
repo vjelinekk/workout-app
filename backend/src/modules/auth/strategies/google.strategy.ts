@@ -16,7 +16,7 @@ export class GoogleStrategy extends PassportStrategy(Strategy, 'google') {
                 config.get<string>('GOOGLE_CLIENT_SECRET') || 'default',
             callbackURL:
                 config.get<string>('GOOGLE_CALLBACK_URL') ||
-                'http://localhost:3001/auth/google/callback',
+                'http://localhost:3001/v1/auth/google/callback',
             scope: ['email', 'profile'],
         });
     }

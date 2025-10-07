@@ -1,7 +1,7 @@
 import { NestFactory, Reflector } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { ClassSerializerInterceptor, ValidationPipe } from '@nestjs/common';
+import { ClassSerializerInterceptor, ValidationPipe, VersioningType } from '@nestjs/common';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 
@@ -10,6 +10,13 @@ async function bootstrap() {
 
     // CORS configuration
     const corsOrigins = process.env.CORS_ORIGINS?.split(',') ?? [];
+
+    const defaultApiVersion = '1';
+
+    app.enableVersioning({
+        type: VersioningType.URI,
+        defaultVersion: defaultApiVersion,
+    });
 
     app.enableCors({
         origin: corsOrigins,

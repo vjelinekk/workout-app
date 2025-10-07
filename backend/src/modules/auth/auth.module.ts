@@ -9,6 +9,7 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 import { GoogleStrategy } from './strategies/google.strategy';
 import { UserModule } from '../user/user.module';
 import { RoleGuard } from './guards/role.guard';
+import { AuthCodeService } from './services/auth-code.service';
 
 @Module({
     imports: [
@@ -27,6 +28,7 @@ import { RoleGuard } from './guards/role.guard';
     ],
     providers: [
         AuthService,
+        AuthCodeService,
         LocalStrategy,
         JwtStrategy,
         GoogleStrategy,

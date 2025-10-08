@@ -1,6 +1,6 @@
 'use client';
 
-import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { ProtectedRoute } from '@/components/Auth/ProtectedRoute';
 import { useAuth } from '@/contexts/AuthContext';
 import { useRole } from '@/hooks/useRole';
 import { UserRole } from '@/types/auth';

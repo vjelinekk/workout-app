@@ -9,10 +9,15 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" suppressHydrationWarning>
-            <body>
+            <body className="bg-background text-foreground">
                 <Providers>
-                    <DarkModeToggle />
-                    {children}
+                    {/* Top bar */}
+                    <header className="flex justify-end p-4">
+                        <DarkModeToggle />
+                    </header>
+
+                    {/* Page content */}
+                    <main className="pt-8 px-4">{children}</main>
                 </Providers>
             </body>
         </html>

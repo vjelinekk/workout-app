@@ -6,6 +6,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import axios from 'axios';
 import { ApiErrorResponse } from '@/types/api';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 export default function LoginPage() {
     const { login, loginWithGoogle, isAuthenticated, isGoogleLoading } =
@@ -70,7 +71,7 @@ export default function LoginPage() {
                             >
                                 Email address
                             </label>
-                            <input
+                            <Input
                                 id="email"
                                 name="email"
                                 type="email"
@@ -90,7 +91,7 @@ export default function LoginPage() {
                             >
                                 Password
                             </label>
-                            <input
+                            <Input
                                 id="password"
                                 name="password"
                                 type="password"

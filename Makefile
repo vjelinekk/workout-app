@@ -100,16 +100,16 @@ test-e2e-cov: test-db-up
 # shadcn/ui commands
 .PHONY: ui-add ui-install
 
-# Add shadcn/ui component(s)
-# Usage: make ui-add COMPONENT="button card input"
+# Add shadcn/ui component(s) interactively
 ui-add:
-	@if [ -z "$(COMPONENT)" ]; then \
-		echo "❌ Error: COMPONENT is required"; \
-		echo "Usage: make ui-add COMPONENT=\"button card input\""; \
+	@echo "📦 Enter the shadcn/ui components you want to add (space-separated):"; \
+	read COMPONENTS; \
+	if [ -z "$$COMPONENTS" ]; then \
+		echo "❌ No components entered. Aborting."; \
 		exit 1; \
 	fi; \
-	echo "📦 Adding shadcn/ui component(s): $(COMPONENT)"; \
-	cd frontend && npx shadcn@latest add $(COMPONENT); \
+	echo "📦 Adding components: $$COMPONENTS"; \
+	cd frontend && npx shadcn@latest add $$COMPONENTS; \
 	echo "🔄 Installing dependencies in Docker container..."; \
 	docker-compose exec frontend npm install; \
 	echo "✅ Component(s) added and dependencies installed!"

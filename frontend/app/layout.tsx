@@ -1,6 +1,8 @@
-import { DarkModeToggle } from '@/components/DarkModeToggle/DarkModeToggle';
+'use client';
+
 import './globals.css';
 import Providers from './providers';
+import { TopBar } from '@/components/TopBar/TopBar';
 
 export default function RootLayout({
     children,
@@ -12,9 +14,7 @@ export default function RootLayout({
             <body className="bg-background text-foreground">
                 <Providers>
                     {/* Top bar */}
-                    <header className="flex justify-end p-4">
-                        <DarkModeToggle />
-                    </header>
+                    <TopBar />
 
                     {/* Page content */}
                     <main className="pt-8 px-4">{children}</main>

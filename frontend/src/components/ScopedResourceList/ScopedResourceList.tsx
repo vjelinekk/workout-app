@@ -3,6 +3,8 @@
 import { ApiErrorResponse } from '@/types/api';
 import { Button } from '../ui/button';
 import { ScopedResourceListCard } from './ScopedResourceListCard';
+import { useTranslations } from 'next-intl';
+import { SECTION_KEYS } from '@/constants/locale';
 
 interface Props<T extends { id: number; name: string }> {
     title: string;
@@ -17,6 +19,7 @@ interface Props<T extends { id: number; name: string }> {
         isLoadingPublic: boolean;
         errorPublic: ApiErrorResponse | null;
     };
+    handleCreate: () => void;
 }
 
 export const ScopedResourceList = <T extends { id: number; name: string }>({
@@ -24,30 +27,43 @@ export const ScopedResourceList = <T extends { id: number; name: string }>({
     createButtonText,
     privateInfo: { privateEntities, isLoadingPrivate, errorPrivate },
     publicInfo: { publicEntities, isLoadingPublic, errorPublic },
+    handleCreate,
 }: Props<T>) => {
+    const t = useTranslations(SECTION_KEYS.scopedResourceList);
+
     return (
         <div className="w-full max-w-4xl mx-auto space-y-6">
             <div className="flex items-center justify-between">
                 <h1 className="text-2xl font-semibold">{title}</h1>
-                <Button variant="default">{createButtonText}</Button>
+                <Button onClick={handleCreate} variant="default">
+                    {createButtonText}
+                </Button>
             </div>
 
             <ScopedResourceListCard<T>
-                title={`My ${title}`}
+                title={t('titlePrivate', { resource: title.toLowerCase() })}
                 entities={privateEntities}
                 isLoading={isLoadingPrivate}
                 error={errorPrivate}
-                errorLabel={`Error loading private ${title.toLowerCase()}`}
-                emptyMessage={`You don't have any private ${title.toLowerCase()} resources yet.`}
+                errorLabel={t('errorLoadingPrivate', {
+                    resource: title.toLowerCase(),
+                })}
+                emptyMessage={t('emptyPrivateMessage', {
+                    resource: title.toLowerCase(),
+                })}
             />
 
             <ScopedResourceListCard<T>
-                title={`Public ${title}`}
+                title={t('titlePublic', { resource: title.toLowerCase() })}
                 entities={publicEntities}
                 isLoading={isLoadingPublic}
                 error={errorPublic}
-                errorLabel={`Error loading public ${title.toLowerCase()}`}
-                emptyMessage={`No public ${title.toLowerCase()} available.`}
+                errorLabel={t('errorLoadingPublic', {
+                    resource: title.toLowerCase(),
+                })}
+                emptyMessage={t('emptyPublicMessage', {
+                    resource: title.toLowerCase(),
+                })}
             />
         </div>
     );

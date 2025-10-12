@@ -1,0 +1,41 @@
+{
+    "LoginPage": {
+        "title": "Vítejte zpět",
+        "description": "Přihlaste se ke svému účtu pro pokračování.",
+        "email": "E-mail",
+        "password": "Heslo",
+        "signIn": "Přihlásit se",
+        "signingIn": "Přihlašování...",
+        "noAccount": "Nemáte účet?",
+        "register": "Zaregistrovat se",
+        "continueWithGoogle": "Nebo pokračujte přes Google",
+        "signInWithGoogle": "Přihlásit se pomocí Google",
+        "loginFailed": "Přihlášení se nezdařilo. Zkontrolujte své přihlašovací údaje.",
+        "unexpectedError": "Došlo k neočekávané chybě. Zkuste to prosím znovu."
+    },
+     "TopBar": {
+        "logout": "Odhlásit se"
+    },
+    "DashboardPage": {
+        "exercises": "Cviky",
+        "exercisesSubtitle": "Prohlížejte a spravujte své cviky.",
+        "workoutSessionPlans": "Tréninkové plány",
+        "workoutSessionPlansSubtitle": "Vytvářejte a upravujte své tréninkové plány.",
+        "trainingSplits": "Tréninkové splity",
+        "trainingSplitsSubtitle": "Efektivně organizujte své tréninkové splity.",
+        "sessionLogging": "Záznam tréninků",
+        "sessionLoggingSubtitle": "Zaznamenávejte své tréninky a sledujte pokrok."
+    },
+    "ExercisesPage": {
+        "title": "Cviky",
+        "createButton": "Vytvořit cvik"
+    },
+    "ScopedResourceList": {
+        "titlePrivate": "Moje {resource}",
+        "errorLoadingPrivate": "Chyba při načítání soukromých {resource}.",
+        "emptyPrivateMessage": "Ještě nemáte žádné soukromé {resource}.",
+        "titlePublic": "Veřejné {resource}",
+        "errorLoadingPublic": "Chyba při načítání veřejných {resource}.",
+        "emptyPublicMessage": "Žádné veřejné {resource} nejsou k dispozici."
+    }
+}

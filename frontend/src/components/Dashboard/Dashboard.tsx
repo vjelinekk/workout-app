@@ -9,34 +9,38 @@ import {
     CardDescription,
 } from '@/components/ui/card';
 import { Dumbbell, Calendar, Layout, CheckSquare } from 'lucide-react';
+import { useTranslations } from 'next-intl';
+import { SECTION_KEYS } from '@/constants/locale';
 
 export const Dashboard = () => {
+    const t = useTranslations(SECTION_KEYS.dashboardPage);
+
     const tiles = [
         {
             id: 'exercises',
-            title: 'Exercises',
-            description: 'Browse and manage exercises',
+            title: t('exercises'),
+            description: t('exercisesSubtitle'),
             href: '/exercises',
             icon: <Dumbbell className="w-6 h-6" />,
         },
         {
             id: 'plans',
-            title: 'Workout Session Plans',
-            description: 'Create and edit session plans',
+            title: t('workoutSessionPlans'),
+            description: t('workoutSessionPlansSubtitle'),
             href: '/plans',
             icon: <Calendar className="w-6 h-6" />,
         },
         {
             id: 'splits',
-            title: 'Training Splits',
-            description: 'Organize training splits',
+            title: t('trainingSplits'),
+            description: t('trainingSplitsSubtitle'),
             href: '/splits',
             icon: <Layout className="w-6 h-6" />,
         },
         {
             id: 'logging',
-            title: 'Session logging',
-            description: 'Log your workout sessions',
+            title: t('sessionLogging'),
+            description: t('sessionLoggingSubtitle'),
             href: '/logging',
             icon: <CheckSquare className="w-6 h-6" />,
         },

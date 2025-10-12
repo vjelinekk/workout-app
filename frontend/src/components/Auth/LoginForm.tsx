@@ -9,12 +9,15 @@ import { ApiErrorResponse } from '@/types/api';
 import { LoginFormValues, loginSchema } from '@/schemas/login';
 import { AuthInputField } from './AuthInputField';
 import { AuthForm } from './AuthForm';
+import { useTranslations } from 'next-intl';
+import { SECTION_KEYS } from '@/constants/locale';
 
 interface Props {
     setError: Dispatch<SetStateAction<string>>;
 }
 
 export const LoginForm = ({ setError }: Props) => {
+    const t = useTranslations(SECTION_KEYS.loginPage);
     const { login } = useAuth();
 
     const form = useForm<LoginFormValues>({
@@ -32,11 +35,10 @@ export const LoginForm = ({ setError }: Props) => {
         } catch (err: unknown) {
             if (axios.isAxiosError<ApiErrorResponse>(err)) {
                 setError(
-                    err.response?.data?.message?.message ||
-                        'Login failed. Please check your credentials.',
+                    err.response?.data?.message?.message || t('loginFailed'),
                 );
             } else {
-                setError('An unexpected error occurred. Please try again.');
+                setError(t('unexpectedError'));
             }
         }
     };
@@ -45,12 +47,12 @@ export const LoginForm = ({ setError }: Props) => {
         <AuthForm<LoginFormValues>
             form={form}
             onSubmit={onSubmit}
-            submitLabel="Sign in"
-            submittingLabel="Signing in..."
+            submitLabel={t('signIn')}
+            submittingLabel={t('signingIn')}
         >
             <AuthInputField<LoginFormValues>
                 name="email"
-                label="Email"
+                label={t('email')}
                 placeholder="user@example.com"
                 autoComplete="email"
                 control={form.control}
@@ -58,7 +60,7 @@ export const LoginForm = ({ setError }: Props) => {
 
             <AuthInputField<LoginFormValues>
                 name="password"
-                label="Password"
+                label={t('password')}
                 type="password"
                 placeholder="••••••••"
                 autoComplete="current-password"

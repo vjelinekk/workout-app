@@ -7,7 +7,7 @@ interface Props<T extends FieldValues> {
     onSubmit: (data: T) => Promise<void>;
     children: React.ReactNode;
     submitLabel: string;
-    submittingLabel?: string;
+    submittingLabel: string;
 }
 
 export const AuthForm = <T extends FieldValues>({
@@ -15,7 +15,7 @@ export const AuthForm = <T extends FieldValues>({
     onSubmit,
     children,
     submitLabel,
-    submittingLabel = 'Submitting...',
+    submittingLabel,
 }: Props<T>) => {
     return (
         <Form {...form}>

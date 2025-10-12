@@ -1,8 +1,12 @@
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '../ui/button';
 import { GoogleIcon } from '../GoogleIcon/GoogleIcon';
+import { useTranslations } from 'next-intl';
+import { Spinner } from '../ui/icons/spinner';
+import { SECTION_KEYS } from '@/constants/locale';
 
 export const GoogleLoginButton = () => {
+    const t = useTranslations(SECTION_KEYS.loginPage);
     const { loginWithGoogle, isGoogleLoading } = useAuth();
 
     const handleGoogleLogin = () => {
@@ -18,11 +22,11 @@ export const GoogleLoginButton = () => {
             disabled={isGoogleLoading}
         >
             {isGoogleLoading ? (
-                'Opening Google login...'
+                <Spinner />
             ) : (
                 <>
                     <GoogleIcon />
-                    Sign in with Google
+                    {t('signInWithGoogle')}
                 </>
             )}
         </Button>

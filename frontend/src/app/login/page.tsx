@@ -9,8 +9,11 @@ import { LoginForm } from '@/components/Auth/LoginForm';
 import { GoogleLoginButton } from '@/components/Auth/GoogleLoginButton';
 import { AuthLayout } from '@/components/Auth/AuthLayout';
 import { Button } from '@/components/ui/button';
+import { useTranslations } from 'next-intl';
+import { SECTION_KEYS } from '@/constants/locale';
 
 export default function LoginPage() {
+    const t = useTranslations(SECTION_KEYS.loginPage);
     const { isAuthenticated } = useAuth();
     const router = useRouter();
     const [error, setError] = useState('');
@@ -27,10 +30,7 @@ export default function LoginPage() {
     };
 
     return (
-        <AuthLayout
-            title="Welcome back"
-            description="Sign in to your account to continue."
-        >
+        <AuthLayout title={t('title')} description={t('description')}>
             {error && (
                 <Alert variant="destructive">
                     <AlertDescription>{error}</AlertDescription>
@@ -40,9 +40,9 @@ export default function LoginPage() {
             <LoginForm setError={setError} />
 
             <div className="text-center text-sm text-muted-foreground">
-                <span className="block sm:inline">Don't have an account?</span>{' '}
+                <span className="block sm:inline">{t('noAccount')}</span>{' '}
                 <Button variant="link" onClick={handleRegister}>
-                    Register
+                    {t('register')}
                 </Button>
             </div>
 
@@ -52,7 +52,7 @@ export default function LoginPage() {
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
                     <span className="bg-card px-2 text-muted-foreground">
-                        Or continue with
+                        {t('continueWithGoogle')}
                     </span>
                 </div>
             </div>

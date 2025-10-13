@@ -4,6 +4,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { UserRole } from '@/types/auth';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { Spinner } from '../ui/icons/spinner';
 
 interface Props {
     children: React.ReactNode;
@@ -46,7 +47,7 @@ export const ProtectedRoute = ({ children, requiredRoles }: Props) => {
     }, [isLoading, isAuthenticated, router]);
 
     if (isLoading && !loadingTimeout) {
-        return <div>Loading...</div>;
+        return <Spinner />;
     }
 
     if (loadingTimeout) {

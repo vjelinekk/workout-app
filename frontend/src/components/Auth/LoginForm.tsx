@@ -4,20 +4,19 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Dispatch, SetStateAction } from 'react';
 import { useAuth } from '@/contexts/AuthContext';
-import axios from 'axios';
-import { ApiErrorResponse } from '@/types/api';
 import { LoginFormValues, loginSchema } from '@/schemas/login';
-import { AuthInputField } from './AuthInputField';
-import { AuthForm } from './AuthForm';
+import { BasicInputField } from '../BasicForm/BasicInputField';
+import { BasicForm } from '../BasicForm/BasicForm';
 import { useTranslations } from 'next-intl';
-import { SECTION_KEYS } from '@/constants/locale';
+import { TRANSLATION_SECTION_KEYS } from '@/constants/locale';
+import { ApiError, handleApiError } from '@/utils/apiError';
 
 interface Props {
     setError: Dispatch<SetStateAction<string>>;
 }
 
 export const LoginForm = ({ setError }: Props) => {
-    const t = useTranslations(SECTION_KEYS.loginPage);
+    const t = useTranslations(TRANSLATION_SECTION_KEYS.loginPage);
     const { login } = useAuth();
 
     const form = useForm<LoginFormValues>({
@@ -33,39 +32,43 @@ export const LoginForm = ({ setError }: Props) => {
         try {
             await login(data);
         } catch (err: unknown) {
-            if (axios.isAxiosError<ApiErrorResponse>(err)) {
-                setError(
-                    err.response?.data?.message?.message || t('loginFailed'),
-                );
-            } else {
-                setError(t('unexpectedError'));
+            try {
+                handleApiError(err, t('loginFailed'));
+            } catch (apiError) {
+                if (apiError instanceof ApiError) {
+                    setError(apiError.message);
+                } else {
+                    setError(t('unexpectedError'));
+                }
             }
         }
     };
 
     return (
-        <AuthForm<LoginFormValues>
+        <BasicForm<LoginFormValues>
             form={form}
-            onSubmit={onSubmit}
+            onSubmit={(data) => void onSubmit(data)}
             submitLabel={t('signIn')}
             submittingLabel={t('signingIn')}
         >
-            <AuthInputField<LoginFormValues>
+            <BasicInputField<LoginFormValues>
                 name="email"
                 label={t('email')}
+                required
                 placeholder="user@example.com"
                 autoComplete="email"
                 control={form.control}
             />
 
-            <AuthInputField<LoginFormValues>
+            <BasicInputField<LoginFormValues>
                 name="password"
                 label={t('password')}
+                required
                 type="password"
                 placeholder="••••••••"
                 autoComplete="current-password"
                 control={form.control}
             />
-        </AuthForm>
+        </BasicForm>
     );
 };

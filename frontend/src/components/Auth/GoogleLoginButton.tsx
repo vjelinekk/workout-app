@@ -3,10 +3,10 @@ import { Button } from '../ui/button';
 import { GoogleIcon } from '../GoogleIcon/GoogleIcon';
 import { useTranslations } from 'next-intl';
 import { Spinner } from '../ui/icons/spinner';
-import { SECTION_KEYS } from '@/constants/locale';
+import { TRANSLATION_SECTION_KEYS } from '@/constants/locale';
 
 export const GoogleLoginButton = () => {
-    const t = useTranslations(SECTION_KEYS.loginPage);
+    const t = useTranslations(TRANSLATION_SECTION_KEYS.loginPage);
     const { loginWithGoogle, isGoogleLoading } = useAuth();
 
     const handleGoogleLogin = () => {

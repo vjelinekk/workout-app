@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ExerciseRepository } from '../repositories/exercise.repository';
 import { ExerciseCreateDto } from '../dtos/exercise/exercise-create.dto';
 import { ExerciseEntity } from '../entities/exercise.entity';
@@ -8,6 +8,7 @@ import { ExerciseUpdateDto } from '../dtos/exercise/exercise-update.dto';
 import { DeepPartial } from 'typeorm';
 import { PublicAuthorizableCrudService } from 'src/common/services/public-authorizable-crud.service';
 import { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
+import { RoleEnum } from 'src/modules/user/enums/role.enum';
 
 @Injectable()
 export class ExerciseService extends PublicAuthorizableCrudService<
@@ -32,6 +33,7 @@ export class ExerciseService extends PublicAuthorizableCrudService<
             bodyPart: dto.body_part,
             equipment: dto.equipment,
             description: dto.description,
+            categoryId: dto.category_id,
             imageUrl: dto.image_url,
             isPublic: dto.is_public,
             isApproved: dto.is_approved,
@@ -93,8 +95,9 @@ export class ExerciseService extends PublicAuthorizableCrudService<
         dto: ExerciseCreateDto,
         user: JwtAuthenticatedUser,
     ): void {
-        void dto;
-        void user;
+        if (dto.is_approved && !user.roles.includes(RoleEnum.ADMIN)) {
+            throw new UnauthorizedException('Only admins can create approved exercises.');
+        }
     }
 
     protected beforeUpdate(

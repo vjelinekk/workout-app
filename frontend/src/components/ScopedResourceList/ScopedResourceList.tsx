@@ -4,7 +4,7 @@ import { ApiErrorResponse } from '@/types/api';
 import { Button } from '../ui/button';
 import { ScopedResourceListCard } from './ScopedResourceListCard';
 import { useTranslations } from 'next-intl';
-import { SECTION_KEYS } from '@/constants/locale';
+import { TRANSLATION_SECTION_KEYS } from '@/constants/locale';
 
 interface Props<T extends { id: number; name: string }> {
     title: string;
@@ -20,6 +20,7 @@ interface Props<T extends { id: number; name: string }> {
         errorPublic: ApiErrorResponse | null;
     };
     handleCreate: () => void;
+    handleDelete: (id: number) => void;
 }
 
 export const ScopedResourceList = <T extends { id: number; name: string }>({
@@ -28,8 +29,9 @@ export const ScopedResourceList = <T extends { id: number; name: string }>({
     privateInfo: { privateEntities, isLoadingPrivate, errorPrivate },
     publicInfo: { publicEntities, isLoadingPublic, errorPublic },
     handleCreate,
+    handleDelete,
 }: Props<T>) => {
-    const t = useTranslations(SECTION_KEYS.scopedResourceList);
+    const t = useTranslations(TRANSLATION_SECTION_KEYS.scopedResourceList);
 
     return (
         <div className="w-full max-w-4xl mx-auto space-y-6">
@@ -51,6 +53,8 @@ export const ScopedResourceList = <T extends { id: number; name: string }>({
                 emptyMessage={t('emptyPrivateMessage', {
                     resource: title.toLowerCase(),
                 })}
+                addDeleteButton
+                handleDelete={handleDelete}
             />
 
             <ScopedResourceListCard<T>

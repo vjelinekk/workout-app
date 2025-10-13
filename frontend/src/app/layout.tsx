@@ -3,6 +3,7 @@ import './globals.css';
 import Providers from './providers';
 import { TopBar } from '@/components/TopBar/TopBar';
 import { getMessages } from 'next-intl/server';
+import { ErrorBoundaryWrapper } from '@/components/ErrorBoundary/ErrorBoundaryWrapper';
 
 export default async function RootLayout({
     children,
@@ -16,11 +17,13 @@ export default async function RootLayout({
         <html lang={locale} suppressHydrationWarning>
             <body className="bg-background text-foreground">
                 <Providers locale={locale} messages={messages}>
-                    {/* Top bar */}
-                    <TopBar />
+                    <ErrorBoundaryWrapper>
+                        {/* Top bar */}
+                        <TopBar />
 
-                    {/* Page content */}
-                    <main className="pt-8 px-4">{children}</main>
+                        {/* Page content */}
+                        <main className="pt-8 px-4">{children}</main>
+                    </ErrorBoundaryWrapper>
                 </Providers>
             </body>
         </html>

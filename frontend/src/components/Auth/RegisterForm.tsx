@@ -1,8 +1,8 @@
 import { RegisterFormValues, registerSchema } from '@/schemas/register';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { AuthInputField } from './AuthInputField';
-import { AuthForm } from './AuthForm';
+import { BasicInputField } from '../BasicForm/BasicInputField';
+import { BasicForm } from '../BasicForm/BasicForm';
 import { Dispatch, SetStateAction } from 'react';
 
 interface Props {
@@ -24,19 +24,19 @@ export const RegisterForm = ({ setError }: Props) => {
 
     const onSubmit = (data: RegisterFormValues): Promise<void> => {
         // TODO: implement registration
+        void data;
         setError(''); // Clear previous errors
-        console.log(data);
         return Promise.resolve();
     };
 
     return (
-        <AuthForm<RegisterFormValues>
+        <BasicForm<RegisterFormValues>
             form={form}
-            onSubmit={onSubmit}
+            onSubmit={(data) => void onSubmit(data)}
             submitLabel="Register"
             submittingLabel="Registering..."
         >
-            <AuthInputField<RegisterFormValues>
+            <BasicInputField<RegisterFormValues>
                 name="email"
                 label="Email"
                 placeholder="user@example.com"
@@ -45,7 +45,7 @@ export const RegisterForm = ({ setError }: Props) => {
                 type="email"
             />
 
-            <AuthInputField<RegisterFormValues>
+            <BasicInputField<RegisterFormValues>
                 name="firstName"
                 label="First Name"
                 placeholder="John"
@@ -53,7 +53,7 @@ export const RegisterForm = ({ setError }: Props) => {
                 control={form.control}
             />
 
-            <AuthInputField<RegisterFormValues>
+            <BasicInputField<RegisterFormValues>
                 name="lastName"
                 label="Last Name"
                 placeholder="Doe"
@@ -61,7 +61,7 @@ export const RegisterForm = ({ setError }: Props) => {
                 control={form.control}
             />
 
-            <AuthInputField<RegisterFormValues>
+            <BasicInputField<RegisterFormValues>
                 name="nickName"
                 label="Nickname"
                 placeholder="Johnny"
@@ -69,7 +69,7 @@ export const RegisterForm = ({ setError }: Props) => {
                 control={form.control}
             />
 
-            <AuthInputField<RegisterFormValues>
+            <BasicInputField<RegisterFormValues>
                 name="password"
                 label="Password"
                 placeholder="********"
@@ -78,7 +78,7 @@ export const RegisterForm = ({ setError }: Props) => {
                 type="password"
             />
 
-            <AuthInputField<RegisterFormValues>
+            <BasicInputField<RegisterFormValues>
                 name="confirmPassword"
                 label="Confirm Password"
                 placeholder="********"
@@ -86,6 +86,6 @@ export const RegisterForm = ({ setError }: Props) => {
                 control={form.control}
                 type="password"
             />
-        </AuthForm>
+        </BasicForm>
     );
 };

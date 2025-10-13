@@ -4,10 +4,13 @@ export const AVAILABLE_LOCALES: { code: string; label: string }[] = [
 	{ code: "cs", label: "CS" },
 ];
 
-export const SECTION_KEYS = {
+export const TRANSLATION_SECTION_KEYS = {
+	common: "Common",
+	errorBoundary: "ErrorBoundary",
 	loginPage: "LoginPage",
 	topBar: "TopBar",
 	dashboardPage: "DashboardPage",
 	exercisesPage: "ExercisesPage",
+	exerciseForm: "ExerciseForm",
 	scopedResourceList: "ScopedResourceList",
 }

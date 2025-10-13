@@ -6,6 +6,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { useRouter } from 'next/navigation';
 import { LanguageSwitcher } from '../LanguageSwitcher/LanguageSwitcher';
 import { useTranslations } from 'next-intl';
+import Link from 'next/dist/client/link';
+import { HouseIcon } from 'lucide-react';
 
 export function TopBar() {
     const t = useTranslations('TopBar');
@@ -18,14 +20,24 @@ export function TopBar() {
     };
 
     return (
-        <header className="flex justify-end items-center gap-2 p-4 border-b">
-            <LanguageSwitcher />
-            <DarkModeToggle />
-            {user && (
-                <Button variant="outline" size="sm" onClick={handleLogout}>
-                    {t('logout')}
-                </Button>
-            )}
+        <header className="flex justify-between items-center p-4 border-b">
+            {/* LEFT SIDE */}
+            <div>
+                <Link href="/dashboard">
+                    <HouseIcon className="inline mr-2" />
+                </Link>
+            </div>
+
+            {/* RIGHT SIDE */}
+            <div className="flex items-center gap-2">
+                <LanguageSwitcher />
+                <DarkModeToggle />
+                {user && (
+                    <Button variant="outline" size="sm" onClick={handleLogout}>
+                        {t('logout')}
+                    </Button>
+                )}
+            </div>
         </header>
     );
 }

@@ -1,4 +1,14 @@
 {
+    "Common": {
+        "optional": "optional",
+        "doYouWantToDelete": "Do you really want to delete {name}?",
+        "deleteDescription": "This action cannot be undone."
+    },
+    "ErrorBoundary": {
+        "title": "Oops! Something went wrong",
+        "description": "An unexpected error occurred",
+        "tryAgain": "Try again"
+    },
     "LoginPage": {
         "title": "Welcome back",
         "description": "Sign in to your account to continue.",
@@ -29,6 +39,64 @@
     "ExercisesPage": {
         "title": "Exercises",
         "createButton": "Create Exercise"
+    },
+    "ExerciseForm": {
+        "create": "Create Exercise",
+        "update": "Update Exercise",
+        "creating": "Creating...",
+        "name": "Name",
+        "bodyPart": "Body part",
+        "equipment": "Equipment",
+        "description": "Description",
+        "category": "Category",
+        "imageFile": "Image File",
+        "noEquipment": "None",
+        "isPublic": "Mark as public",
+        "isApproved": "Mark as approved",
+        "placeholder": {
+            "name": "Push Up",
+            "bodyPart": "Select body part",
+            "equipment": "None",
+            "description": "A basic upper body strength exercise",
+            "category": "Select category"
+        },
+        "validation": {
+            "nameRequired": "Name is required",
+            "bodyPartRequired": "Body part is required",
+            "equipmentRequired": "Equipment is required",
+            "descriptionRequired": "Description is required",
+            "categoryIdPositive": "Category id must be positive",
+            "imageUrl": "Image must be a valid URL"
+        },
+        "bodyParts": {
+            "chest": "Chest",
+            "traps": "Traps",
+            "back": "Back",
+            "shoulders": "Shoulders",
+            "biceps": "Biceps",
+            "triceps": "Triceps",
+            "forearms": "Forearms",
+            "quadriceps": "Quadriceps",
+            "hamstrings": "Hamstrings",
+            "glutes": "Glutes",
+            "calves": "Calves",
+            "abs": "Abs",
+            "core": "Core",
+            "full body": "Full body"
+        },
+        "categories": {
+            "strength": "Strength",
+            "cardio": "Cardio",
+            "flexibility": "Flexibility",
+            "balance": "Balance"
+        },
+        "unexpectedError": "An unexpected error occurred. Please try again.",
+        "unexpectedCategoryError": "An unexpected error occurred while loading categories. Please try again.",
+        "retryLoadingCategories": "Retry loading categories",
+        "creationFailed": "Exercise creation failed. Please try again.",
+        "creationSuccess": "Exercise created successfully!",
+        "updateSuccess": "Exercise updated successfully!",
+        "updateFailed": "Exercise update failed. Please try again."
     },
     "ScopedResourceList": {
         "titlePrivate": "My {resource}",

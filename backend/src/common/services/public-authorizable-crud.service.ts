@@ -58,7 +58,7 @@ export abstract class PublicAuthorizableCrudService<
         entity: PublicAuthorizableEntity,
         user: JwtAuthenticatedUser,
     ): void {
-        if (entity.isPublic && entity.isApproved) {
+        if (entity.isPublic && entity.isApproved && !this.isAdmin(user.roles)) {
             throw new ForbiddenException(
                 `Cannot access ${this.getEntityName()} that is publicly visible to other users`,
             );

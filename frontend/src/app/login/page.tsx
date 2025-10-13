@@ -10,10 +10,10 @@ import { GoogleLoginButton } from '@/components/Auth/GoogleLoginButton';
 import { AuthLayout } from '@/components/Auth/AuthLayout';
 import { Button } from '@/components/ui/button';
 import { useTranslations } from 'next-intl';
-import { SECTION_KEYS } from '@/constants/locale';
+import { TRANSLATION_SECTION_KEYS } from '@/constants/locale';
 
 export default function LoginPage() {
-    const t = useTranslations(SECTION_KEYS.loginPage);
+    const t = useTranslations(TRANSLATION_SECTION_KEYS.loginPage);
     const { isAuthenticated } = useAuth();
     const router = useRouter();
     const [error, setError] = useState('');

@@ -20,8 +20,7 @@ interface AuthContextType extends AuthState {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
-    const [user, setUser] = useState<User | null>(null);
-    const [token, setToken] = useState<string | null>(null);
+    const [authData, setAuthData] = useState<{ user: User | null; token: string | null }>({ user: null, token: null });
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isGoogleLoading, setIsGoogleLoading] = useState<boolean>(false);
     const router = useRouter();
@@ -31,8 +30,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         const storedUser = storage.getUser();
 
         if (storedToken && storedUser) {
-            setToken(storedToken);
-            setUser(storedUser);
+            setAuthData({ user: storedUser, token: storedToken });
             api.defaults.headers.common[AUTH_HEADER_KEY] = `Bearer ${storedToken}`;
         }
 
@@ -41,8 +39,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
 
     const handleLogout = useCallback(() => {
-        setUser(null);
-        setToken(null);
+        setAuthData({ user: null, token: null });
         logout();
         router.push('/login');
     }, [router]);
@@ -70,8 +67,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             storage.setToken(token);
             storage.setUser(user);
 
-            setToken(token);
-            setUser(user);
+            setAuthData({ user, token });
             api.defaults.headers.common[AUTH_HEADER_KEY] = `Bearer ${token}`;
             router.push('/dashboard');
         } catch (error) {
@@ -93,8 +89,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         storage.setToken(token);
         storage.setUser(user);
 
-        setToken(token);
-        setUser(user);
+        setAuthData({ user, token });
         api.defaults.headers.common[AUTH_HEADER_KEY] = `Bearer ${token}`;
         setIsGoogleLoading(false);
         router.push('/dashboard');
@@ -112,7 +107,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         // Open popup window
         const backendUrl = process.env.NEXT_PUBLIC_API_URL;
         if (!backendUrl) {
-            console.error('Backend URL is not defined');
             setIsGoogleLoading(false);
             return;
         }
@@ -124,7 +118,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         );
 
         if (!popup) {
-            console.error('Failed to open popup window');
             setIsGoogleLoading(false);
             return;
         }
@@ -144,7 +137,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 window.removeEventListener('message', handleMessage);
                 // Don't close popup on error - let it show the error message
                 setIsGoogleLoading(false);
-                console.error('Google login error:', event.data.error);
             }
         };
 
@@ -158,12 +150,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 setIsGoogleLoading(false);
             }
         }, 500);
+
+        return () => {
+            window.removeEventListener('message', handleMessage);
+            clearInterval(popupCheckInterval);
+        }
     }, [handleGoogleLoginSuccess]);
 
     const value: AuthContextType = {
-        user,
-        token,
-        isAuthenticated: !!user && !!token,
+        user: authData.user,
+        token: authData.token,
+        isAuthenticated: !!authData.user && !!authData.token,
         isLoading,
         isGoogleLoading,
         login: handleLogin,

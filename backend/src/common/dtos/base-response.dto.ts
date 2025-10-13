@@ -10,14 +10,14 @@ export abstract class BaseResponseDto {
     id: number;
 
     @ApiProperty({
-        example: 'true',
+        example: '2024-01-01T00:00:00.000Z',
         description: 'When was the exercise created',
     })
     @IsDate()
     created_at: Date;
 
     @ApiProperty({
-        example: 'true',
+        example: '2024-01-01T00:00:00.000Z',
         description: 'When was the exercise last updated',
     })
     @IsDate()

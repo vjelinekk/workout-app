@@ -10,10 +10,10 @@ import {
 } from '@/components/ui/card';
 import { Dumbbell, Calendar, Layout, CheckSquare } from 'lucide-react';
 import { useTranslations } from 'next-intl';
-import { SECTION_KEYS } from '@/constants/locale';
+import { TRANSLATION_SECTION_KEYS } from '@/constants/locale';
 
 export const Dashboard = () => {
-    const t = useTranslations(SECTION_KEYS.dashboardPage);
+    const t = useTranslations(TRANSLATION_SECTION_KEYS.dashboardPage);
 
     const tiles = [
         {

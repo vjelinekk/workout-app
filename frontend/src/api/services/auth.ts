@@ -3,6 +3,9 @@ import { api } from "../axios";
 import { AUTH_ENDPOINTS } from "../endpoints/auth";
 import { storage } from "@/utils/storage";
 import { AUTH_HEADER_KEY } from "@/constants/api";
+import axios from "axios";
+import { ApiErrorResponse } from "@/types/api";
+import { handleApiError } from "@/utils/apiError";
 
 /**
  * Transforms the API login response to a User object.
@@ -28,11 +31,15 @@ const transformLoginResponseToUser = (response: LoginResponse) => ({
 export const login = async (
     credentials: LoginCredentials
 ): Promise<LoginResult> => {
-    const response = await api.post<LoginResponse>(AUTH_ENDPOINTS.login, credentials);
+    try {
+        const response = await api.post<LoginResponse>(AUTH_ENDPOINTS.login, credentials);
 
-    return {
-        token: response.data.access_token,
-        user: transformLoginResponseToUser(response.data),
+        return {
+            token: response.data.access_token,
+            user: transformLoginResponseToUser(response.data),
+        }
+    } catch (error: unknown) {
+        handleApiError(error, 'Login failed');
     }
 }
 

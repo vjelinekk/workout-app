@@ -2,16 +2,17 @@
 
 import React from 'react';
 import { ScopedResourceList } from '@/components/ScopedResourceList/ScopedResourceList';
-import { useExercises } from '@/hooks/useExercises';
+import { useDeleteExercise, useExercises } from '@/hooks/useExercises';
 import { Exercise } from '@/types/exercise';
 import { Scope } from '@/types/scope';
 import { useTranslations } from 'next-intl';
-import { SECTION_KEYS } from '@/constants/locale';
+import { TRANSLATION_SECTION_KEYS } from '@/constants/locale';
 import { useRouter } from 'next/navigation';
 
 export const Exercises = () => {
-    const t = useTranslations(SECTION_KEYS.exercisesPage);
+    const t = useTranslations(TRANSLATION_SECTION_KEYS.exercisesPage);
     const router = useRouter();
+    const { mutate: deleteExercise } = useDeleteExercise();
 
     const {
         data: privateExercises,
@@ -26,6 +27,10 @@ export const Exercises = () => {
 
     const handleCreate = () => {
         router.push('/exercises/create');
+    };
+
+    const handleDelete = (id: number) => {
+        deleteExercise({ id });
     };
 
     return (
@@ -43,6 +48,7 @@ export const Exercises = () => {
                 isLoadingPublic,
                 errorPublic: publicError,
             }}
+            handleDelete={handleDelete}
         />
     );
 };

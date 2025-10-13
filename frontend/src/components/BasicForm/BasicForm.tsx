@@ -4,18 +4,20 @@ import { Form } from '../ui/form';
 
 interface Props<T extends FieldValues> {
     form: UseFormReturn<T>;
-    onSubmit: (data: T) => Promise<void>;
+    onSubmit: (data: T) => void;
     children: React.ReactNode;
     submitLabel: string;
     submittingLabel: string;
+    isViewMode?: boolean;
 }
 
-export const AuthForm = <T extends FieldValues>({
+export const BasicForm = <T extends FieldValues>({
     form,
     onSubmit,
     children,
     submitLabel,
     submittingLabel,
+    isViewMode,
 }: Props<T>) => {
     return (
         <Form {...form}>
@@ -27,15 +29,17 @@ export const AuthForm = <T extends FieldValues>({
             >
                 {children}
 
-                <Button
-                    type="submit"
-                    className="w-full"
-                    disabled={form.formState.isSubmitting}
-                >
-                    {form.formState.isSubmitting
-                        ? submittingLabel
-                        : submitLabel}
-                </Button>
+                {isViewMode ? null : (
+                    <Button
+                        type="submit"
+                        className="w-full"
+                        disabled={form.formState.isSubmitting}
+                    >
+                        {form.formState.isSubmitting
+                            ? submittingLabel
+                            : submitLabel}
+                    </Button>
+                )}
             </form>
         </Form>
     );

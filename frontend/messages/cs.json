@@ -1,64 +1,72 @@
 {
     "Common": {
-        "optional": "volitelné"
+        "optional": "volitelné",
+        "doYouWantToDelete": "Opravdu chcete smazat {name}?",
+        "deleteDescription": "Tuto akci nelze vrátit zpět."
+    },
+    "ErrorBoundary": {
+        "title": "Jejda! Něco se pokazilo",
+        "description": "Došlo k neočekávané chybě",
+        "tryAgain": "Zkuste znovu"
     },
     "LoginPage": {
         "title": "Vítejte zpět",
         "description": "Přihlaste se ke svému účtu pro pokračování.",
-        "email": "E-mail",
+        "email": "Email",
         "password": "Heslo",
         "signIn": "Přihlásit se",
-        "signingIn": "Přihlašování...",
+        "signingIn": "Přihlašování…",
         "noAccount": "Nemáte účet?",
-        "register": "Zaregistrovat se",
+        "register": "Registrovat se",
         "continueWithGoogle": "Nebo pokračujte přes Google",
-        "signInWithGoogle": "Přihlásit se pomocí Google",
-        "loginFailed": "Přihlášení se nezdařilo. Zkontrolujte své přihlašovací údaje.",
+        "signInWithGoogle": "Přihlásit se přes Google",
+        "loginFailed": "Přihlášení selhalo. Zkontrolujte své údaje.",
         "unexpectedError": "Došlo k neočekávané chybě. Zkuste to prosím znovu."
     },
-     "TopBar": {
+    "TopBar": {
         "logout": "Odhlásit se"
     },
     "DashboardPage": {
         "exercises": "Cviky",
         "exercisesSubtitle": "Prohlížejte a spravujte své cviky.",
-        "workoutSessionPlans": "Tréninkové plány",
-        "workoutSessionPlansSubtitle": "Vytvářejte a upravujte své tréninkové plány.",
+        "workoutSessionPlans": "Plány tréninku",
+        "workoutSessionPlansSubtitle": "Vytvářejte a upravujte plány tréninku.",
         "trainingSplits": "Tréninkové splity",
         "trainingSplitsSubtitle": "Efektivně organizujte své tréninkové splity.",
-        "sessionLogging": "Záznam tréninků",
-        "sessionLoggingSubtitle": "Zaznamenávejte své tréninky a sledujte pokrok."
+        "sessionLogging": "Záznam tréninku",
+        "sessionLoggingSubtitle": "Zaznamenávejte své tréninkové jednotky a sledujte pokrok."
     },
     "ExercisesPage": {
         "title": "Cviky",
         "createButton": "Vytvořit cvik"
     },
     "ExerciseForm": {
-        "createExercise": "Vytvořit cvik",
-        "creating": "Vytvářím...",
+        "create": "Vytvořit cvik",
+        "update": "Upravit cvik",
+        "creating": "Vytváření…",
         "name": "Název",
-        "bodyPart": "Část těla",
+        "bodyPart": "Svalová skupina",
         "equipment": "Vybavení",
         "description": "Popis",
         "category": "Kategorie",
-        "imageFile": "Soubor obrázku",
-        "noEquipment": "Bez vybavení",
+        "imageFile": "Obrázek",
+        "noEquipment": "Žádné",
         "isPublic": "Označit jako veřejné",
         "isApproved": "Označit jako schválené",
         "placeholder": {
             "name": "Kliky",
-            "bodyPart": "Vyberte část těla",
-            "equipment": "Bez vybavení",
-            "description": "Základní cvik na horní část těla",
+            "bodyPart": "Vyberte svalovou skupinu",
+            "equipment": "Žádné",
+            "description": "Základní cvičení pro horní část těla",
             "category": "Vyberte kategorii"
         },
         "validation": {
             "nameRequired": "Název je povinný",
-            "bodyPartRequired": "Část těla je povinná",
+            "bodyPartRequired": "Svalová skupina je povinná",
             "equipmentRequired": "Vybavení je povinné",
             "descriptionRequired": "Popis je povinný",
-            "categoryIdPositive": "Kategorie musí být kladné číslo",
-            "imageUrl": "URL obrázku musí být platná adresa"
+            "categoryIdPositive": "ID kategorie musí být kladné",
+            "imageUrl": "Obrázek musí být platná URL"
         },
         "bodyParts": {
             "chest": "Hrudník",
@@ -72,11 +80,9 @@
             "hamstrings": "Hamstringy",
             "glutes": "Hýždě",
             "calves": "Lýtka",
-            "abs": "Břišní svaly",
+            "abs": "Břicho",
             "core": "Střed těla",
-            "full body": "Celé tělo",
-            "legs": "Nohy",
-            "arms": "Paže"
+            "full body": "Celé tělo"
         },
         "categories": {
             "strength": "Síla",
@@ -84,57 +90,118 @@
             "flexibility": "Flexibilita",
             "balance": "Rovnováha"
         },
-        "creationFailed": "Vytvoření cviku se nezdařilo. Zkuste to prosím znovu.",
-        "creationSuccess": "Cvik byl úspěšně vytvořen!",
         "unexpectedError": "Došlo k neočekávané chybě. Zkuste to prosím znovu.",
-        "unexpectedCategoryError": "Došlo k neočekávané chybě při načítání kategorií.",
-        "retryLoadingCategories": "Zkuste znovu načíst kategorie"
+        "unexpectedCategoryError": "Při načítání kategorií došlo k neočekávané chybě. Zkuste to prosím znovu.",
+        "retryLoadingCategories": "Znovu načíst kategorie",
+        "creationFailed": "Vytvoření cviku selhalo. Zkuste to prosím znovu.",
+        "creationSuccess": "Cvik byl úspěšně vytvořen!",
+        "updateSuccess": "Cvik byl úspěšně aktualizován!",
+        "updateFailed": "Aktualizace cviku selhala. Zkuste to prosím znovu."
     },
     "ScopedResourceList": {
         "titlePrivate": "Moje {resource}",
         "errorLoadingPrivate": "Chyba při načítání soukromých {resource}.",
-        "emptyPrivateMessage": "Ještě nemáte žádné soukromé {resource}.",
+        "emptyPrivateMessage": "Zatím nemáte žádné soukromé {resource}.",
         "titlePublic": "Veřejné {resource}",
         "errorLoadingPublic": "Chyba při načítání veřejných {resource}.",
-        "emptyPublicMessage": "Žádné veřejné {resource} nejsou k dispozici."
+        "emptyPublicMessage": "Žádné veřejné {resource} dostupné."
     },
     "WorkoutSessionPlansPage": {
-        "title": "Tréninkové plány",
+        "title": "Plány tréninku",
         "createButton": "Vytvořit plán"
     },
     "WorkoutSessionPlanForm": {
-        "create": "Vytvořit tréninkový plán",
-        "update": "Upravit tréninkový plán",
-        "creating": "Vytváření...",
+        "create": "Vytvořit plán tréninku",
+        "update": "Upravit plán tréninku",
+        "creating": "Vytváření…",
         "name": "Název",
         "description": "Popis",
         "isPublic": "Označit jako veřejné",
         "isApproved": "Označit jako schválené",
         "placeholder": {
-            "name": "Celotělový trénink",
-            "description": "Komplexní celotělový tréninkový plán"
+            "name": "Full Body Blast",
+            "description": "Komplexní trénink pro celé tělo",
+            "exercise": "Vyberte cvik"
         },
         "validation": {
             "nameRequired": "Název je povinný",
-            "descriptionRequired": "Popis je povinný"
+            "descriptionRequired": "Popis je povinný",
+            "oneExerciseValidation": "Je vyžadován alespoň jeden cvik",
+            "oneSetValidation": "Pro každý cvik je vyžadována alespoň jedna série",
+            "exerciseRequired": "Vyberte cvik",
+            "oneExerciseRequired": "Je vyžadován alespoň jeden cvik",
+            "setsRequired": "Počet sérií je povinný",
+            "oneSetRequired": "Je vyžadována alespoň jedna série",
+            "setsMinimum": "Je vyžadována alespoň 1 série",
+            "repsRequired": "Opakování jsou povinná pro všechny série",
+            "repsMinimum": "Je vyžadováno alespoň 1 opakování",
+            "youHaveToAddAtLeastOneExercise": "Je vyžadován alespoň jeden cvik",
+            "eachExerciseHasToHaveAtLeastOneSet": "Každý cvik musí mít alespoň jednu sérii"
         },
         "unexpectedError": "Došlo k neočekávané chybě. Zkuste to prosím znovu.",
-        "creationFailed": "Vytvoření tréninkového plánu selhalo. Zkuste to prosím znovu.",
-        "creationSuccess": "Tréninkový plán byl úspěšně vytvořen!",
-        "updateSuccess": "Tréninkový plán byl úspěšně upraven!",
-        "updateFailed": "Úprava tréninkového plánu selhala. Zkuste to prosím znovu.",
+        "creationFailed": "Vytvoření plánu tréninku selhalo. Zkuste to prosím znovu.",
+        "creationSuccess": "Plán tréninku byl úspěšně vytvořen!",
+        "updateSuccess": "Plán tréninku byl úspěšně aktualizován!",
+        "updateFailed": "Aktualizace plánu tréninku selhala. Zkuste to prosím znovu.",
         "exercises": "Cviky",
         "addExercise": "Přidat cvik",
         "selectExercise": "Vyberte cvik",
         "sets": "Série",
         "reps": "Opakování",
         "set": "Série",
-        "removeExercise": "Odebrat cvik",
-        "noExercisesAdded": "Ještě nebyly přidány žádné cviky. Klikněte na 'Přidat cvik' a začněte.",
-        "exerciseRequired": "Prosím vyberte cvik",
-        "setsRequired": "Počet sérií je povinný",
-        "setsMinimum": "Je vyžadována alespoň 1 série",
-        "repsRequired": "Opakování jsou povinná pro všechny série",
-        "repsMinimum": "Je vyžadováno alespoň 1 opakování"
+        "removeExercise": "Odstranit cvik",
+        "noExercisesAdded": "Zatím nebyl přidán žádný cvik. Klikněte na 'Přidat cvik' pro začátek.",
+        "exercise": "Cvik",
+        "addSet": "Přidat sérii"
+    },
+    "TrainingSplitsPage": {
+        "title": "Tréninkové splity",
+        "createButton": "Vytvořit tréninkový split"
+    },
+    "TrainingSplitsForm": {
+        "create": "Vytvořit tréninkový split",
+        "update": "Upravit tréninkový split",
+        "creating": "Vytváření…",
+        "name": "Název",
+        "description": "Popis",
+        "isPublic": "Označit jako veřejné",
+        "isApproved": "Označit jako schválené",
+        "placeholder": {
+            "name": "Upper/Lower Split",
+            "description": "Tréninkový split zaměřený na horní a dolní část těla"
+        },
+        "validation": {
+            "nameRequired": "Název je povinný",
+            "descriptionRequired": "Popis je povinný"
+        },
+        "days": {
+            "monday": "Pondělí",
+            "tuesday": "Úterý",
+            "wednesday": "Středa",
+            "thursday": "Čtvrtek",
+            "friday": "Pátek",
+            "saturday": "Sobota",
+            "sunday": "Neděle",
+            "mon": "Po",
+            "tue": "Út",
+            "wed": "St",
+            "thu": "Čt",
+            "fri": "Pá",
+            "sat": "So",
+            "sun": "Ne"
+        },
+        "restDay": "Den odpočinku",
+        "oneWorkout": "1 trénink",
+        "workouts": "tréninky",
+        "weeklySchedule": "Týdenní rozvrh",
+        "noWorkoutsScheduled": "Pro tento den nejsou naplánovány žádné tréninky",
+        "selectWorkoutPlan": "Vyberte plán tréninku",
+        "addWorkoutPlan": "Přidat tréninkový plán",
+        "totalWorkoutDays": "Celkový počet tréninkových dnů:",
+        "unexpectedError": "Došlo k neočekávané chybě. Zkuste to prosím znovu.",
+        "creationFailed": "Vytvoření tréninkového splitu selhalo. Zkuste to prosím znovu.",
+        "creationSuccess": "Tréninkový split byl úspěšně vytvořen!",
+        "updateSuccess": "Tréninkový split byl úspěšně aktualizován!",
+        "updateFailed": "Aktualizace tréninkového splitu selhala. Zkuste to prosím znovu."
     }
 }

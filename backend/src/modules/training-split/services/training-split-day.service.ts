@@ -173,4 +173,59 @@ export class TrainingSplitDayService extends ValidatedMappedCrudService<
 
         return entityFields;
     }
+
+    async createBulk(
+        createDtos: TrainingSplitDayCreateDto[],
+        user: JwtAuthenticatedUser,
+    ): Promise<void> {
+        const entities = createDtos.map((dto) => {
+            const entity = this.toEntity(dto);
+            entity.createdById = user.id;
+            return entity;
+        });
+
+        const result = await this.trainingSplitDayRepository.insert(entities);
+
+        if (result.identifiers.length !== createDtos.length) {
+            // TODO: exception
+        }
+    }
+
+    async updateBulk(
+        trainingSplitId: number,
+        createDtos: TrainingSplitDayCreateDto[],
+        user: JwtAuthenticatedUser,
+    ) {
+        const entities = createDtos.map((dto) => {
+            const entity = this.toEntity(dto);
+            entity.createdById = user.id;
+            return entity;
+        });
+
+        const deleteResult = await this.trainingSplitDayRepository.delete({
+            trainingSplitId,
+        });
+
+        if (!deleteResult.affected || deleteResult.affected === 0) {
+            // TODO: exception
+        }
+
+        const result = await this.trainingSplitDayRepository.insert(entities);
+
+        if (result.identifiers.length !== createDtos.length) {
+            // TODO: exception
+        }
+    }
+
+    async findAllByTrainingSplitIdActiveMapped(
+        trainingSplitId: number,
+    ): Promise<TrainingSplitDayResponseDto[]> {
+        const entities = await this.trainingSplitDayRepository.findActive({
+            where: {
+                trainingSplitId,
+            },
+        });
+
+        return entities.map((entity) => this.toResponseDto(entity));
+    }
 }

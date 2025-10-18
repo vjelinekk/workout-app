@@ -36,16 +36,4 @@ export const workoutSessionPlanSchema = (
     )).min(1, oneExerciseValidation),
 });
 
-export type WorkoutSessionPlanFormValues = {
-    name: string;
-    description: string;
-    is_public: boolean;
-    is_approved: boolean;
-    exercises: Array<{
-        id?: number;
-        exercise_id: number | undefined;
-        sets: Array<{
-            reps: number;
-        }>;
-    }>;
-};
+export type WorkoutSessionPlanFormValues = z.infer<ReturnType<typeof workoutSessionPlanSchema>>;

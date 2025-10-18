@@ -153,5 +153,55 @@
         "noExercisesAdded": "No exercises added yet. Click 'Add Exercise' to get started.",
         "exercise": "Exercise",
         "addSet": "Add Set"
+    },
+    "TrainingSplitsPage": {
+        "title": "Training Splits",
+        "createButton": "Create Training Split"
+    },
+    "TrainingSplitsForm": {
+        "create": "Create Training Split",
+        "update": "Update Training Split",
+        "creating": "Creating...",
+        "name": "Name",
+        "description": "Description",
+        "isPublic": "Mark as public",
+        "isApproved": "Mark as approved",
+        "placeholder": {
+            "name": "Upper/Lower Split",
+            "description": "A training split focusing on upper and lower body workouts"
+        },
+        "validation": {
+            "nameRequired": "Name is required",
+            "descriptionRequired": "Description is required"
+        },
+        "days": {
+            "monday": "Monday",
+            "tuesday": "Tuesday",
+            "wednesday": "Wednesday",
+            "thursday": "Thursday",
+            "friday": "Friday",
+            "saturday": "Saturday",
+            "sunday": "Sunday",
+            "mon": "Mon",
+            "tue": "Tue",
+            "wed": "Wed",
+            "thu": "Thu",
+            "fri": "Fri",
+            "sat": "Sat",
+            "sun": "Sun"
+        },
+        "restDay": "Rest day",
+        "oneWorkout": "1 workout",
+        "workouts": "workouts",
+        "weeklySchedule": "Weekly Schedule",
+        "noWorkoutsScheduled": "No workouts scheduled for this day",
+        "selectWorkoutPlan": "Select a workout plan",
+        "addWorkoutPlan": "Add Workout Session",
+        "totalWorkoutDays": "Total workout days:",
+        "unexpectedError": "An unexpected error occurred. Please try again.",
+        "creationFailed": "Training split creation failed. Please try again.",
+        "creationSuccess": "Training split created successfully!",
+        "updateSuccess": "Training split updated successfully!",
+        "updateFailed": "Training split update failed. Please try again."
     }
 }

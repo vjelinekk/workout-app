@@ -1,8 +1,6 @@
 import { createWorkoutSessionPlan, deleteWorkoutSessionPlan, fetchAllWorkoutSessionPlans, fetchWorkoutSessionPlanById, QUERY_KEY_WORKOUT_SESSION_PLAN, QUERY_KEY_WORKOUT_SESSION_PLANS, updateWorkoutSessionPlan } from "@/api/services/workoutSessionPlan"
-import { ExerciseFormValues } from "@/schemas/exercise"
 import { WorkoutSessionPlanFormValues } from "@/schemas/workoutSessionPlan"
 import { ApiErrorResponse } from "@/types/api"
-import { Exercise } from "@/types/exercise"
 import { Scope } from "@/types/scope"
 import { WorkoutSessionPlan } from "@/types/workoutSessionPlan"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"

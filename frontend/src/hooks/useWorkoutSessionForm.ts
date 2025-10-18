@@ -1,4 +1,3 @@
-
 import { TRANSLATION_SECTION_KEYS } from "@/constants/locale";
 import { WorkoutSessionPlanFormValues, workoutSessionPlanSchema } from "@/schemas/workoutSessionPlan";
 import { WorkoutSessionPlan } from "@/types/workoutSessionPlan";

@@ -8,6 +8,7 @@ import {
     Patch,
     Post,
     Put,
+    Query,
 } from '@nestjs/common';
 import {
     ApiBadRequestResponse,
@@ -17,6 +18,7 @@ import {
     ApiOkResponse,
     ApiOperation,
     ApiParam,
+    ApiQuery,
     ApiTags,
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -61,6 +63,28 @@ export class TrainingSplitDayController {
         );
     }
 
+    @Post('bulk')
+    @ApiOperation({ summary: 'Create training split days in bulk' })
+    @ApiBody({
+        type: [TrainingSplitDayCreateDto],
+        description: 'Array of training split day creation data',
+    })
+    @ApiOkResponse({
+        description: 'The training split days have been successfully created.',
+    })
+    @ApiUnauthorizedResponse({
+        description: 'Unauthorized',
+    })
+    @ApiBadRequestResponse({
+        description: 'Invalid input data',
+    })
+    async createBulk(
+        @Body() createDtos: TrainingSplitDayCreateDto[],
+        @JwtUser() user: JwtAuthenticatedUser,
+    ): Promise<void> {
+        await this.trainingSplitDayService.createBulk(createDtos, user);
+    }
+
     @Patch(':id')
     @ApiOperation({ summary: 'Patch a training split day' })
     @ApiParam({
@@ -92,6 +116,39 @@ export class TrainingSplitDayController {
         return await this.trainingSplitDayService.patchValidated(
             id,
             patchDto,
+            user,
+        );
+    }
+
+    @Put('bulk')
+    @ApiOperation({ summary: 'Update training split days in bulk' })
+    @ApiQuery({
+        name: 'training_split_id',
+        required: true,
+        type: Number,
+        description: 'The ID of the training split to which the days belong',
+    })
+    @ApiBody({
+        type: [TrainingSplitDayCreateDto],
+        description: 'Array of training split day creation data',
+    })
+    @ApiOkResponse({
+        description: 'The training split days have been successfully updated.',
+    })
+    @ApiUnauthorizedResponse({
+        description: 'Unauthorized',
+    })
+    @ApiBadRequestResponse({
+        description: 'Invalid input data',
+    })
+    async updateBulk(
+        @Body() createDtos: TrainingSplitDayCreateDto[],
+        @Query('training_split_id', ParseIntPipe) trainingSplitId: number,
+        @JwtUser() user: JwtAuthenticatedUser,
+    ): Promise<void> {
+        await this.trainingSplitDayService.updateBulk(
+            trainingSplitId,
+            createDtos,
             user,
         );
     }
@@ -154,6 +211,39 @@ export class TrainingSplitDayController {
         return await this.trainingSplitDayService.deleteValidated(id, user);
     }
 
+    @Get()
+    @ApiOperation({ summary: 'Get all training split days' })
+    @ApiQuery({
+        name: 'trainingSplitId',
+        required: false,
+        type: Number,
+        description: 'Filter by training split ID',
+    })
+    @ApiOkResponse({
+        description: 'List of all training split days',
+        type: [TrainingSplitDayResponseDto],
+    })
+    @ApiNotFoundResponse({
+        description: 'No training split days found',
+    })
+    @ApiUnauthorizedResponse({
+        description: 'Unauthorized',
+    })
+    @ApiBadRequestResponse({
+        description: 'Invalid request',
+    })
+    async getAll(
+        @Query('training_split_id', ParseIntPipe) trainingSplitId?: number,
+    ): Promise<TrainingSplitDayResponseDto[]> {
+        if (trainingSplitId) {
+            return await this.trainingSplitDayService.findAllByTrainingSplitIdActiveMapped(
+                trainingSplitId,
+            );
+        }
+
+        return await this.trainingSplitDayService.findAllActiveMapped();
+    }
+
     @Get(':id')
     @ApiOperation({ summary: 'Get training split day by ID' })
     @ApiOkResponse({
@@ -177,25 +267,6 @@ export class TrainingSplitDayController {
             id,
             user,
         );
-    }
-
-    @Get()
-    @ApiOperation({ summary: 'Get all training split days' })
-    @ApiOkResponse({
-        description: 'List of all training split days',
-        type: [TrainingSplitDayResponseDto],
-    })
-    @ApiNotFoundResponse({
-        description: 'No training split days found',
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Unauthorized',
-    })
-    @ApiBadRequestResponse({
-        description: 'Invalid request',
-    })
-    async getAll(): Promise<TrainingSplitDayResponseDto[]> {
-        return await this.trainingSplitDayService.findAllActiveMapped();
     }
 
     @Post('/:id/restore')

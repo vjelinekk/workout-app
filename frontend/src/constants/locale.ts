@@ -15,4 +15,6 @@ export const TRANSLATION_SECTION_KEYS = {
 	scopedResourceList: "ScopedResourceList",
 	workoutSessionPlansPage: "WorkoutSessionPlansPage",
 	workoutSessionPlanForm: "WorkoutSessionPlanForm",
+	trainingSplitsPage: "TrainingSplitsPage",
+	trainingSplitsForm: "TrainingSplitsForm",
 }

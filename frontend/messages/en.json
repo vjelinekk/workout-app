@@ -105,5 +105,53 @@
         "titlePublic": "Public {resource}",
         "errorLoadingPublic": "Error loading public {resource}.",
         "emptyPublicMessage": "No public {resource} resources available."
+    },
+    "WorkoutSessionPlansPage": {
+        "title": "Workout Session Plans",
+        "createButton": "Create Plan"
+    },
+    "WorkoutSessionPlanForm": {
+        "create": "Create Workout Session Plan",
+        "update": "Update Workout Session Plan",
+        "creating": "Creating...",
+        "name": "Name",
+        "description": "Description",
+        "isPublic": "Mark as public",
+        "isApproved": "Mark as approved",
+        "placeholder": {
+            "name": "Full Body Blast",
+            "description": "A comprehensive full-body workout plan",
+            "exercise": "Select exercise"
+        },
+        "validation": {
+            "nameRequired": "Name is required",
+            "descriptionRequired": "Description is required",
+            "oneExerciseValidation": "At least one exercise is required",
+            "oneSetValidation": "At least one set is required for each exercise",
+            "exerciseRequired": "Please select an exercise",
+            "oneExerciseRequired": "At least one exercise is required",
+            "setsRequired": "Number of sets is required",
+            "oneSetRequired": "At least one set is required",
+            "setsMinimum": "At least 1 set is required",
+            "repsRequired": "Reps are required for all sets",
+            "repsMinimum": "At least 1 rep is required",
+            "youHaveToAddAtLeastOneExercise": "At least one exercise required",
+            "eachExerciseHasToHaveAtLeastOneSet": "At least one set required"
+        },
+        "unexpectedError": "An unexpected error occurred. Please try again.",
+        "creationFailed": "Workout session plan creation failed. Please try again.",
+        "creationSuccess": "Workout session plan created successfully!",
+        "updateSuccess": "Workout session plan updated successfully!",
+        "updateFailed": "Workout session plan update failed. Please try again.",
+        "exercises": "Exercises",
+        "addExercise": "Add Exercise",
+        "selectExercise": "Select an exercise",
+        "sets": "Sets",
+        "reps": "Reps",
+        "set": "Set",
+        "removeExercise": "Remove exercise",
+        "noExercisesAdded": "No exercises added yet. Click 'Add Exercise' to get started.",
+        "exercise": "Exercise",
+        "addSet": "Add Set"
     }
 }

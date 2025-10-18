@@ -191,4 +191,66 @@ export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudServic
             );
         }
     }
+
+    public async findAllActiveByWorkoutSessionPlanIdMapped(
+        workoutSessionPlanId: number,
+    ): Promise<WorkoutSessionPlanExerciseResponseDto[]> {
+        const entities =
+            await this.workoutSessionPlanExerciseRepository.findActive({
+                where: {
+                    workoutSessionPlanId,
+                },
+                order: {
+                    order: 'ASC',
+                },
+            });
+
+        return entities.map((entity) => this.toResponseDto(entity));
+    }
+
+    public async createBulk(
+        createDtos: WorkoutSessionPlanExerciseCreateDto[],
+        user: JwtAuthenticatedUser,
+    ): Promise<void> {
+        const entities = createDtos.map((dto) => {
+            const entity = this.toEntity(dto);
+            entity.createdById = user.id;
+            return entity;
+        });
+
+        const result =
+            await this.workoutSessionPlanExerciseRepository.insert(entities);
+
+        if (result.identifiers.length !== createDtos.length) {
+            // TODO: exception
+        }
+    }
+
+    public async updateBulk(
+        workoutSessionPlanId: number,
+        createDtos: WorkoutSessionPlanExerciseCreateDto[],
+        user: JwtAuthenticatedUser,
+    ): Promise<void> {
+        const entities = createDtos.map((dto) => {
+            const entity = this.toEntity(dto);
+            entity.createdById = user.id;
+            return entity;
+        });
+
+        const deleteResult =
+            await this.workoutSessionPlanExerciseRepository.delete({
+                workoutSessionPlanId,
+            });
+
+        if (!deleteResult.affected || deleteResult.affected === 0) {
+            // TODO: exception
+        }
+
+        const result =
+            await this.workoutSessionPlanExerciseRepository.insert(entities);
+
+        if (result.identifiers.length !== createDtos.length) {
+            // TODO: exception
+        }
+    }
 }

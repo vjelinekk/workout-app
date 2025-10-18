@@ -8,6 +8,7 @@ import {
     Patch,
     Post,
     Put,
+    Query,
 } from '@nestjs/common';
 import {
     ApiBadRequestResponse,
@@ -17,6 +18,7 @@ import {
     ApiOkResponse,
     ApiOperation,
     ApiParam,
+    ApiQuery,
     ApiTags,
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -64,6 +66,32 @@ export class WorkoutSessionPlanExerciseController {
         );
     }
 
+    @Post('bulk')
+    @ApiOperation({ summary: 'Create multiple workout session plan exercises' })
+    @ApiBody({
+        type: [WorkoutSessionPlanExerciseCreateDto],
+        description: 'Array of workout session plan exercise creation data',
+    })
+    @ApiOkResponse({
+        description:
+            'The workout session plan exercises have been successfully created.',
+    })
+    @ApiUnauthorizedResponse({
+        description: 'Unauthorized',
+    })
+    @ApiBadRequestResponse({
+        description: 'Invalid input data',
+    })
+    async createBulk(
+        @Body() createDtos: WorkoutSessionPlanExerciseCreateDto[],
+        @JwtUser() user: JwtAuthenticatedUser,
+    ): Promise<void> {
+        await this.workoutSessionPlanExerciseService.createBulk(
+            createDtos,
+            user,
+        );
+    }
+
     @Patch(':id')
     @ApiOperation({ summary: 'Patch a workout session plan exercise' })
     @ApiParam({
@@ -93,6 +121,42 @@ export class WorkoutSessionPlanExerciseController {
         return this.workoutSessionPlanExerciseService.patchValidated(
             id,
             patchDto,
+            user,
+        );
+    }
+
+    @Put('bulk')
+    @ApiOperation({ summary: 'Update multiple workout session plan exercises' })
+    @ApiQuery({
+        name: 'workoutSessionPlanId',
+        type: Number,
+        description:
+            'The ID of the workout session plan to which the exercises belong',
+        required: true,
+    })
+    @ApiBody({
+        type: [WorkoutSessionPlanExerciseCreateDto],
+        description: 'Array of workout session plan exercise update data',
+    })
+    @ApiOkResponse({
+        description:
+            'The workout session plan exercises have been successfully updated.',
+    })
+    @ApiUnauthorizedResponse({
+        description: 'Unauthorized',
+    })
+    @ApiBadRequestResponse({
+        description: 'Invalid input data',
+    })
+    async updateBulk(
+        @Body() createDtos: WorkoutSessionPlanExerciseCreateDto[],
+        @Query('workoutSessionPlanId', ParseIntPipe)
+        workoutSessionPlanId: number,
+        @JwtUser() user: JwtAuthenticatedUser,
+    ): Promise<void> {
+        await this.workoutSessionPlanExerciseService.updateBulk(
+            workoutSessionPlanId,
+            createDtos,
             user,
         );
     }
@@ -182,6 +246,15 @@ export class WorkoutSessionPlanExerciseController {
 
     @Get()
     @ApiOperation({ summary: 'Get all workout session plan exercises' })
+    @ApiQuery({
+        name: 'workout_session_plan_id',
+        description:
+            'Optional workout session plan ID to filter the exercises by',
+        required: false,
+        schema: {
+            type: 'number',
+        },
+    })
     @ApiOkResponse({
         description: 'List of all workout session plan exercises',
         type: [WorkoutSessionPlanExerciseResponseDto],
@@ -196,7 +269,16 @@ export class WorkoutSessionPlanExerciseController {
         description: 'Invalid request',
     })
     @Roles(RoleEnum.ADMIN)
-    async getAll(): Promise<WorkoutSessionPlanExerciseResponseDto[]> {
+    async getAll(
+        @Query('workout_session_plan_id', ParseIntPipe)
+        workoutSessionPlanId?: number,
+    ): Promise<WorkoutSessionPlanExerciseResponseDto[]> {
+        if (workoutSessionPlanId) {
+            return this.workoutSessionPlanExerciseService.findAllActiveByWorkoutSessionPlanIdMapped(
+                workoutSessionPlanId,
+            );
+        }
+
         return this.workoutSessionPlanExerciseService.findAllActiveMapped();
     }
 }

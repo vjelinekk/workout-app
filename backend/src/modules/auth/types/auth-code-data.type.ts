@@ -1,6 +1,6 @@
-import { LoginResponseDto } from "../dtos/login-response.dto";
+import { LoginResponseDto } from '../dtos/login-response.dto';
 
 export interface AuthCodeData {
-    loginResponse: LoginResponseDto,
-    expiresAt: Date,
+    loginResponse: LoginResponseDto;
+    expiresAt: Date;
 }

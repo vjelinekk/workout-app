@@ -9,7 +9,7 @@ import { useCreateExercise, useUpdateExercise } from '@/hooks/useExercises';
 import { Exercise } from '@/types/exercise';
 import { ExerciseFormFields } from './ExerciseFormFields';
 import { useExerciseForm } from '@/hooks/useExerciseForm';
-import { ExerciseFormAlerts } from './ExerciseFormAlerts';
+import { CreateUpdateAlerts } from '../../BasicForm/CreateUpdateAlerts';
 import { useEffect } from 'react';
 
 interface Props {
@@ -71,7 +71,11 @@ export const ExerciseForm = ({ mode, id, initialData }: Props) => {
                 submittingLabel={t('creating')}
                 isViewMode={mode === 'view'}
             >
-                <ExerciseFormAlerts
+                <CreateUpdateAlerts
+                    creationFailedTitle={t('creationFailed')}
+                    updateFailedTitle={t('updateFailed')}
+                    creationSuccessTitle={t('creationSuccess')}
+                    updateSuccessTitle={t('updateSuccess')}
                     createError={createError?.message}
                     updateError={updateError?.message}
                     isErrorCreate={isErrorCreate}

@@ -97,5 +97,44 @@
         "titlePublic": "Veřejné {resource}",
         "errorLoadingPublic": "Chyba při načítání veřejných {resource}.",
         "emptyPublicMessage": "Žádné veřejné {resource} nejsou k dispozici."
+    },
+    "WorkoutSessionPlansPage": {
+        "title": "Tréninkové plány",
+        "createButton": "Vytvořit plán"
+    },
+    "WorkoutSessionPlanForm": {
+        "create": "Vytvořit tréninkový plán",
+        "update": "Upravit tréninkový plán",
+        "creating": "Vytváření...",
+        "name": "Název",
+        "description": "Popis",
+        "isPublic": "Označit jako veřejné",
+        "isApproved": "Označit jako schválené",
+        "placeholder": {
+            "name": "Celotělový trénink",
+            "description": "Komplexní celotělový tréninkový plán"
+        },
+        "validation": {
+            "nameRequired": "Název je povinný",
+            "descriptionRequired": "Popis je povinný"
+        },
+        "unexpectedError": "Došlo k neočekávané chybě. Zkuste to prosím znovu.",
+        "creationFailed": "Vytvoření tréninkového plánu selhalo. Zkuste to prosím znovu.",
+        "creationSuccess": "Tréninkový plán byl úspěšně vytvořen!",
+        "updateSuccess": "Tréninkový plán byl úspěšně upraven!",
+        "updateFailed": "Úprava tréninkového plánu selhala. Zkuste to prosím znovu.",
+        "exercises": "Cviky",
+        "addExercise": "Přidat cvik",
+        "selectExercise": "Vyberte cvik",
+        "sets": "Série",
+        "reps": "Opakování",
+        "set": "Série",
+        "removeExercise": "Odebrat cvik",
+        "noExercisesAdded": "Ještě nebyly přidány žádné cviky. Klikněte na 'Přidat cvik' a začněte.",
+        "exerciseRequired": "Prosím vyberte cvik",
+        "setsRequired": "Počet sérií je povinný",
+        "setsMinimum": "Je vyžadována alespoň 1 série",
+        "repsRequired": "Opakování jsou povinná pro všechny série",
+        "repsMinimum": "Je vyžadováno alespoň 1 opakování"
     }
 }

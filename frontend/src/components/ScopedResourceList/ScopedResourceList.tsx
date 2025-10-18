@@ -9,6 +9,7 @@ import { TRANSLATION_SECTION_KEYS } from '@/constants/locale';
 interface Props<T extends { id: number; name: string }> {
     title: string;
     createButtonText: string;
+    detailLink: string;
     privateInfo: {
         privateEntities?: T[];
         isLoadingPrivate: boolean;
@@ -26,6 +27,7 @@ interface Props<T extends { id: number; name: string }> {
 export const ScopedResourceList = <T extends { id: number; name: string }>({
     title,
     createButtonText,
+    detailLink,
     privateInfo: { privateEntities, isLoadingPrivate, errorPrivate },
     publicInfo: { publicEntities, isLoadingPublic, errorPublic },
     handleCreate,
@@ -55,6 +57,7 @@ export const ScopedResourceList = <T extends { id: number; name: string }>({
                 })}
                 addDeleteButton
                 handleDelete={handleDelete}
+                detailLink={detailLink}
             />
 
             <ScopedResourceListCard<T>
@@ -68,6 +71,7 @@ export const ScopedResourceList = <T extends { id: number; name: string }>({
                 emptyMessage={t('emptyPublicMessage', {
                     resource: title.toLowerCase(),
                 })}
+                detailLink={detailLink}
             />
         </div>
     );

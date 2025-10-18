@@ -96,7 +96,9 @@ export class ExerciseService extends PublicAuthorizableCrudService<
         user: JwtAuthenticatedUser,
     ): void {
         if (dto.is_approved && !user.roles.includes(RoleEnum.ADMIN)) {
-            throw new UnauthorizedException('Only admins can create approved exercises.');
+            throw new UnauthorizedException(
+                'Only admins can create approved exercises.',
+            );
         }
     }
 

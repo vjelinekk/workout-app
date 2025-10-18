@@ -8,6 +8,8 @@ interface Props {
     autoDismiss?: boolean;
     variant?: 'default' | 'destructive';
     description?: string;
+    dismissCallback?: () => void;
+    isDismissible?: boolean;
 }
 
 export const BasicFormAlert = ({
@@ -16,6 +18,8 @@ export const BasicFormAlert = ({
     autoDismiss = true,
     variant = 'destructive',
     description,
+    dismissCallback,
+    isDismissible = true,
 }: Props) => {
     const { showAlert, setShowAlert, timerRef } = useBasicFormAlertDismiss(
         show,
@@ -23,10 +27,15 @@ export const BasicFormAlert = ({
     );
 
     const handleDismiss = () => {
+        if (!isDismissible) {
+            return;
+        }
+
         setShowAlert(false);
         if (timerRef.current) {
             clearTimeout(timerRef.current);
         }
+        dismissCallback?.();
     };
 
     return (
@@ -42,7 +51,7 @@ export const BasicFormAlert = ({
                     {description && (
                         <AlertDescription>{description}</AlertDescription>
                     )}
-                    {!autoDismiss && (
+                    {!autoDismiss && isDismissible && (
                         <X
                             className="h-4 w-4 cursor-pointer absolute top-2 right-2"
                             onClick={handleDismiss}

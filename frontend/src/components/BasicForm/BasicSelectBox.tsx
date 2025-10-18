@@ -27,6 +27,10 @@ interface Props<TFormValues extends FieldValues> {
     disabled?: boolean;
     /** coerce incoming select values to a specific type before calling field.onChange */
     valueType?: 'string' | 'number';
+    /** css classes to apply to the FormItem container */
+    containerClassName?: string;
+    /** css classes to apply to the SelectTrigger */
+    triggerClassName?: string;
 }
 
 export const BasicSelectBox = <TFormValues extends FieldValues>({
@@ -38,13 +42,15 @@ export const BasicSelectBox = <TFormValues extends FieldValues>({
     children,
     disabled,
     valueType = 'string',
+    containerClassName,
+    triggerClassName,
 }: Props<TFormValues>) => {
     return (
         <FormField
             control={control}
             name={name}
             render={({ field }) => (
-                <FormItem>
+                <FormItem className={containerClassName}>
                     <FormLabel>
                         {required ? (
                             <RequiredLabel label={label} />
@@ -75,7 +81,7 @@ export const BasicSelectBox = <TFormValues extends FieldValues>({
                             disabled={disabled}
                         >
                             <SelectTrigger
-                                className="w-full"
+                                className={triggerClassName || 'w-full'}
                                 disabled={disabled}
                             >
                                 <SelectValue placeholder={placeholder} />

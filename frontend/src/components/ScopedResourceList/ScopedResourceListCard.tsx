@@ -16,6 +16,7 @@ interface Props<T extends { id: number; name: string }> {
     error: ApiErrorResponse | null;
     errorLabel: string;
     emptyMessage: string;
+    detailLink: string;
     addDeleteButton?: boolean;
     handleDelete?: (id: number) => void;
 }
@@ -27,6 +28,7 @@ export const ScopedResourceListCard = <T extends { id: number; name: string }>({
     error,
     errorLabel,
     emptyMessage,
+    detailLink,
     addDeleteButton = false,
     handleDelete,
 }: Props<T>) => {
@@ -69,7 +71,9 @@ export const ScopedResourceListCard = <T extends { id: number; name: string }>({
                                             key={e.id}
                                             className="flex items-center justify-between"
                                         >
-                                            <Link href={`/exercises/${e.id}`}>
+                                            <Link
+                                                href={`/${detailLink}/${e.id}`}
+                                            >
                                                 {e.name}
                                             </Link>
 

@@ -1,8 +1,10 @@
 import { BasicFormAlert } from '@/components/BasicForm/BasicFormAlert';
-import { TRANSLATION_SECTION_KEYS } from '@/constants/locale';
-import { useTranslations } from 'next-intl';
 
 interface Props {
+    creationFailedTitle: string;
+    updateFailedTitle: string;
+    creationSuccessTitle: string;
+    updateSuccessTitle: string;
     createError?: string;
     updateError?: string;
     isErrorCreate: boolean;
@@ -11,7 +13,11 @@ interface Props {
     isSuccessUpdate: boolean;
 }
 
-export const ExerciseFormAlerts = ({
+export const CreateUpdateAlerts = ({
+    creationFailedTitle,
+    updateFailedTitle,
+    creationSuccessTitle,
+    updateSuccessTitle,
     createError,
     updateError,
     isErrorCreate,
@@ -19,12 +25,10 @@ export const ExerciseFormAlerts = ({
     isSuccessCreate,
     isSuccessUpdate,
 }: Props) => {
-    const t = useTranslations(TRANSLATION_SECTION_KEYS.exerciseForm);
-
     return (
         <>
             <BasicFormAlert
-                title={t('creationFailed')}
+                title={creationFailedTitle}
                 show={isErrorCreate}
                 autoDismiss={false}
                 variant="destructive"
@@ -32,7 +36,7 @@ export const ExerciseFormAlerts = ({
             />
 
             <BasicFormAlert
-                title={t('updateFailed')}
+                title={updateFailedTitle}
                 show={isErrorUpdate}
                 autoDismiss={false}
                 variant="destructive"
@@ -40,13 +44,13 @@ export const ExerciseFormAlerts = ({
             />
 
             <BasicFormAlert
-                title={t('creationSuccess')}
+                title={creationSuccessTitle}
                 show={isSuccessCreate}
                 variant="default"
             />
 
             <BasicFormAlert
-                title={t('updateSuccess')}
+                title={updateSuccessTitle}
                 show={isSuccessUpdate}
                 variant="default"
             />

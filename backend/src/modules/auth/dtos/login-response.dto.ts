@@ -26,11 +26,17 @@ export class LoginResponseDto {
     @IsString()
     user_nickname: string;
 
-    @ApiProperty({ example: 'johndoe@example.com', description: 'Email of the user' })
+    @ApiProperty({
+        example: 'johndoe@example.com',
+        description: 'Email of the user',
+    })
     @IsString()
     user_email: string;
 
-    @ApiProperty({ example: ['user', 'admin'], description: 'Roles of the user' })
+    @ApiProperty({
+        example: ['user', 'admin'],
+        description: 'Roles of the user',
+    })
     @IsString({ each: true })
     roles: RoleEnum[];
 }

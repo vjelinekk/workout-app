@@ -20,6 +20,9 @@ interface Props<TFormValues extends FieldValues> {
     autoComplete?: HTMLInputAutoCompleteAttribute;
     control: Control<TFormValues>;
     disabled?: boolean;
+    min?: number;
+    max?: number;
+    layout?: 'vertical' | 'horizontal';
 }
 
 export const BasicInputField = <TFormValues extends FieldValues>({
@@ -31,6 +34,9 @@ export const BasicInputField = <TFormValues extends FieldValues>({
     autoComplete,
     control,
     disabled = false,
+    min,
+    max,
+    layout = 'vertical',
 }: Props<TFormValues>) => {
     return (
         <FormField
@@ -38,8 +44,16 @@ export const BasicInputField = <TFormValues extends FieldValues>({
             name={name}
             disabled={disabled}
             render={({ field }) => (
-                <FormItem>
-                    <FormLabel>
+                <FormItem
+                    className={
+                        layout === 'horizontal' ? 'flex items-center gap-2' : ''
+                    }
+                >
+                    <FormLabel
+                        className={
+                            layout === 'horizontal' ? 'flex-shrink-0 mb-0' : ''
+                        }
+                    >
                         {required ? (
                             <RequiredLabel label={label} />
                         ) : (
@@ -52,6 +66,17 @@ export const BasicInputField = <TFormValues extends FieldValues>({
                             placeholder={placeholder}
                             autoComplete={autoComplete}
                             {...field}
+                            value={field.value ?? ''} // <-- key: fallback to empty string
+                            onChange={(e) => {
+                                if (type === 'number') {
+                                    const n = Number(e.target.value);
+                                    field.onChange(isNaN(n) ? undefined : n); // pass undefined if empty
+                                } else {
+                                    field.onChange(e);
+                                }
+                            }}
+                            min={min ? min : undefined}
+                            max={max ? max : undefined}
                         />
                     </FormControl>
                     <FormMessage />

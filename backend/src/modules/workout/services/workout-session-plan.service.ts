@@ -34,6 +34,8 @@ export class WorkoutSessionPlanService extends PublicAuthorizableCrudService<
         return {
             name: dto.name,
             description: dto.description,
+            isPublic: dto.is_public,
+            isApproved: dto.is_approved,
         };
     }
 
@@ -47,6 +49,12 @@ export class WorkoutSessionPlanService extends PublicAuthorizableCrudService<
         }
         if ('description' in dto && dto.description !== undefined) {
             entityFields.description = dto.description;
+        }
+        if ('is_public' in dto && dto.is_public !== undefined) {
+            entityFields.isPublic = dto.is_public;
+        }
+        if ('is_approved' in dto && dto.is_approved !== undefined) {
+            entityFields.isApproved = dto.is_approved;
         }
 
         return entityFields;

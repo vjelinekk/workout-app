@@ -1,4 +1,13 @@
-import { Controller, Post, UseGuards, Get, Version, Res, InternalServerErrorException, Body, UnauthorizedException } from '@nestjs/common';
+import {
+    Controller,
+    Post,
+    UseGuards,
+    Get,
+    Res,
+    InternalServerErrorException,
+    Body,
+    UnauthorizedException,
+} from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { GoogleAuthGuard } from '../guards/google-auth.guard';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
@@ -53,7 +62,7 @@ export class AuthController {
     @ApiOperation({ summary: 'Google OAuth2 callback' })
     googleAuthRedirect(
         @AuthenticatedUser() user: UserEntity,
-        @Res() res: Response
+        @Res() res: Response,
     ) {
         const loginResponse = this.authService.login(user);
 
@@ -61,12 +70,14 @@ export class AuthController {
 
         const frontendUrl = this.configService.get<string>('FRONTEND_URL');
         if (!frontendUrl) {
-            throw new InternalServerErrorException('FRONTEND_URL is not defined');
+            throw new InternalServerErrorException(
+                'FRONTEND_URL is not defined',
+            );
         }
         const redirectUrl = new URL('/auth/callback', frontendUrl);
         redirectUrl.searchParams.append('code', authCode);
 
-        return res.redirect(redirectUrl.toString())
+        return res.redirect(redirectUrl.toString());
     }
 
     @Public()

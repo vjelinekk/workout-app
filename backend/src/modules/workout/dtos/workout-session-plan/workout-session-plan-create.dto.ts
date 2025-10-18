@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class WorkoutSessionPlanCreateDto {
     @ApiProperty({
@@ -18,4 +18,22 @@ export class WorkoutSessionPlanCreateDto {
     @IsString()
     @IsNotEmpty()
     description: string;
+
+    @ApiProperty({
+        example: 'true',
+        description: 'Is exercise publicly available',
+        required: false,
+    })
+    @IsBoolean()
+    @IsOptional()
+    is_public?: boolean;
+
+    @ApiProperty({
+        example: 'true',
+        description: 'Is exercise approved to show publicly',
+        required: false,
+    })
+    @IsBoolean()
+    @IsOptional()
+    is_approved?: boolean;
 }

@@ -49,6 +49,7 @@ export const Exercises = () => {
                 errorPublic: publicError,
             }}
             handleDelete={handleDelete}
+            detailLink="exercises"
         />
     );
 };

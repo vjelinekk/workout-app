@@ -263,10 +263,10 @@ describe('ExerciseController (e2e - Integration Tests)', () => {
         it('should create an exercise with valid authentication', async () => {
             const createDto: ExerciseCreateDto = {
                 name: 'Bench Press',
-                body_part: BodyPartEnum.CHEST,
+                bodyPart: BodyPartEnum.CHEST,
                 equipment: 'Barbell',
                 description: 'A compound chest exercise',
-                category_id: testCategoryId,
+                categoryId: testCategoryId,
             };
 
             const response = await request(app.getHttpServer())
@@ -277,7 +277,7 @@ describe('ExerciseController (e2e - Integration Tests)', () => {
 
             expect(response.body).toHaveProperty('id');
             expect(response.body.name).toBe(createDto.name);
-            expect(response.body.body_part).toBe(createDto.body_part);
+            expect(response.body.body_part).toBe(createDto.bodyPart);
             expect(response.body.equipment).toBe(createDto.equipment);
             expect(response.body.description).toBe(createDto.description);
         });
@@ -285,7 +285,7 @@ describe('ExerciseController (e2e - Integration Tests)', () => {
         it('should return 401 without authentication', async () => {
             const createDto: ExerciseCreateDto = {
                 name: 'Squat',
-                body_part: BodyPartEnum.QUADRICEPS,
+                bodyPart: BodyPartEnum.QUADRICEPS,
                 equipment: 'Barbell',
                 description: 'A leg exercise',
             };
@@ -370,12 +370,12 @@ describe('ExerciseController (e2e - Integration Tests)', () => {
         it('should create exercise with optional fields', async () => {
             const createDto: ExerciseCreateDto = {
                 name: 'Pull Up',
-                body_part: BodyPartEnum.BACK,
+                bodyPart: BodyPartEnum.BACK,
                 equipment: 'Pull-up bar',
                 description: 'Upper body exercise',
-                image_url: 'https://example.com/pullup.jpg',
-                is_public: true,
-                is_approved: false,
+                imageUrl: 'https://example.com/pullup.jpg',
+                isPublic: true,
+                isApproved: false,
             };
 
             const response = await request(app.getHttpServer())
@@ -384,8 +384,8 @@ describe('ExerciseController (e2e - Integration Tests)', () => {
                 .send(createDto)
                 .expect(201);
 
-            expect(response.body.image_url).toBe(createDto.image_url);
-            expect(response.body.is_public).toBe(createDto.is_public);
+            expect(response.body.image_url).toBe(createDto.imageUrl);
+            expect(response.body.is_public).toBe(createDto.isPublic);
         });
 
         it('should return 400 with invalid image URL', async () => {
@@ -423,7 +423,7 @@ describe('ExerciseController (e2e - Integration Tests)', () => {
         it('should handle special characters in name and description', async () => {
             const createDto: ExerciseCreateDto = {
                 name: "Test & <Exercise> with 'quotes'",
-                body_part: BodyPartEnum.CHEST,
+                bodyPart: BodyPartEnum.CHEST,
                 equipment: 'Barbell',
                 description: 'Description with special chars: !@#$%^&*()',
             };
@@ -590,7 +590,7 @@ describe('ExerciseController (e2e - Integration Tests)', () => {
             const patchDto: ExercisePatchDto = {
                 name: 'Multi-field Update',
                 equipment: 'Kettlebell',
-                is_public: true,
+                isPublic: true,
             };
 
             const response = await request(app.getHttpServer())
@@ -601,7 +601,7 @@ describe('ExerciseController (e2e - Integration Tests)', () => {
 
             expect(response.body.name).toBe(patchDto.name);
             expect(response.body.equipment).toBe(patchDto.equipment);
-            expect(response.body.is_public).toBe(patchDto.is_public);
+            expect(response.body.is_public).toBe(patchDto.isPublic);
         });
 
         it('should return 401 without authentication', async () => {
@@ -672,7 +672,7 @@ describe('ExerciseController (e2e - Integration Tests)', () => {
         it('should update entire exercise', async () => {
             const updateDto: ExerciseUpdateDto = {
                 name: 'Completely Updated Exercise',
-                body_part: BodyPartEnum.TRICEPS,
+                bodyPart: BodyPartEnum.TRICEPS,
                 equipment: 'Cable',
                 description: 'Completely updated description',
             };
@@ -684,7 +684,7 @@ describe('ExerciseController (e2e - Integration Tests)', () => {
                 .expect(200);
 
             expect(response.body.name).toBe(updateDto.name);
-            expect(response.body.body_part).toBe(updateDto.body_part);
+            expect(response.body.body_part).toBe(updateDto.bodyPart);
             expect(response.body.equipment).toBe(updateDto.equipment);
             expect(response.body.description).toBe(updateDto.description);
         });
@@ -692,7 +692,7 @@ describe('ExerciseController (e2e - Integration Tests)', () => {
         it('should return 401 without authentication', async () => {
             const updateDto: ExerciseUpdateDto = {
                 name: 'Should Not Work',
-                body_part: BodyPartEnum.CHEST,
+                bodyPart: BodyPartEnum.CHEST,
                 equipment: 'Barbell',
                 description: 'Should not work',
             };
@@ -718,7 +718,7 @@ describe('ExerciseController (e2e - Integration Tests)', () => {
         it('should return 404 for non-existent exercise', async () => {
             const updateDto: ExerciseUpdateDto = {
                 name: 'Non-existent',
-                body_part: BodyPartEnum.CHEST,
+                bodyPart: BodyPartEnum.CHEST,
                 equipment: 'Barbell',
                 description: 'Non-existent',
             };
@@ -733,7 +733,7 @@ describe('ExerciseController (e2e - Integration Tests)', () => {
         it('should return 401/404 when trying to update another users exercise', async () => {
             const updateDto: ExerciseUpdateDto = {
                 name: 'Unauthorized Update',
-                body_part: BodyPartEnum.CHEST,
+                bodyPart: BodyPartEnum.CHEST,
                 equipment: 'Barbell',
                 description: 'Unauthorized',
             };
@@ -750,7 +750,7 @@ describe('ExerciseController (e2e - Integration Tests)', () => {
         it('should allow admin to update any exercise', async () => {
             const updateDto: ExerciseUpdateDto = {
                 name: 'Admin Complete Update',
-                body_part: BodyPartEnum.ABS,
+                bodyPart: BodyPartEnum.ABS,
                 equipment: 'None',
                 description: 'Updated by admin',
             };
@@ -977,7 +977,7 @@ describe('ExerciseController (e2e - Integration Tests)', () => {
         it('should handle SQL injection attempts in name', async () => {
             const sqlInjectionDto: ExerciseCreateDto = {
                 name: "'; DROP TABLE exercises; --",
-                body_part: BodyPartEnum.CHEST,
+                bodyPart: BodyPartEnum.CHEST,
                 equipment: 'None',
                 description: 'SQL injection attempt',
             };
@@ -1000,7 +1000,7 @@ describe('ExerciseController (e2e - Integration Tests)', () => {
         it('should handle XSS attempts in description', async () => {
             const xssDto: ExerciseCreateDto = {
                 name: 'XSS Test',
-                body_part: BodyPartEnum.CHEST,
+                bodyPart: BodyPartEnum.CHEST,
                 equipment: 'None',
                 description: '<script>alert("XSS")</script>',
             };
@@ -1017,7 +1017,7 @@ describe('ExerciseController (e2e - Integration Tests)', () => {
         it('should handle unicode characters', async () => {
             const unicodeDto: ExerciseCreateDto = {
                 name: '力量训练 (Strength) 🏋️',
-                body_part: BodyPartEnum.CHEST,
+                bodyPart: BodyPartEnum.CHEST,
                 equipment: 'Barbell',
                 description: 'Émojis and spëciål çhåråctérs',
             };
@@ -1035,7 +1035,7 @@ describe('ExerciseController (e2e - Integration Tests)', () => {
         it('should handle very long strings', async () => {
             const longDto: ExerciseCreateDto = {
                 name: 'A'.repeat(100),
-                body_part: BodyPartEnum.CHEST,
+                bodyPart: BodyPartEnum.CHEST,
                 equipment: 'B'.repeat(100),
                 description: 'C'.repeat(500),
             };
@@ -1054,7 +1054,7 @@ describe('ExerciseController (e2e - Integration Tests)', () => {
         it('should create exercise within acceptable time', async () => {
             const createDto: ExerciseCreateDto = {
                 name: 'Performance Test',
-                body_part: BodyPartEnum.CHEST,
+                bodyPart: BodyPartEnum.CHEST,
                 equipment: 'Barbell',
                 description: 'Testing response time',
             };

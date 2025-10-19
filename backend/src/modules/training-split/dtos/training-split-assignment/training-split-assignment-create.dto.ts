@@ -8,7 +8,7 @@ export class TrainingSplitAssignmentCreateDto {
     })
     @IsInt()
     @IsNotEmpty()
-    trainee_id: number;
+    traineeId: number;
 
     @ApiProperty({
         example: 1,
@@ -16,5 +16,5 @@ export class TrainingSplitAssignmentCreateDto {
     })
     @IsInt()
     @IsNotEmpty()
-    training_split_id: number;
+    trainingSplitId: number;
 }

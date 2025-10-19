@@ -32,64 +32,11 @@ export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudServic
         super(workoutSessionPlanExerciseRepository);
     }
 
-    protected toEntity(
-        dto: WorkoutSessionPlanExerciseCreateDto,
-    ): DeepPartial<WorkoutSessionPlanExerciseEntity> {
-        return {
-            workoutSessionPlanId: dto.workout_session_plan_id,
-            exerciseId: dto.exercise_id,
-            order: dto.order,
-            plannedSets: dto.planned_sets,
-            plannedRepsPerSet: dto.planned_reps_per_set,
-        };
+    protected get entityClass(): new () => WorkoutSessionPlanExerciseEntity {
+        return WorkoutSessionPlanExerciseEntity;
     }
-
-    protected toEntityUpdate(
-        dto:
-            | WorkoutSessionPlanExerciseUpdateDto
-            | WorkoutSessionPlanExercisePatchDto,
-    ): Partial<WorkoutSessionPlanExerciseEntity> {
-        const entityFields: Partial<WorkoutSessionPlanExerciseEntity> = {};
-
-        if (
-            'workout_session_plan_id' in dto &&
-            dto.workout_session_plan_id !== undefined
-        ) {
-            entityFields.workoutSessionPlanId = dto.workout_session_plan_id;
-        }
-        if ('exercise_id' in dto && dto.exercise_id !== undefined) {
-            entityFields.exerciseId = dto.exercise_id;
-        }
-        if ('order' in dto && dto.order !== undefined) {
-            entityFields.order = dto.order;
-        }
-        if ('planned_sets' in dto && dto.planned_sets !== undefined) {
-            entityFields.plannedSets = dto.planned_sets;
-        }
-        if (
-            'planned_reps_per_set' in dto &&
-            dto.planned_reps_per_set !== undefined
-        ) {
-            entityFields.plannedRepsPerSet = dto.planned_reps_per_set;
-        }
-
-        return entityFields;
-    }
-
-    protected toResponseDto(
-        entity: WorkoutSessionPlanExerciseEntity,
-    ): WorkoutSessionPlanExerciseResponseDto {
-        return {
-            id: entity.id,
-            workout_session_plan_id: entity.workoutSessionPlanId,
-            exercise_id: entity.exerciseId,
-            order: entity.order,
-            planned_sets: entity.plannedSets,
-            planned_reps_per_set: entity.plannedRepsPerSet,
-            created_at: entity.createdAt,
-            updated_at: entity.updatedAt,
-            is_deleted: entity.isDeleted,
-        };
+    protected get responseDtoClass(): new () => WorkoutSessionPlanExerciseResponseDto {
+        return WorkoutSessionPlanExerciseResponseDto;
     }
 
     /**
@@ -123,8 +70,8 @@ export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudServic
 
     protected beforeCreate(dto: WorkoutSessionPlanExerciseCreateDto): void {
         this.validatePlannedRepsPerSet(
-            dto.planned_sets,
-            dto.planned_reps_per_set,
+            dto.plannedSets,
+            dto.plannedRepsPerSet,
         );
     }
 
@@ -139,22 +86,22 @@ export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudServic
         entity: WorkoutSessionPlanExerciseEntity,
     ): void {
         if (
-            dto.planned_sets !== undefined &&
-            dto.planned_reps_per_set !== undefined
+            dto.plannedSets !== undefined &&
+            dto.plannedRepsPerSet !== undefined
         ) {
             this.validatePlannedRepsPerSet(
-                dto.planned_sets,
-                dto.planned_reps_per_set,
+                dto.plannedSets,
+                dto.plannedRepsPerSet,
             );
-        } else if (dto.planned_sets !== undefined) {
+        } else if (dto.plannedSets !== undefined) {
             this.validatePlannedRepsPerSet(
-                dto.planned_sets,
+                dto.plannedSets,
                 entity.plannedRepsPerSet,
             );
-        } else if (dto.planned_reps_per_set !== undefined) {
+        } else if (dto.plannedRepsPerSet !== undefined) {
             this.validatePlannedRepsPerSet(
                 entity.plannedSets,
-                dto.planned_reps_per_set,
+                dto.plannedRepsPerSet,
             );
         }
     }

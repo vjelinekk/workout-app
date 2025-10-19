@@ -26,7 +26,7 @@ export class TrainingSplitCreateDto {
     })
     @IsBoolean()
     @IsOptional()
-    is_public?: boolean;
+    isPublic?: boolean;
 
     @ApiProperty({
         example: 'true',
@@ -35,5 +35,5 @@ export class TrainingSplitCreateDto {
     })
     @IsBoolean()
     @IsOptional()
-    is_approved?: boolean;
+    isApproved?: boolean;
 }

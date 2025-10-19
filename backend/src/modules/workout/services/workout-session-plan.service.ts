@@ -24,56 +24,15 @@ export class WorkoutSessionPlanService extends PublicAuthorizableCrudService<
         super(workoutSessionPlanRepository);
     }
 
+    protected get entityClass(): new () => WorkoutSessionPlanEntity {
+        return WorkoutSessionPlanEntity;
+    }
+    protected get responseDtoClass(): new () => WorkoutSessionPlanResponseDto {
+        return WorkoutSessionPlanResponseDto;
+    }
+
     protected getEntityName(): string {
         return 'workout session plan';
-    }
-
-    protected toEntity(
-        dto: WorkoutSessionPlanCreateDto,
-    ): DeepPartial<WorkoutSessionPlanEntity> {
-        return {
-            name: dto.name,
-            description: dto.description,
-            isPublic: dto.is_public,
-            isApproved: dto.is_approved,
-        };
-    }
-
-    protected toEntityUpdate(
-        dto: WorkoutSessionPlanUpdateDto | WorkoutSessionPlanPatchDto,
-    ): Partial<WorkoutSessionPlanEntity> {
-        const entityFields: Partial<WorkoutSessionPlanEntity> = {};
-
-        if ('name' in dto && dto.name !== undefined) {
-            entityFields.name = dto.name;
-        }
-        if ('description' in dto && dto.description !== undefined) {
-            entityFields.description = dto.description;
-        }
-        if ('is_public' in dto && dto.is_public !== undefined) {
-            entityFields.isPublic = dto.is_public;
-        }
-        if ('is_approved' in dto && dto.is_approved !== undefined) {
-            entityFields.isApproved = dto.is_approved;
-        }
-
-        return entityFields;
-    }
-
-    protected toResponseDto(
-        entity: WorkoutSessionPlanEntity,
-    ): WorkoutSessionPlanResponseDto {
-        return {
-            id: entity.id,
-            name: entity.name,
-            description: entity.description,
-            is_public: entity.isPublic,
-            created_at: entity.createdAt,
-            updated_at: entity.updatedAt,
-            created_by: entity.createdById,
-            is_approved: entity.isApproved,
-            is_deleted: entity.isDeleted,
-        };
     }
 
     protected beforeCreate(

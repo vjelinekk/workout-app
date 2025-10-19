@@ -33,6 +33,13 @@ export class TrainingSplitDayService extends ValidatedMappedCrudService<
         super(trainingSplitDayRepository);
     }
 
+    protected get entityClass(): new () => TrainingSplitDayEntity {
+        return TrainingSplitDayEntity;
+    }
+    protected get responseDtoClass(): new () => TrainingSplitDayResponseDto {
+        return TrainingSplitDayResponseDto;
+    }
+
     protected async validateEntityAccess(
         entity: TrainingSplitDayEntity,
         user: JwtAuthenticatedUser,
@@ -121,57 +128,6 @@ export class TrainingSplitDayService extends ValidatedMappedCrudService<
     ): Promise<void> | void {
         void entity;
         void user;
-    }
-
-    protected toEntity(
-        dto: TrainingSplitDayCreateDto,
-    ): DeepPartial<TrainingSplitDayEntity> {
-        return {
-            trainingSplit: { id: dto.training_split_id },
-            workoutSessionPlan: { id: dto.workout_session_plan_id },
-            dayOfWeek: dto.day_of_week,
-            order: dto.order,
-        };
-    }
-
-    protected toResponseDto(
-        entity: TrainingSplitDayEntity,
-    ): TrainingSplitDayResponseDto {
-        return {
-            id: entity.id,
-            training_split_id: entity.trainingSplitId,
-            workout_session_plan_id: entity.workoutSessionPlanId,
-            day_of_week: entity.dayOfWeek,
-            order: entity.order,
-            created_by: entity.createdById,
-            created_at: entity.createdAt,
-            updated_at: entity.updatedAt,
-            is_deleted: entity.isDeleted,
-        };
-    }
-
-    protected toEntityUpdate(
-        dto: TrainingSplitDayUpdateDto | TrainingSplitDayPatchDto,
-    ): Partial<TrainingSplitDayEntity> {
-        const entityFields: Partial<TrainingSplitDayEntity> = {};
-
-        if ('training_split_id' in dto && dto.training_split_id !== undefined) {
-            entityFields.trainingSplitId = dto.training_split_id;
-        }
-        if (
-            'workout_session_plan_id' in dto &&
-            dto.workout_session_plan_id !== undefined
-        ) {
-            entityFields.workoutSessionPlanId = dto.workout_session_plan_id;
-        }
-        if ('day_of_week' in dto && dto.day_of_week !== undefined) {
-            entityFields.dayOfWeek = dto.day_of_week;
-        }
-        if ('order' in dto && dto.order !== undefined) {
-            entityFields.order = dto.order;
-        }
-
-        return entityFields;
     }
 
     async createBulk(

@@ -25,6 +25,13 @@ export class TrainingSplitAssignmentService extends ValidatedMappedCrudService<
         super(trainingSplitAssignmentRepository);
     }
 
+    protected get entityClass(): new () => TrainingSplitAssignmentEntity {
+        return TrainingSplitAssignmentEntity;
+    }
+    protected get responseDtoClass(): new () => TrainingSplitAssignmentResponseDto {
+        return TrainingSplitAssignmentResponseDto;
+    }
+
     protected validateEntityAccess(
         entity: TrainingSplitAssignmentEntity,
         user: JwtAuthenticatedUser,
@@ -71,54 +78,17 @@ export class TrainingSplitAssignmentService extends ValidatedMappedCrudService<
         dto: TrainingSplitAssignmentCreateDto,
     ): DeepPartial<TrainingSplitAssignmentEntity> {
         return {
-            trainee: { id: dto.trainee_id },
-            trainingSplit: { id: dto.training_split_id },
+            trainee: { id: dto.traineeId },
+            trainingSplit: { id: dto.trainingSplitId },
         };
     }
 
-    protected toResponseDto(
-        entity: TrainingSplitAssignmentEntity,
-    ): TrainingSplitAssignmentResponseDto {
-        return {
-            id: entity.id,
-            trainee_id: entity.traineeId,
-            training_split_id: entity.trainingSplitId,
-            assigned_by_id: entity.assignedById,
-            status: entity.status,
-            assigned_at: entity.assignedAt?.toISOString(),
-            responded_at: entity.respondedAt?.toISOString(),
-            created_by: entity.createdById,
-            created_at: entity.createdAt,
-            updated_at: entity.updatedAt,
-            is_deleted: entity.isDeleted,
-        };
-    }
-
-    protected toEntityUpdate(
-        dto: TrainingSplitAssignmentUpdateDto | TrainingSplitAssignmentPatchDto,
-    ): Partial<TrainingSplitAssignmentEntity> {
-        const entityFields: Partial<TrainingSplitAssignmentEntity> = {};
-
-        if ('trainee_id' in dto && dto.trainee_id !== undefined) {
-            entityFields.traineeId = dto.trainee_id;
-        }
-        if ('training_split_id' in dto && dto.training_split_id !== undefined) {
-            entityFields.trainingSplitId = dto.training_split_id;
-        }
-
-        return entityFields;
-    }
-
-    async createMapped(
-        dto: TrainingSplitAssignmentCreateDto,
-        userId: number,
-    ): Promise<TrainingSplitAssignmentResponseDto> {
+    async createMapped(dto: TrainingSplitAssignmentCreateDto, userId: number): Promise<TrainingSplitAssignmentResponseDto> {
         const entity = this.toEntity(dto);
         entity.createdById = userId;
         entity.status = TrainingSplitAssignmentStatusEnum.PENDING;
         entity.assignedAt = new Date();
         entity.assignedById = userId;
-
         const createdEntity = await this.create(entity);
         return this.toResponseDto(createdEntity);
     }

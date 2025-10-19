@@ -8,7 +8,7 @@ export class TrainingSplitDayCreateDto {
     })
     @IsInt()
     @IsNotEmpty()
-    training_split_id: number;
+    trainingSplitId: number;
 
     @ApiProperty({
         example: 1,
@@ -16,7 +16,7 @@ export class TrainingSplitDayCreateDto {
     })
     @IsInt()
     @IsNotEmpty()
-    workout_session_plan_id: number;
+    workoutSessionPlanId: number;
 
     @ApiProperty({
         example: 1,
@@ -28,7 +28,7 @@ export class TrainingSplitDayCreateDto {
     @Min(1)
     @Max(7)
     @IsNotEmpty()
-    day_of_week: number;
+    dayOfWeek: number;
 
     @ApiProperty({
         example: 1,

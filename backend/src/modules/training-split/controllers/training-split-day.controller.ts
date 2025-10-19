@@ -233,7 +233,7 @@ export class TrainingSplitDayController {
         description: 'Invalid request',
     })
     async getAll(
-        @Query('training_split_id', ParseIntPipe) trainingSplitId?: number,
+        @Query('training_split_id', new ParseIntPipe({ optional: true })) trainingSplitId?: number,
     ): Promise<TrainingSplitDayResponseDto[]> {
         if (trainingSplitId) {
             return await this.trainingSplitDayService.findAllByTrainingSplitIdActiveMapped(

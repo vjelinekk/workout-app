@@ -1,21 +1,25 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Expose } from 'class-transformer';
 import { IsNumber } from 'class-validator';
 import { BaseResponseDto } from 'src/common/dtos/base-response.dto';
 
 export class WorkoutSessionPlanExerciseResponseDto extends BaseResponseDto {
     @ApiProperty({ example: 1, description: 'ID of the workout session plan' })
     @IsNumber()
-    workout_session_plan_id: number;
+    @Expose()
+    workoutSessionPlanId: number;
 
     @ApiProperty({ example: 1, description: 'ID of the exercise' })
     @IsNumber()
-    exercise_id: number;
+    @Expose()
+    exerciseId: number;
 
     @ApiProperty({
         example: 1,
         description: 'Order of the exercise in the plan',
     })
     @IsNumber()
+    @Expose()
     order: number;
 
     @ApiProperty({
@@ -23,11 +27,13 @@ export class WorkoutSessionPlanExerciseResponseDto extends BaseResponseDto {
         description: 'Number of sets planned for the exercise',
     })
     @IsNumber()
-    planned_sets: number;
+    @Expose()
+    plannedSets: number;
 
     @ApiProperty({
         example: [10, 12, 15],
         description: 'Number of reps planned per set',
     })
-    planned_reps_per_set: number[];
+    @Expose()
+    plannedRepsPerSet: number[];
 }

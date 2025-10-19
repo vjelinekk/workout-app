@@ -16,7 +16,7 @@ export class WorkoutSessionPlanExerciseCreateDto {
     @IsNumber()
     @IsPositive()
     @IsNotEmpty()
-    workout_session_plan_id: number;
+    workoutSessionPlanId: number;
 
     @ApiProperty({
         example: 5,
@@ -26,7 +26,7 @@ export class WorkoutSessionPlanExerciseCreateDto {
     @IsNumber()
     @IsPositive()
     @IsNotEmpty()
-    exercise_id: number;
+    exerciseId: number;
 
     @ApiProperty({
         example: 1,
@@ -44,7 +44,7 @@ export class WorkoutSessionPlanExerciseCreateDto {
     @IsNumber()
     @IsPositive()
     @IsNotEmpty()
-    planned_sets: number;
+    plannedSets: number;
 
     @ApiProperty({
         example: [8, 10, 12],
@@ -55,5 +55,5 @@ export class WorkoutSessionPlanExerciseCreateDto {
     @IsNumber({}, { each: true })
     @IsPositive({ each: true })
     @IsNotEmpty()
-    planned_reps_per_set: number[];
+    plannedRepsPerSet: number[];
 }

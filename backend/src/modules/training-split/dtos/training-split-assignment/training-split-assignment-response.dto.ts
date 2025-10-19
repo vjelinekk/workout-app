@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsDateString, IsEnum, IsInt, IsOptional } from 'class-validator';
 import { BaseResponseDto } from 'src/common/dtos/base-response.dto';
 import { TrainingSplitAssignmentStatusEnum } from '../../enums/training-split-assignment-status.enum';
+import { Expose } from 'class-transformer';
 
 export class TrainingSplitAssignmentResponseDto extends BaseResponseDto {
     @ApiProperty({
@@ -9,14 +10,16 @@ export class TrainingSplitAssignmentResponseDto extends BaseResponseDto {
         description: 'The ID of the trainee user',
     })
     @IsInt()
-    trainee_id: number;
+    @Expose()
+    traineeId: number;
 
     @ApiProperty({
         example: 1,
         description: 'The ID of the training split',
     })
     @IsInt()
-    training_split_id: number;
+    @Expose()
+    trainingSplitId: number;
 
     @ApiProperty({
         example: 1,
@@ -25,7 +28,8 @@ export class TrainingSplitAssignmentResponseDto extends BaseResponseDto {
     })
     @IsInt()
     @IsOptional()
-    assigned_by_id?: number;
+    @Expose()
+    assignedById?: number;
 
     @ApiProperty({
         example: TrainingSplitAssignmentStatusEnum.PENDING,
@@ -33,6 +37,7 @@ export class TrainingSplitAssignmentResponseDto extends BaseResponseDto {
         enum: TrainingSplitAssignmentStatusEnum,
     })
     @IsEnum(TrainingSplitAssignmentStatusEnum)
+    @Expose()
     status: TrainingSplitAssignmentStatusEnum;
 
     @ApiProperty({
@@ -40,7 +45,8 @@ export class TrainingSplitAssignmentResponseDto extends BaseResponseDto {
         description: 'Timestamp when the training split was assigned',
     })
     @IsDateString()
-    assigned_at: string;
+    @Expose()
+    assignedAt: string;
 
     @ApiProperty({
         example: '2025-10-05T15:00:00.000Z',
@@ -49,12 +55,14 @@ export class TrainingSplitAssignmentResponseDto extends BaseResponseDto {
     })
     @IsDateString()
     @IsOptional()
-    responded_at?: string;
+    @Expose()
+    respondedAt?: string;
 
     @ApiProperty({
         example: 1,
         description: 'ID of the user who created the assignment',
     })
     @IsInt()
-    created_by: number;
+    @Expose()
+    createdBy: number;
 }

@@ -4,6 +4,7 @@ import { BaseCrudService } from './base-crud.service';
 import { NotFoundException } from '@nestjs/common';
 import { AuditableEntity } from '../entities/auditable.entity';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
+import { plainToInstance } from 'class-transformer';
 
 export abstract class MappedCrudService<
     Entity extends AuditableEntity,
@@ -17,6 +18,9 @@ export abstract class MappedCrudService<
         super(repository);
     }
 
+    protected abstract get entityClass(): new () => Entity;
+    protected abstract get responseDtoClass(): new () => ResponseDto;
+
     /**
      * Maps create DTO fields to entity fields for creation operations.
      * This method should handle the mapping between DTO field names and entity field names,
@@ -26,7 +30,9 @@ export abstract class MappedCrudService<
      * @param loggedInUserId Optional ID of the currently logged-in user
      * @returns Partial entity with properly mapped fields ready for creation
      */
-    protected abstract toEntity(dto: CreateDto): DeepPartial<Entity>;
+    protected toEntity(dto: CreateDto): DeepPartial<Entity> {
+        return plainToInstance(this.entityClass, dto);
+    }
 
     /**
      * Maps entity fields to response DTO fields for API responses.
@@ -36,7 +42,9 @@ export abstract class MappedCrudService<
      * @param entity Entity instance to be converted to response format
      * @returns Response DTO with properly mapped fields
      */
-    protected abstract toResponseDto(entity: Entity): ResponseDto;
+    protected toResponseDto(entity: Entity): ResponseDto {
+        return plainToInstance(this.responseDtoClass, entity, { excludeExtraneousValues: true });
+    }
 
     /**
      * Maps update/patch DTO fields to entity fields.
@@ -45,9 +53,22 @@ export abstract class MappedCrudService<
      * @param dto Update or patch DTO
      * @returns Partial entity with properly mapped fields
      */
-    protected abstract toEntityUpdate(
+    protected toEntityUpdate(
         dto: UpdateDto | PatchDto,
-    ): Partial<Entity>;
+    ): Partial<Entity> {
+        // Convert DTO to instance to apply any class-transformer decorators if needed
+        const instance = plainToInstance(this.entityClass, dto);
+
+        // Only keep fields that are defined in the DTO
+        const partial: Partial<Entity> = {};
+        Object.entries(instance).forEach(([key, value]) => {
+            if (value !== undefined) {
+                (partial as any)[key] = value;
+            }
+        });
+
+        return partial;
+    }
 
     /**
      * Creates a new entity from the provided DTO and returns it as a response DTO.
@@ -80,6 +101,7 @@ export abstract class MappedCrudService<
 
         // Map DTO fields to entity fields
         const mappedFields = this.toEntityUpdate(dto);
+        console.log(mappedFields);
 
         // Update timestamp and apply mapped fields
         entity.updatedAt = new Date();

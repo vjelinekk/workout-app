@@ -219,31 +219,6 @@ export class WorkoutSessionPlanExerciseController {
         );
     }
 
-    @Get(':id')
-    @ApiOperation({ summary: 'Get workout session plan exercise by ID' })
-    @ApiOkResponse({
-        description: 'The workout session plan exercise with the specified ID',
-        type: WorkoutSessionPlanExerciseResponseDto,
-    })
-    @ApiNotFoundResponse({
-        description: 'Workout session plan exercise not found',
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Unauthorized',
-    })
-    @ApiBadRequestResponse({
-        description: 'Invalid request',
-    })
-    async getById(
-        @Param('id', ParseIntPipe) id: number,
-        @JwtUser() user: JwtAuthenticatedUser,
-    ): Promise<WorkoutSessionPlanExerciseResponseDto> {
-        return this.workoutSessionPlanExerciseService.findByIdActiveValidated(
-            id,
-            user,
-        );
-    }
-
     @Get()
     @ApiOperation({ summary: 'Get all workout session plan exercises' })
     @ApiQuery({
@@ -270,7 +245,7 @@ export class WorkoutSessionPlanExerciseController {
     })
     @Roles(RoleEnum.ADMIN)
     async getAll(
-        @Query('workout_session_plan_id', ParseIntPipe)
+        @Query('workout_session_plan_id', new ParseIntPipe({ optional: true }))
         workoutSessionPlanId?: number,
     ): Promise<WorkoutSessionPlanExerciseResponseDto[]> {
         if (workoutSessionPlanId) {
@@ -280,5 +255,30 @@ export class WorkoutSessionPlanExerciseController {
         }
 
         return this.workoutSessionPlanExerciseService.findAllActiveMapped();
+    }
+
+    @Get(':id')
+    @ApiOperation({ summary: 'Get workout session plan exercise by ID' })
+    @ApiOkResponse({
+        description: 'The workout session plan exercise with the specified ID',
+        type: WorkoutSessionPlanExerciseResponseDto,
+    })
+    @ApiNotFoundResponse({
+        description: 'Workout session plan exercise not found',
+    })
+    @ApiUnauthorizedResponse({
+        description: 'Unauthorized',
+    })
+    @ApiBadRequestResponse({
+        description: 'Invalid request',
+    })
+    async getById(
+        @Param('id', ParseIntPipe) id: number,
+        @JwtUser() user: JwtAuthenticatedUser,
+    ): Promise<WorkoutSessionPlanExerciseResponseDto> {
+        return this.workoutSessionPlanExerciseService.findByIdActiveValidated(
+            id,
+            user,
+        );
     }
 }

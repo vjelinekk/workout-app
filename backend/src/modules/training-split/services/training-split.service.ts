@@ -24,6 +24,13 @@ export class TrainingSplitService extends PublicAuthorizableCrudService<
         super(trainingSplitRepository);
     }
 
+    protected get entityClass(): new () => TrainingSplitEntity {
+        return TrainingSplitEntity;
+    }
+    protected get responseDtoClass(): new () => TrainingSplitResponseDto {
+        return TrainingSplitResponseDto;
+    }
+
     protected getEntityName(): string {
         return 'Training Split';
     }
@@ -60,53 +67,5 @@ export class TrainingSplitService extends PublicAuthorizableCrudService<
     ): Promise<void> | void {
         void entity;
         void user;
-    }
-
-    protected toEntity(
-        dto: TrainingSplitCreateDto,
-    ): DeepPartial<TrainingSplitEntity> {
-        return {
-            name: dto.name,
-            description: dto.description,
-            isPublic: dto.is_public,
-            isApproved: dto.is_approved,
-        };
-    }
-
-    protected toResponseDto(
-        entity: TrainingSplitEntity,
-    ): TrainingSplitResponseDto {
-        return {
-            id: entity.id,
-            name: entity.name,
-            description: entity.description,
-            is_public: entity.isPublic,
-            is_approved: entity.isApproved,
-            created_by: entity.createdById,
-            created_at: entity.createdAt,
-            updated_at: entity.updatedAt,
-            is_deleted: entity.isDeleted,
-        };
-    }
-
-    protected toEntityUpdate(
-        dto: TrainingSplitUpdateDto | TrainingSplitPatchDto,
-    ): Partial<TrainingSplitEntity> {
-        const entityFields: Partial<TrainingSplitEntity> = {};
-
-        if ('name' in dto && dto.name !== undefined) {
-            entityFields.name = dto.name;
-        }
-        if ('description' in dto && dto.description !== undefined) {
-            entityFields.description = dto.description;
-        }
-        if ('is_public' in dto && dto.is_public !== undefined) {
-            entityFields.isPublic = dto.is_public;
-        }
-        if ('is_approved' in dto && dto.is_approved !== undefined) {
-            entityFields.isApproved = dto.is_approved;
-        }
-
-        return entityFields;
     }
 }

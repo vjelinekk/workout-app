@@ -26,7 +26,7 @@ export class ExerciseCreateDto {
     })
     @IsEnum(BodyPartEnum)
     @IsNotEmpty()
-    body_part: BodyPartEnum;
+    bodyPart: BodyPartEnum;
 
     @ApiProperty({
         example: 'None',
@@ -52,7 +52,7 @@ export class ExerciseCreateDto {
     })
     @IsNumber()
     @IsOptional()
-    category_id?: number;
+    categoryId?: number;
 
     @ApiProperty({
         example: 'https://example.com/image.jpg',
@@ -62,7 +62,7 @@ export class ExerciseCreateDto {
     @IsString()
     @IsUrl()
     @IsOptional()
-    image_url?: string;
+    imageUrl?: string;
 
     @ApiProperty({
         example: 'true',
@@ -71,7 +71,7 @@ export class ExerciseCreateDto {
     })
     @IsBoolean()
     @IsOptional()
-    is_public?: boolean;
+    isPublic?: boolean;
 
     @ApiProperty({
         example: 'true',
@@ -80,5 +80,5 @@ export class ExerciseCreateDto {
     })
     @IsBoolean()
     @IsOptional()
-    is_approved?: boolean;
+    isApproved?: boolean;
 }

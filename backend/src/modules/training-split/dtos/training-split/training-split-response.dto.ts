@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Expose } from 'class-transformer';
 import { IsBoolean, IsNumber, IsString } from 'class-validator';
 import { BaseResponseDto } from 'src/common/dtos/base-response.dto';
 
@@ -8,6 +9,7 @@ export class TrainingSplitResponseDto extends BaseResponseDto {
         description: 'The name of the training split',
     })
     @IsString()
+    @Expose()
     name: string;
 
     @ApiProperty({
@@ -16,6 +18,7 @@ export class TrainingSplitResponseDto extends BaseResponseDto {
         description: 'A brief description of the training split',
     })
     @IsString()
+    @Expose()
     description: string;
 
     @ApiProperty({
@@ -23,19 +26,22 @@ export class TrainingSplitResponseDto extends BaseResponseDto {
         description: 'Is training split publicly available',
     })
     @IsBoolean()
-    is_public: boolean;
+    @Expose()
+    isPublic: boolean;
 
     @ApiProperty({
         example: 'true',
         description: 'Is training split approved to show publicly',
     })
     @IsBoolean()
-    is_approved: boolean;
+    @Expose()
+    isApproved: boolean;
 
     @ApiProperty({
         example: '1',
         description: 'ID of the user who created the training split',
     })
     @IsNumber()
-    created_by: number;
+    @Expose()
+    createdBy: number;
 }

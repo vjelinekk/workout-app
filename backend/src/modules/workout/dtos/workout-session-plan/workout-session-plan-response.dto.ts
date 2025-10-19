@@ -1,6 +1,7 @@
 import { BaseResponseDto } from 'src/common/dtos/base-response.dto';
 import { ApiProperty } from '@nestjs/swagger';
 import { IsBoolean, IsNumber, IsString } from 'class-validator';
+import { Expose } from 'class-transformer';
 
 export class WorkoutSessionPlanResponseDto extends BaseResponseDto {
     @ApiProperty({
@@ -8,6 +9,7 @@ export class WorkoutSessionPlanResponseDto extends BaseResponseDto {
         description: 'The name of the workout session plan',
     })
     @IsString()
+    @Expose()
     name: string;
 
     @ApiProperty({
@@ -16,6 +18,7 @@ export class WorkoutSessionPlanResponseDto extends BaseResponseDto {
         description: 'A detailed description of the workout session plan',
     })
     @IsString()
+    @Expose()
     description: string;
 
     @ApiProperty({
@@ -23,14 +26,16 @@ export class WorkoutSessionPlanResponseDto extends BaseResponseDto {
         description: 'The ID of the user who created this workout session plan',
     })
     @IsNumber()
-    created_by: number;
+    @Expose()
+    createdBy: number;
 
     @ApiProperty({
         example: true,
         description: 'Whether the workout session plan is publicly available',
     })
     @IsBoolean()
-    is_public: boolean;
+    @Expose()
+    isPublic: boolean;
 
     @ApiProperty({
         example: true,
@@ -38,5 +43,6 @@ export class WorkoutSessionPlanResponseDto extends BaseResponseDto {
             'Whether the workout session plan is approved to show publicly',
     })
     @IsBoolean()
-    is_approved: boolean;
+    @Expose()
+    isApproved: boolean;
 }

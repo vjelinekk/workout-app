@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Expose } from 'class-transformer';
 import { IsInt } from 'class-validator';
 import { BaseResponseDto } from 'src/common/dtos/base-response.dto';
 
@@ -8,14 +9,16 @@ export class TrainingSplitDayResponseDto extends BaseResponseDto {
         description: 'The ID of the training split',
     })
     @IsInt()
-    training_split_id: number;
+    @Expose()
+    trainingSplitId: number;
 
     @ApiProperty({
         example: 1,
         description: 'The ID of the workout session plan',
     })
     @IsInt()
-    workout_session_plan_id: number;
+    @Expose()
+    workoutSessionPlanId: number;
 
     @ApiProperty({
         example: 1,
@@ -24,13 +27,15 @@ export class TrainingSplitDayResponseDto extends BaseResponseDto {
         maximum: 7,
     })
     @IsInt()
-    day_of_week: number;
+    @Expose()
+    dayOfWeek: number;
 
     @ApiProperty({
         example: 1,
         description: 'Order of the workout session plan in the day',
     })
     @IsInt()
+    @Expose()
     order: number;
 
     @ApiProperty({
@@ -38,5 +43,6 @@ export class TrainingSplitDayResponseDto extends BaseResponseDto {
         description: 'ID of the user who created the training split day',
     })
     @IsInt()
-    created_by: number;
+    @Expose()
+    createdBy: number;
 }

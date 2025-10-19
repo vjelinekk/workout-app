@@ -22,40 +22,10 @@ export class ExerciseCategoryService extends MappedCrudService<
         super(exerciseCategoryRepository);
     }
 
-    protected toEntity(
-        dto: ExerciseCategoryCreateDto,
-    ): Partial<ExerciseCategoryEntity> {
-        return {
-            name: dto.name,
-            description: dto.description,
-        };
+    protected get entityClass(): new () => ExerciseCategoryEntity {
+        return ExerciseCategoryEntity;
     }
-
-    protected toEntityUpdate(
-        dto: ExerciseCategoryUpdateDto | ExerciseCategoryPatchDto,
-    ): Partial<ExerciseCategoryEntity> {
-        const entityFields: Partial<ExerciseCategoryEntity> = {};
-
-        if ('name' in dto && dto.name !== undefined) {
-            entityFields.name = dto.name;
-        }
-        if ('description' in dto && dto.description !== undefined) {
-            entityFields.description = dto.description;
-        }
-
-        return entityFields;
-    }
-
-    protected toResponseDto(
-        entity: ExerciseCategoryEntity,
-    ): ExerciseCategoryResponseDto {
-        return {
-            id: entity.id,
-            name: entity.name,
-            description: entity.description,
-            created_at: entity.createdAt,
-            updated_at: entity.updatedAt,
-            is_deleted: entity.isDeleted,
-        };
+    protected get responseDtoClass(): new () => ExerciseCategoryResponseDto {
+        return ExerciseCategoryResponseDto;
     }
 }

@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { Expose } from 'class-transformer';
 import { IsString } from 'class-validator';
 import { BaseResponseDto } from 'src/common/dtos/base-response.dto';
 
@@ -8,6 +9,7 @@ export class ExerciseCategoryResponseDto extends BaseResponseDto {
         description: 'Name of the category',
     })
     @IsString()
+    @Expose()
     name: string;
 
     @ApiProperty({
@@ -15,5 +17,6 @@ export class ExerciseCategoryResponseDto extends BaseResponseDto {
         description: 'Description of the category',
     })
     @IsString()
+    @Expose()
     description: string;
 }

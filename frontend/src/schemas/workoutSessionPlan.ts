@@ -10,7 +10,7 @@ export const workoutSessionPlanExerciseSchema = (
     oneSetValidation: string,
 ) => z.object({
     id: z.number().optional(),
-    exercise_id: z.union([z.number().min(1, exerciseIdValidation), z.undefined()])
+    exerciseId: z.union([z.number().min(1, exerciseIdValidation), z.undefined()])
         .refine((val) => val !== undefined && val >= 1, {
             message: exerciseIdValidation,
         }),
@@ -27,8 +27,8 @@ export const workoutSessionPlanSchema = (
 ) => z.object({
     name: z.string().min(1, nameValidation),
     description: z.string().min(1, descriptionValidation),
-    is_public: z.boolean(),
-    is_approved: z.boolean(),
+    isPublic: z.boolean(),
+    isApproved: z.boolean(),
     exercises: z.array(workoutSessionPlanExerciseSchema(
         exerciseIdValidation,
         repsValidation,

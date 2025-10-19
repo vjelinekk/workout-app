@@ -127,24 +127,36 @@ export abstract class PublicAuthorizableCrudService<
         userRoles: RoleEnum[],
         scope: FindAllScopes,
         id: number,
+        relations?: string[],
     ): Promise<Entity | null> {
         const isAdmin = this.isAdmin(userRoles);
 
         switch (scope) {
             case FindAllScopes.AVAILABLE:
-                return this.repository.findOneAvailable(userId, id, isAdmin);
+                return this.repository.findOneAvailable(
+                    userId,
+                    id,
+                    isAdmin,
+                    relations,
+                );
 
             case FindAllScopes.MY:
-                return this.repository.findOnePrivate(userId, id, isAdmin);
+                return this.repository.findOnePrivate(
+                    userId,
+                    id,
+                    isAdmin,
+                    relations,
+                );
 
             case FindAllScopes.PUBLIC:
-                return this.repository.findOnePublicAndApproved(id);
+                return this.repository.findOnePublicAndApproved(id, relations);
 
             case FindAllScopes.ALL:
                 return this.repository.findOneAvailableIncludingDeleted(
                     userId,
                     id,
                     isAdmin,
+                    relations,
                 );
 
             case FindAllScopes.DELETED:
@@ -152,6 +164,7 @@ export abstract class PublicAuthorizableCrudService<
                     userId,
                     id,
                     isAdmin,
+                    relations,
                 );
 
             default:
@@ -159,6 +172,7 @@ export abstract class PublicAuthorizableCrudService<
                     userId,
                     id,
                     isAdmin,
+                    relations,
                 );
         }
     }
@@ -195,8 +209,15 @@ export abstract class PublicAuthorizableCrudService<
         userRoles: RoleEnum[],
         scope: FindAllScopes,
         id: number,
+        relations?: string[],
     ): Promise<ResponseDto> {
-        const entity = await this.findOneByScope(userId, userRoles, scope, id);
+        const entity = await this.findOneByScope(
+            userId,
+            userRoles,
+            scope,
+            id,
+            relations,
+        );
 
         if (!entity) {
             throw new NotFoundException(`${this.getEntityName()} not found`);

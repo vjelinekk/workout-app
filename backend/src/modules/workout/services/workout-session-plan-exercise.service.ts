@@ -9,7 +9,6 @@ import { WorkoutSessionPlanExerciseUpdateDto } from '../dtos/workout-session-pla
 import { WorkoutSessionPlanExercisePatchDto } from '../dtos/workout-session-plan-exercise/workout-session-plan-exercise-patch.dto';
 import { WorkoutSessionPlanExerciseResponseDto } from '../dtos/workout-session-plan-exercise/workout-session-plan-exercise-response.dto';
 import { WorkoutSessionPlanExerciseRepository } from '../repositories/workout-session-plan-exercise.respository';
-import { DeepPartial } from 'typeorm';
 import { PlannedRepsSetsMismatchException } from '../exceptions/workout-session-plan-exercise/planned-reps-sets-mismatch.exception';
 import { ValidatedMappedCrudService } from 'src/common/services/validated-mapped-crud.service';
 import { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
@@ -69,10 +68,7 @@ export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudServic
     }
 
     protected beforeCreate(dto: WorkoutSessionPlanExerciseCreateDto): void {
-        this.validatePlannedRepsPerSet(
-            dto.plannedSets,
-            dto.plannedRepsPerSet,
-        );
+        this.validatePlannedRepsPerSet(dto.plannedSets, dto.plannedRepsPerSet);
     }
 
     /**

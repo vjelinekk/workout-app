@@ -5,7 +5,6 @@ import { WorkoutSessionPlanPatchDto } from '../dtos/workout-session-plan/workout
 import { WorkoutSessionPlanResponseDto } from '../dtos/workout-session-plan/workout-session-plan-response.dto';
 import { WorkoutSessionPlanRepository } from '../repositories/workout-session-plan.repository';
 import { Injectable } from '@nestjs/common';
-import { DeepPartial } from 'typeorm';
 import { PublicAuthorizableCrudService } from 'src/common/services/public-authorizable-crud.service';
 import { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
 

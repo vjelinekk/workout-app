@@ -42,7 +42,7 @@ export const WorkoutSessionPlanExercisesFormFields = ({
 
     const addExercise = () => {
         setShowNoExerciseError(false);
-        append({ exercise_id: undefined, sets: [{ reps: 1 }] });
+        append({ exerciseId: undefined, sets: [{ reps: 1 }] });
     };
 
     return (

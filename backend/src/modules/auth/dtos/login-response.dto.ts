@@ -8,30 +8,30 @@ export class LoginResponseDto {
         description: 'JWT access token',
     })
     @IsString()
-    access_token: string;
+    accessToken: string;
 
     @ApiProperty({ example: 1, description: 'ID of the user' })
     @IsNumber()
-    user_id: number;
+    userId: number;
 
     @ApiProperty({ example: 'John', description: 'First name of the user' })
     @IsString()
-    user_first_name: string;
+    userFistName: string;
 
     @ApiProperty({ example: 'Doe', description: 'Last name of the user' })
     @IsString()
-    user_last_name: string;
+    userLastName: string;
 
     @ApiProperty({ example: 'johndoe', description: 'Nickname of the user' })
     @IsString()
-    user_nickname: string;
+    userNickname: string;
 
     @ApiProperty({
         example: 'johndoe@example.com',
         description: 'Email of the user',
     })
     @IsString()
-    user_email: string;
+    userEmail: string;
 
     @ApiProperty({
         example: ['user', 'admin'],

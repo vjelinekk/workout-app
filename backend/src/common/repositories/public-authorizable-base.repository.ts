@@ -27,6 +27,7 @@ export abstract class PublicAuthorizableBaseRepository<
         userId: number,
         id: number,
         isAdmin: boolean,
+        relations?: string[],
     ): Promise<T | null> {
         let where = { createdById: userId, id } as FindManyOptions<T>['where'];
         if (isAdmin) {
@@ -36,6 +37,7 @@ export abstract class PublicAuthorizableBaseRepository<
 
         return this.findOneActive({
             where,
+            relations,
         });
     }
 
@@ -59,6 +61,7 @@ export abstract class PublicAuthorizableBaseRepository<
         userId: number,
         id: number,
         isAdmin: boolean,
+        relations?: string[],
     ): Promise<T | null> {
         let where = [
             { isPublic: true, isApproved: true, id } as Partial<T>,
@@ -71,6 +74,7 @@ export abstract class PublicAuthorizableBaseRepository<
 
         return this.findOneActive({
             where,
+            relations,
         });
     }
 
@@ -83,13 +87,17 @@ export abstract class PublicAuthorizableBaseRepository<
         });
     }
 
-    async findOnePublicAndApproved(id: number): Promise<T | null> {
+    async findOnePublicAndApproved(
+        id: number,
+        relations?: string[],
+    ): Promise<T | null> {
         return this.findOneActive({
             where: {
                 isPublic: true,
                 isApproved: true,
                 id,
             } as FindManyOptions<T>['where'],
+            relations,
         });
     }
 
@@ -116,6 +124,7 @@ export abstract class PublicAuthorizableBaseRepository<
         userId: number,
         id: number,
         isAdmin: boolean,
+        relations?: string[],
     ): Promise<T | null> {
         let where = [
             { isPublic: true, isApproved: true, id } as Partial<T>,
@@ -129,6 +138,7 @@ export abstract class PublicAuthorizableBaseRepository<
 
         return this.findOne({
             where,
+            relations,
         });
     }
 
@@ -164,6 +174,7 @@ export abstract class PublicAuthorizableBaseRepository<
         userId: number,
         id: number,
         isAdmin: boolean,
+        relations?: string[],
     ): Promise<T | null> {
         let where = [
             {
@@ -186,6 +197,7 @@ export abstract class PublicAuthorizableBaseRepository<
 
         return this.findOne({
             where,
+            relations,
         });
     }
 }

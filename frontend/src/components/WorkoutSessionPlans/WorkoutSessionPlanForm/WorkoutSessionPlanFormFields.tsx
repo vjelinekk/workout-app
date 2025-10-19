@@ -41,7 +41,7 @@ export const WorkoutSessionPlanFormFields = ({
 
             <BasicCheckbox<WorkoutSessionPlanFormValues>
                 control={control}
-                name="is_public"
+                name="isPublic"
                 label={t('isPublic')}
                 disabled={isViewMode}
             />
@@ -49,7 +49,7 @@ export const WorkoutSessionPlanFormFields = ({
             {(isViewMode || user?.roles.includes(UserRole.ADMIN)) && (
                 <BasicCheckbox<WorkoutSessionPlanFormValues>
                     control={control}
-                    name="is_approved"
+                    name="isApproved"
                     label={t('isApproved')}
                     disabled={isViewMode}
                 />

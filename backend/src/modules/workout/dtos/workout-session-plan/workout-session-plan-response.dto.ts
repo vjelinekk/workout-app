@@ -1,7 +1,8 @@
 import { BaseResponseDto } from 'src/common/dtos/base-response.dto';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsNumber, IsString } from 'class-validator';
-import { Expose } from 'class-transformer';
+import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
+import { Expose, Type } from 'class-transformer';
+import { WorkoutSessionPlanExerciseResponseDto } from '../workout-session-plan-exercise/workout-session-plan-exercise-response.dto';
 
 export class WorkoutSessionPlanResponseDto extends BaseResponseDto {
     @ApiProperty({
@@ -45,4 +46,13 @@ export class WorkoutSessionPlanResponseDto extends BaseResponseDto {
     @IsBoolean()
     @Expose()
     isApproved: boolean;
+
+    @ApiProperty({
+        type: [WorkoutSessionPlanExerciseResponseDto],
+        description: 'The exercises included in this workout session plan',
+    })
+    @IsOptional()
+    @Expose()
+    @Type(() => WorkoutSessionPlanExerciseResponseDto)
+    exercises: WorkoutSessionPlanExerciseResponseDto[];
 }

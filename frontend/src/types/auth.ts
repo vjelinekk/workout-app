@@ -15,12 +15,12 @@ export interface LoginResult {
 }
 
 export interface LoginResponse {
-    access_token: string;
-    user_id: number;
-    user_first_name: string;
-    user_last_name: string;
-    user_nickname: string;
-    user_email: string;
+    accessToken: string;
+    userId: number;
+    userFirstName: string;
+    userLastName: string;
+    userNickname: string;
+    userEmail: string;
     roles: UserRole[];
 }
 

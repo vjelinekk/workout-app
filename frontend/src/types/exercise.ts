@@ -18,12 +18,12 @@ export enum BodyPart {
 export interface Exercise {
     id: number;
     name: string;
-    body_part: BodyPart;
+    bodyPart: BodyPart;
     equipment: string;
     description: string;
-    category_id?: number;
-    image_url: string;
-    is_public: boolean;
-    is_approved: boolean;
-    created_by: number;
+    categoryId?: number;
+    imageUrl: string;
+    isPublic: boolean;
+    isApproved: boolean;
+    createdBy: number;
 };

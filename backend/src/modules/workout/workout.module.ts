@@ -10,6 +10,10 @@ import { WorkoutSessionPlanRepository } from './repositories/workout-session-pla
 import { WorkoutSessionPlanExerciseRepository } from './repositories/workout-session-plan-exercise.respository';
 import { WorkoutSessionPlanService } from './services/workout-session-plan.service';
 import { WorkoutSessionPlanExerciseService } from './services/workout-session-plan-exercise.service';
+import { WorkoutSessionController } from './controllers/workout-session.controller';
+import { WorkoutSessionRepository } from './repositories/workout-session.respository';
+import { WorkoutSessionService } from './services/workout-session.service';
+import { WorkoutSessionExerciseRepository } from './repositories/workout-session-exercise.respository';
 
 @Module({
     imports: [
@@ -23,12 +27,16 @@ import { WorkoutSessionPlanExerciseService } from './services/workout-session-pl
     controllers: [
         WorkoutSessionPlanController,
         WorkoutSessionPlanExerciseController,
+        WorkoutSessionController,
     ],
     providers: [
         WorkoutSessionPlanRepository,
         WorkoutSessionPlanService,
         WorkoutSessionPlanExerciseRepository,
         WorkoutSessionPlanExerciseService,
+        WorkoutSessionRepository,
+        WorkoutSessionService,
+        WorkoutSessionExerciseRepository,
     ],
     exports: [WorkoutSessionPlanRepository],
 })

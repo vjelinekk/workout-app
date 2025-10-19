@@ -41,7 +41,7 @@ export const Dashboard = () => {
             id: 'logging',
             title: t('sessionLogging'),
             description: t('sessionLoggingSubtitle'),
-            href: '/logging',
+            href: '/session-logging',
             icon: <CheckSquare className="w-6 h-6" />,
         },
     ];

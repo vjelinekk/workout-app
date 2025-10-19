@@ -268,7 +268,7 @@ export const WorkoutSessionPlanExerciseForm = ({
                     )}
 
                     <BasicSelectBox
-                        name={`exercises.${exerciseIndex}.exercise_id`}
+                        name={`exercises.${exerciseIndex}.exerciseId`}
                         control={control}
                         label={t('exercise')}
                         placeholder={t('placeholder.exercise')}

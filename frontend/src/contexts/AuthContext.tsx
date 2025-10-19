@@ -76,13 +76,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     const handleGoogleLoginSuccess = useCallback(async (response: LoginResponse) => {
-        const token = response.access_token;
+        const token = response.accessToken;
         const user: User = {
-            id: response.user_id,
-            firstName: response.user_first_name,
-            lastName: response.user_last_name,
-            nickname: response.user_nickname,
-            email: response.user_email,
+            id: response.userId,
+            firstName: response.userFirstName,
+            lastName: response.userLastName,
+            nickname: response.userNickname,
+            email: response.userEmail,
             roles: response.roles,
         };
 

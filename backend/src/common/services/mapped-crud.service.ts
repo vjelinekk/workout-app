@@ -43,7 +43,9 @@ export abstract class MappedCrudService<
      * @returns Response DTO with properly mapped fields
      */
     protected toResponseDto(entity: Entity): ResponseDto {
-        return plainToInstance(this.responseDtoClass, entity, { excludeExtraneousValues: true });
+        return plainToInstance(this.responseDtoClass, entity, {
+            excludeExtraneousValues: true,
+        });
     }
 
     /**
@@ -53,17 +55,17 @@ export abstract class MappedCrudService<
      * @param dto Update or patch DTO
      * @returns Partial entity with properly mapped fields
      */
-    protected toEntityUpdate(
-        dto: UpdateDto | PatchDto,
-    ): Partial<Entity> {
-        // Convert DTO to instance to apply any class-transformer decorators if needed
+    protected toEntityUpdate(dto: UpdateDto | PatchDto): Partial<Entity> {
         const instance = plainToInstance(this.entityClass, dto);
 
-        // Only keep fields that are defined in the DTO
-        const partial: Partial<Entity> = {};
-        Object.entries(instance).forEach(([key, value]) => {
+        // Create a strongly typed Partial<Entity> object
+        const partial = {} as Partial<Entity>;
+
+        (
+            Object.entries(instance) as [keyof Entity, Entity[keyof Entity]][]
+        ).forEach(([key, value]) => {
             if (value !== undefined) {
-                (partial as any)[key] = value;
+                partial[key] = value;
             }
         });
 

@@ -5,7 +5,6 @@ import { ExerciseEntity } from '../entities/exercise.entity';
 import { ExerciseResponseDto } from '../dtos/exercise/exercise-response.dto';
 import { ExercisePatchDto } from '../dtos/exercise/exercise-patch.dto';
 import { ExerciseUpdateDto } from '../dtos/exercise/exercise-update.dto';
-import { DeepPartial } from 'typeorm';
 import { PublicAuthorizableCrudService } from 'src/common/services/public-authorizable-crud.service';
 import { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
 import { RoleEnum } from 'src/modules/user/enums/role.enum';

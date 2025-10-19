@@ -152,44 +152,6 @@ export class TrainingSplitController {
         return await this.trainingSplitService.deleteValidated(id, user);
     }
 
-    @Get(':id')
-    @ApiOperation({ summary: 'Get training split by ID' })
-    @ApiQuery({
-        name: 'scope',
-        description: 'Scope of training splits to retrieve',
-        required: false,
-        schema: {
-            type: 'string',
-            enum: Object.values(FindAllScopes),
-            default: FindAllScopes.AVAILABLE,
-        },
-    })
-    @ApiOkResponse({
-        description: 'The training split with the specified ID',
-        type: TrainingSplitResponseDto,
-    })
-    @ApiNotFoundResponse({
-        description: 'Training split not found',
-    })
-    @ApiUnauthorizedResponse({
-        description: 'Unauthorized',
-    })
-    @ApiBadRequestResponse({
-        description: 'Invalid request',
-    })
-    async get(
-        @Param('id', ParseIntPipe) id: number,
-        @Query('scope') scope: FindAllScopes = FindAllScopes.AVAILABLE,
-        @JwtUser() user: JwtAuthenticatedUser,
-    ): Promise<TrainingSplitResponseDto> {
-        return await this.trainingSplitService.findOneAvailableAuthorized(
-            user.id,
-            user.roles,
-            scope,
-            id,
-        );
-    }
-
     @Get()
     @ApiOperation({ summary: 'Get all training splits' })
     @ApiQuery({
@@ -223,6 +185,70 @@ export class TrainingSplitController {
             user.id,
             user.roles,
             scope,
+        );
+    }
+
+    @Get('assigned')
+    async getAssigned(
+        @JwtUser() user: JwtAuthenticatedUser,
+    ): Promise<TrainingSplitResponseDto> {
+        return await this.trainingSplitService.findAssignedTrainingSplit(
+            user.id,
+        );
+    }
+
+    @Get(':id')
+    @ApiOperation({ summary: 'Get training split by ID' })
+    @ApiQuery({
+        name: 'scope',
+        description: 'Scope of training splits to retrieve',
+        required: false,
+        schema: {
+            type: 'string',
+            enum: Object.values(FindAllScopes),
+            default: FindAllScopes.AVAILABLE,
+        },
+    })
+    @ApiOkResponse({
+        description: 'The training split with the specified ID',
+        type: TrainingSplitResponseDto,
+    })
+    @ApiNotFoundResponse({
+        description: 'Training split not found',
+    })
+    @ApiUnauthorizedResponse({
+        description: 'Unauthorized',
+    })
+    @ApiBadRequestResponse({
+        description: 'Invalid request',
+    })
+    async get(
+        @Param('id', ParseIntPipe) id: number,
+        @Query('scope') scope: FindAllScopes = FindAllScopes.AVAILABLE,
+        @Query('withAllRelations') withAllRelations: boolean = false,
+        @JwtUser() user: JwtAuthenticatedUser,
+    ): Promise<TrainingSplitResponseDto> {
+        if (withAllRelations) {
+            return await this.trainingSplitService.findOneAvailableAuthorized(
+                user.id,
+                user.roles,
+                scope,
+                id,
+                [
+                    'days',
+                    'days.workoutSessionPlan',
+                    'days.workoutSessionPlan.exercises',
+                    'days.workoutSessionPlan.exercises.exercise',
+                ],
+            );
+        }
+
+        return await this.trainingSplitService.findOneAvailableAuthorized(
+            user.id,
+            user.roles,
+            scope,
+            id,
+            ['days'],
         );
     }
 

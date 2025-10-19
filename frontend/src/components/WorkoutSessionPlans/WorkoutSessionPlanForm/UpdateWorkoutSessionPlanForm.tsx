@@ -47,8 +47,8 @@ const WorkoutSessionPlanLoader = ({
     if (
         workoutSessionPlan &&
         user &&
-        workoutSessionPlan.is_approved &&
-        workoutSessionPlan.is_public &&
+        workoutSessionPlan.isApproved &&
+        workoutSessionPlan.isPublic &&
         !user.roles.includes(UserRole.ADMIN)
     ) {
         return (

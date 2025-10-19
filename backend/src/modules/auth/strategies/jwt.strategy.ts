@@ -40,7 +40,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         return {
             id: payload.sub,
             nickname: payload.nickname,
-            roles: currentRoleIds, // Use current roles from DB, not token
+            roles: currentRoleIds,
         };
     }
 }

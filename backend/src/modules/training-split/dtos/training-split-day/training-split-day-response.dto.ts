@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
 import { IsInt } from 'class-validator';
 import { BaseResponseDto } from 'src/common/dtos/base-response.dto';
+import { WorkoutSessionPlanResponseDto } from 'src/modules/workout/dtos/workout-session-plan/workout-session-plan-response.dto';
 
 export class TrainingSplitDayResponseDto extends BaseResponseDto {
     @ApiProperty({
@@ -19,6 +20,14 @@ export class TrainingSplitDayResponseDto extends BaseResponseDto {
     @IsInt()
     @Expose()
     workoutSessionPlanId: number;
+
+    @ApiProperty({
+        type: WorkoutSessionPlanResponseDto,
+        description: 'The workout session plan associated with this day',
+    })
+    @Expose()
+    @Type(() => WorkoutSessionPlanResponseDto)
+    workoutSessionPlan: WorkoutSessionPlanResponseDto;
 
     @ApiProperty({
         example: 1,

@@ -39,7 +39,7 @@ export const ExerciseFormFields = ({ control, user, isViewMode }: Props) => {
             />
 
             <BasicSelectBox<ExerciseFormValues>
-                name="body_part"
+                name="bodyPart"
                 label={t('bodyPart')}
                 required
                 placeholder={t('placeholder.bodyPart')}
@@ -84,13 +84,13 @@ export const ExerciseFormFields = ({ control, user, isViewMode }: Props) => {
                 <BasicFileInput<ExerciseFormValues>
                     label={t('imageFile')}
                     control={control}
-                    name="image_file"
+                    name="imageFile"
                 />
             )}
 
             <BasicCheckbox<ExerciseFormValues>
                 control={control}
-                name="is_public"
+                name="isPublic"
                 label={t('isPublic')}
                 disabled={isViewMode}
             />
@@ -98,7 +98,7 @@ export const ExerciseFormFields = ({ control, user, isViewMode }: Props) => {
             {(isViewMode || user?.roles.includes(UserRole.ADMIN)) && (
                 <BasicCheckbox<ExerciseFormValues>
                     control={control}
-                    name="is_approved"
+                    name="isApproved"
                     label={t('isApproved')}
                     disabled={isViewMode}
                 />

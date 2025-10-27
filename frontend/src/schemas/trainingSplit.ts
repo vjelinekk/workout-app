@@ -7,8 +7,8 @@ export const workoutSessionPlanExerciseSetSchema = (repsValidation: string) => z
 export const trainingSplitDaySchema = (
 ) => z.object({
     id: z.number().optional(),
-    workout_session_plan_id: z.number().min(1),
-    day_of_week: z.number().min(1).max(7),
+    workoutSessionPlanId: z.number().min(1),
+    dayOfWeek: z.number().min(1).max(7),
 });
 
 export const trainingSplitSchema = (
@@ -17,9 +17,9 @@ export const trainingSplitSchema = (
 ) => z.object({
     name: z.string().min(1, nameValidation),
     description: z.string().min(1, descriptionValidation),
-    is_public: z.boolean(),
-    is_approved: z.boolean(),
-    training_split_days: z.array(trainingSplitDaySchema()),
+    isPublic: z.boolean(),
+    isApproved: z.boolean(),
+    days: z.array(trainingSplitDaySchema()),
 });
 
 export type TrainingSplitFormValues = z.infer<ReturnType<typeof trainingSplitSchema>>;

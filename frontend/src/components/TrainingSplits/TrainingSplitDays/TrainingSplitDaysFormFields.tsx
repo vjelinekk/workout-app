@@ -41,7 +41,7 @@ export const TrainingSplitDaysFormFields = ({
     ];
     const { fields, append, remove } = useFieldArray({
         control,
-        name: 'training_split_days',
+        name: 'days',
     });
 
     // Track which day is currently expanded (only one at a time)
@@ -68,8 +68,8 @@ export const TrainingSplitDaysFormFields = ({
         if (!plan) return;
 
         append({
-            workout_session_plan_id: plan.id,
-            day_of_week: dayId,
+            workoutSessionPlanId: plan.id,
+            dayOfWeek: dayId,
         });
 
         setSelectedPlanId((prev) => ({ ...prev, [dayId]: '' }));
@@ -80,7 +80,7 @@ export const TrainingSplitDaysFormFields = ({
     const getWorkoutsForDay = (dayId: number) =>
         fields
             .map((f, index) => ({ ...f, index }))
-            .filter((w) => w.day_of_week === dayId);
+            .filter((w) => w.dayOfWeek === dayId);
 
     return (
         <div className="space-y-3">
@@ -155,8 +155,7 @@ export const TrainingSplitDaysFormFields = ({
                                     {dayWorkouts.map((w) => {
                                         const plan = workoutSessionPlans.find(
                                             (p) =>
-                                                p.id ===
-                                                w.workout_session_plan_id,
+                                                p.id === w.workoutSessionPlanId,
                                         );
                                         if (!plan) return null;
 

@@ -83,7 +83,10 @@ export class TrainingSplitAssignmentService extends ValidatedMappedCrudService<
         };
     }
 
-    async createMapped(dto: TrainingSplitAssignmentCreateDto, userId: number): Promise<TrainingSplitAssignmentResponseDto> {
+    async createMapped(
+        dto: TrainingSplitAssignmentCreateDto,
+        userId: number,
+    ): Promise<TrainingSplitAssignmentResponseDto> {
         const entity = this.toEntity(dto);
         entity.createdById = userId;
         entity.status = TrainingSplitAssignmentStatusEnum.PENDING;

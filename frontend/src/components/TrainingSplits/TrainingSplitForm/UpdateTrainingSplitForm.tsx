@@ -43,8 +43,8 @@ const TrainingSplitLoader = ({
     if (
         trainingSplit &&
         user &&
-        trainingSplit.is_approved &&
-        trainingSplit.is_public &&
+        trainingSplit.isApproved &&
+        trainingSplit.isPublic &&
         !user.roles.includes(UserRole.ADMIN)
     ) {
         return (

@@ -56,7 +56,11 @@ export default function AuthCallback() {
                     let errorMessage = 'Failed to complete authentication';
                     if (axios.isAxiosError<ApiErrorResponse>(err)) {
                         if (err.response?.data?.message?.message) {
-                            errorMessage = err.response.data.message.message;
+                            errorMessage = Array.isArray(
+                                err.response.data.message.message,
+                            )
+                                ? err.response.data.message.message.join(', ')
+                                : err.response.data.message.message;
                         }
                     }
 

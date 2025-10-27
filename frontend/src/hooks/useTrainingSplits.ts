@@ -1,4 +1,4 @@
-import { createTrainingSplit, deleteTrainingSplit, fetchAllTrainingSplits, fetchTrainingSplitById, QUERY_KEY_TRAINING_SPLIT, QUERY_KEY_TRAINING_SPLITS, updateTrainingSplit } from "@/api/services/trainingSplit"
+import { createTrainingSplit, deleteTrainingSplit, fetchAllTrainingSplits, fetchTrainingSplitAssignedToUser, fetchTrainingSplitById, QUERY_KEY_TRAINING_SPLIT, QUERY_KEY_TRAINING_SPLIT_ASSIGNED_TO_USER, QUERY_KEY_TRAINING_SPLITS, updateTrainingSplit } from "@/api/services/trainingSplit"
 import { TrainingSplitFormValues } from "@/schemas/trainingSplit"
 import { ApiErrorResponse } from "@/types/api"
 import { Scope } from "@/types/scope"
@@ -18,6 +18,15 @@ export const useTrainingSplit = (id: number) => {
     const { data, error, isLoading } = useQuery<TrainingSplit, ApiErrorResponse>({
         queryKey: [QUERY_KEY_TRAINING_SPLITS, QUERY_KEY_TRAINING_SPLIT, id],
         queryFn: ({ signal }) => fetchTrainingSplitById(id, signal),
+    })
+
+    return { data, error, isLoading }
+}
+
+export const useTrainingSplitAssignedToUser = () => {
+    const { data, error, isLoading } = useQuery<TrainingSplit, ApiErrorResponse>({
+        queryKey: [QUERY_KEY_TRAINING_SPLIT_ASSIGNED_TO_USER],
+        queryFn: ({ signal }) => fetchTrainingSplitAssignedToUser(signal),
     })
 
     return { data, error, isLoading }

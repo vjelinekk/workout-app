@@ -37,8 +37,8 @@ const ExerciseLoader = ({ id, user }: { id: number; user: User | null }) => {
     if (
         exercise &&
         user &&
-        exercise.is_approved &&
-        exercise.is_public &&
+        exercise.isApproved &&
+        exercise.isPublic &&
         !user.roles.includes(UserRole.ADMIN)
     ) {
         return <ExerciseForm mode="view" id={id} initialData={exercise} />;

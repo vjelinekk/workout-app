@@ -1,21 +1,24 @@
+import { Exercise } from "./exercise";
+
 export interface WorkoutSessionPlan {
     id: number;
-    created_at: Date;
-    updated_at: Date;
-    is_deleted: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+    isDeleted: boolean;
     name: string;
     description: string;
-    created_by: number;
-    is_public: boolean;
-    is_approved: boolean;
+    createdBy: number;
+    isPublic: boolean;
+    isApproved: boolean;
     exercises?: WorkoutSessionPlanExercise[];
 }
 
 export interface WorkoutSessionPlanExercise {
     id: number;
-    workout_session_plan_id: number;
-    exercise_id: number;
+    workoutSessionPlanId: number;
+    exerciseId: number;
+    exercise?: Exercise;
     order: number;
-    planned_sets: number;
-    planned_reps_per_set: number[];
+    plannedSets: number;
+    plannedRepsPerSet: number[];
 }

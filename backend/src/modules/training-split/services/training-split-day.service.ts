@@ -11,7 +11,6 @@ import { TrainingSplitDayPatchDto } from '../dtos/training-split-day/training-sp
 import { TrainingSplitDayResponseDto } from '../dtos/training-split-day/training-split-day-response.dto';
 import { TrainingSplitDayRepository } from '../repositories/training-split-day.repository';
 import { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
-import { DeepPartial } from 'typeorm';
 import { TrainingSplitRepository } from '../repositories/training-split.repository';
 import { RoleEnum } from 'src/modules/user/enums/role.enum';
 import { WorkoutSessionPlanRepository } from 'src/modules/workout/repositories/workout-session-plan.repository';

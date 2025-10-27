@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Expose } from 'class-transformer';
-import { IsBoolean, IsNumber, IsString } from 'class-validator';
+import { Expose, Type } from 'class-transformer';
+import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator';
 import { BaseResponseDto } from 'src/common/dtos/base-response.dto';
+import { TrainingSplitDayResponseDto } from '../training-split-day/training-split-day-response.dto';
 
 export class TrainingSplitResponseDto extends BaseResponseDto {
     @ApiProperty({
@@ -44,4 +45,13 @@ export class TrainingSplitResponseDto extends BaseResponseDto {
     @IsNumber()
     @Expose()
     createdBy: number;
+
+    @ApiProperty({
+        type: [TrainingSplitDayResponseDto],
+        description: 'The days associated with the training split',
+    })
+    @IsOptional()
+    @Expose()
+    @Type(() => TrainingSplitDayResponseDto)
+    days?: TrainingSplitDayResponseDto[];
 }

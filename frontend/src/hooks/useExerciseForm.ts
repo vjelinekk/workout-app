@@ -19,23 +19,23 @@ export const useExerciseForm = (initialData?: Exercise) => {
     const computedDefaults: ExerciseFormValues = initialData
         ? {
             name: initialData.name ?? '',
-            body_part: initialData.body_part ?? '',
+            bodyPart: initialData.bodyPart ?? '',
             equipment: initialData.equipment ?? '',
             description: initialData.description ?? '',
-            category_id: initialData.category_id ?? undefined,
-            image_file: undefined,
-            is_public: initialData.is_public ?? false,
-            is_approved: initialData.is_approved ?? false,
+            categoryId: initialData.categoryId ?? undefined,
+            imageFile: undefined,
+            isPublic: initialData.isPublic ?? false,
+            isApproved: initialData.isApproved ?? false,
         }
         : {
             name: '',
-            body_part: '',
+            bodyPart: '',
             equipment: '',
             description: '',
-            category_id: undefined,
-            image_file: undefined,
-            is_public: false,
-            is_approved: false,
+            categoryId: undefined,
+            imageFile: undefined,
+            isPublic: false,
+            isApproved: false,
         };
 
     const form = useForm<ExerciseFormValues>({

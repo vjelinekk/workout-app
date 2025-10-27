@@ -2,7 +2,23 @@
     "Common": {
         "optional": "optional",
         "doYouWantToDelete": "Do you really want to delete {name}?",
-        "deleteDescription": "This action cannot be undone."
+        "deleteDescription": "This action cannot be undone.",
+        "days": {
+            "monday": "Monday",
+            "tuesday": "Tuesday",
+            "wednesday": "Wednesday",
+            "thursday": "Thursday",
+            "friday": "Friday",
+            "saturday": "Saturday",
+            "sunday": "Sunday",
+            "mon": "Mon",
+            "tue": "Tue",
+            "wed": "Wed",
+            "thu": "Thu",
+            "fri": "Fri",
+            "sat": "Sat",
+            "sun": "Sun"
+        }
     },
     "ErrorBoundary": {
         "title": "Oops! Something went wrong",
@@ -203,5 +219,31 @@
         "creationSuccess": "Training split created successfully!",
         "updateSuccess": "Training split updated successfully!",
         "updateFailed": "Training split update failed. Please try again."
+    },
+    "SessionLoggingPage": {
+        "title": "Session Logging",
+        "startSession": "Start New Session",
+        "unexpectedStartError": "An unexpected error occurred while starting the session. Please try again.",
+        "reps": "reps",
+        "set": "Set {setNumber}",
+        "activeTrainingSplit": "Active Training Split",
+        "weightWithKg": "{weight} kg",
+        "lastReps": "Last: {previousReps} reps",
+        "weightColumnTitle": "Weight (kg)",
+        "finishWorkout": "Finish Workout",
+        "errorOccurred": "An error occurred while loading the workout session.",
+        "unexpectedSummaryError": "An unexpected error occurred while loading the session summary. Please try again.",
+        "todayWorkout": "Today's Workout"
+    },
+    "SessionLoggingSummaryPage": {
+        "title": "Session Summary",
+        "subtitle": "Completed on {date} at {time}",
+        "sessionPlan": "Session Plan: {planName}",
+        "summaryTable": {
+            "setHeader": "Set",
+            "repsHeader": "Reps",
+            "weightHeader": "Weight"
+        },
+        "weightWithKg": "{weight} kg"
     }
 }

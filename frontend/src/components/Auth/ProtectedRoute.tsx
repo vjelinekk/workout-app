@@ -16,7 +16,13 @@ const LOADING_TIMEOUT_MS = 5000;
 export const ProtectedRoute = ({ children, requiredRoles }: Props) => {
     const { isAuthenticated, isLoading, user } = useAuth();
     const [loadingTimeout, setLoadingTimeout] = useState(false);
+    const [isHydrated, setIsHydrated] = useState(false);
     const router = useRouter();
+
+    // Wait for hydration to complete before using router or rendering children
+    useEffect(() => {
+        setIsHydrated(true);
+    }, []);
 
     useEffect(() => {
         const timeout = setTimeout(() => {
@@ -29,7 +35,13 @@ export const ProtectedRoute = ({ children, requiredRoles }: Props) => {
     }, [isLoading]);
 
     useEffect(() => {
-        if (!isLoading && isAuthenticated && requiredRoles && user) {
+        if (
+            !isLoading &&
+            isAuthenticated &&
+            requiredRoles &&
+            user &&
+            isHydrated
+        ) {
             const hasRequiredRole = user.roles.some((role) =>
                 requiredRoles.includes(role),
             );
@@ -38,15 +50,16 @@ export const ProtectedRoute = ({ children, requiredRoles }: Props) => {
                 router.push('/unauthorized');
             }
         }
-    }, [isAuthenticated, isLoading, user, requiredRoles, router]);
+    }, [isAuthenticated, isLoading, user, requiredRoles, router, isHydrated]);
 
     useEffect(() => {
-        if (!isLoading && !isAuthenticated) {
+        if (!isLoading && !isAuthenticated && isHydrated) {
             router.push('/login');
         }
-    }, [isLoading, isAuthenticated, router]);
+    }, [isLoading, isAuthenticated, router, isHydrated]);
 
-    if (isLoading && !loadingTimeout) {
+    // Show spinner while loading authentication or waiting for hydration
+    if ((isLoading || !isHydrated) && !loadingTimeout) {
         return <Spinner />;
     }
 
@@ -62,6 +75,11 @@ export const ProtectedRoute = ({ children, requiredRoles }: Props) => {
     }
 
     if (!isAuthenticated) {
+        return null;
+    }
+
+    // Only render children after hydration is complete
+    if (!isHydrated) {
         return null;
     }
 

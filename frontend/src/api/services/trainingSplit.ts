@@ -1,7 +1,7 @@
 import { api } from "../axios";
 import { Scope } from "@/types/scope";
 import { handleApiError } from "@/utils/apiError";
-import { TrainingSplit, TrainingSplitDay } from "@/types/trainingSplit";
+import { TrainingSplit } from "@/types/trainingSplit";
 import { TRAINING_SPLIT_DAYS_ENDPOINTS, TRAINING_SPLIT_ENDPOINTS } from "../endpoints/trainingSplit";
 import { TrainingSplitFormValues } from "@/schemas/trainingSplit";
 
@@ -22,46 +22,39 @@ export const QUERY_KEY_TRAINING_SPLIT = 'training-split';
 export const fetchTrainingSplitById = async (id: number, signal?: AbortSignal): Promise<TrainingSplit> => {
     const { data } = await api.get<TrainingSplit>(`${TRAINING_SPLIT_ENDPOINTS.trainingSplits}/${id}`, { signal });
 
-    const trainingSplitId = data.id;
-    
-    const { data: trainingSplitData } = await api.get<TrainingSplitDay[]>(`${TRAINING_SPLIT_DAYS_ENDPOINTS.trainingSplitDays}`, {
-        params: { training_split_id: trainingSplitId },
-        signal,
-    });
+    return data;
+}
 
-    const result: TrainingSplit = {
-        ...data,
-        training_split_days: trainingSplitData,
-    }
+export const QUERY_KEY_TRAINING_SPLIT_ASSIGNED_TO_USER = 'training-split-assigned-to-user';
+export const fetchTrainingSplitAssignedToUser = async (signal?: AbortSignal): Promise<TrainingSplit> => {
+    const { data } = await api.get<TrainingSplit>(`${TRAINING_SPLIT_ENDPOINTS.assigned}`, { signal });
 
-    return result;
+    return data;
 }
 
 const mapTrainingSplitToApiFormat = (trainingSplit: TrainingSplitFormValues): {
     name: string;
     description: string;
-    is_public: boolean;
-    is_approved: boolean;
+    isPublic: boolean;
+    isApproved: boolean;
 } => {
     return {
         name: trainingSplit.name,
         description: trainingSplit.description,
-        is_public: trainingSplit.is_public,
-        is_approved: trainingSplit.is_approved,
+        isPublic: trainingSplit.isPublic,
+        isApproved: trainingSplit.isApproved,
     }
 }
 
 export const createTrainingSplit = async (trainingSplit: TrainingSplitFormValues): Promise<TrainingSplit> => {
     try {
-        const trainingSplitData = mapTrainingSplitToApiFormat(trainingSplit);
-
-        const { data } = await api.post<TrainingSplit>(`${TRAINING_SPLIT_ENDPOINTS.trainingSplits}`, trainingSplitData);
+        const { data } = await api.post<TrainingSplit>(`${TRAINING_SPLIT_ENDPOINTS.trainingSplits}`, mapTrainingSplitToApiFormat(trainingSplit));
 
         const trainingSplitId = data.id;
-        const trainingSplitWorkoutSessionPlans = trainingSplit.training_split_days.map(day => ({
-            training_split_id: trainingSplitId,
-            workout_session_plan_id: day.workout_session_plan_id,
-            day_of_week: day.day_of_week,
+        const trainingSplitWorkoutSessionPlans = trainingSplit.days.map(day => ({
+            trainingSplitId: trainingSplitId,
+            workoutSessionPlanId: day.workoutSessionPlanId,
+            dayOfWeek: day.dayOfWeek,
         }));
         await api.post(`${TRAINING_SPLIT_DAYS_ENDPOINTS.bulk}`, trainingSplitWorkoutSessionPlans);
         
@@ -73,14 +66,13 @@ export const createTrainingSplit = async (trainingSplit: TrainingSplitFormValues
 
 export const updateTrainingSplit = async (id: number, trainingSplit: TrainingSplitFormValues): Promise<TrainingSplit> => {
     try {
-        const trainingSplitData = mapTrainingSplitToApiFormat(trainingSplit);
-        const { data } = await api.patch<TrainingSplit>(`${TRAINING_SPLIT_ENDPOINTS.trainingSplits}/${id}`, trainingSplitData);
+        const { data } = await api.patch<TrainingSplit>(`${TRAINING_SPLIT_ENDPOINTS.trainingSplits}/${id}`, mapTrainingSplitToApiFormat(trainingSplit));
 
         const trainingSplitId = data.id;
-        const trainingSplitWorkoutSessionPlans = trainingSplit.training_split_days.map(day => ({
-            training_split_id: trainingSplitId,
-            workout_session_plan_id: day.workout_session_plan_id,
-            day_of_week: day.day_of_week,
+        const trainingSplitWorkoutSessionPlans = trainingSplit.days.map(day => ({
+            trainingSplitId: trainingSplitId,
+            workoutSessionPlanId: day.workoutSessionPlanId,
+            dayOfWeek: day.dayOfWeek,
         }));
         await api.put(`${TRAINING_SPLIT_DAYS_ENDPOINTS.bulk}`, trainingSplitWorkoutSessionPlans, {
             params: {

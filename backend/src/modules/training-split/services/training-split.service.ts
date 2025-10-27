@@ -7,7 +7,8 @@ import { TrainingSplitPatchDto } from '../dtos/training-split/training-split-pat
 import { TrainingSplitResponseDto } from '../dtos/training-split/training-split-response.dto';
 import { TrainingSplitRepository } from '../repositories/training-split.repository';
 import { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
-import { DeepPartial } from 'typeorm';
+import { TrainingSplitAssignmentRepository } from '../repositories/training-split-assignment.repository';
+import { TrainingSplitAssignmentStatusEnum } from '../enums/training-split-assignment-status.enum';
 
 @Injectable()
 export class TrainingSplitService extends PublicAuthorizableCrudService<
@@ -20,6 +21,7 @@ export class TrainingSplitService extends PublicAuthorizableCrudService<
 > {
     constructor(
         protected readonly trainingSplitRepository: TrainingSplitRepository,
+        protected readonly trainingSplitAssignmentRepository: TrainingSplitAssignmentRepository,
     ) {
         super(trainingSplitRepository);
     }
@@ -67,5 +69,36 @@ export class TrainingSplitService extends PublicAuthorizableCrudService<
     ): Promise<void> | void {
         void entity;
         void user;
+    }
+
+    async findAssignedTrainingSplit(
+        id: number,
+    ): Promise<TrainingSplitResponseDto> {
+        const trainingSplit =
+            await this.trainingSplitAssignmentRepository.findOneActive({
+                where: {
+                    traineeId: id,
+                    status: TrainingSplitAssignmentStatusEnum.ACTIVE,
+                },
+                relations: [
+                    'trainingSplit',
+                    'trainingSplit.days',
+                    'trainingSplit.days.workoutSessionPlan',
+                    'trainingSplit.days.workoutSessionPlan.exercises',
+                    'trainingSplit.days.workoutSessionPlan.exercises.exercise',
+                ],
+            });
+
+        if (!trainingSplit) {
+            // TODO: error handling
+            throw new Error('No assigned training split found');
+        }
+
+        if (!trainingSplit.trainingSplit) {
+            // TODO: error handling
+            throw new Error('Assigned training split not found');
+        }
+
+        return this.toResponseDto(trainingSplit?.trainingSplit);
     }
 }

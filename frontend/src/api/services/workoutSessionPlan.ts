@@ -40,52 +40,41 @@ export const fetchWorkoutSessionPlanById = async (id: number, signal?: AbortSign
 const mapWorkoutSessionPlanToApiFormat = (workoutSessionPlan: WorkoutSessionPlanFormValues): {
     name: string;
     description: string;
-    is_public: boolean;
-    is_approved: boolean;
+    isPublic: boolean;
+    isApproved: boolean;
 } => {
     return {
         name: workoutSessionPlan.name,
         description: workoutSessionPlan.description,
-        is_public: workoutSessionPlan.is_public,
-        is_approved: workoutSessionPlan.is_approved,
+        isPublic: workoutSessionPlan.isPublic,
+        isApproved: workoutSessionPlan.isApproved,
     }
 }
 
 const mapWorkoutSessionPlanExerciseToApiFormat = (exercise: {
     id?: number;
-    exercise_id: number | undefined;
+    exerciseId: number | undefined;
     sets: { reps: number }[];
-}, workoutSessionPlanId: number, order: number): {
-    workout_session_plan_id: number;
-    exercise_id: number;
-    order: number;
-    planned_sets: number;
-    planned_reps_per_set: number[];
-} => {
-    if (!exercise.exercise_id) {
+}, workoutSessionPlanId: number, order: number): Omit<WorkoutSessionPlanExercise, 'id'> & Partial<Pick<WorkoutSessionPlanExercise, 'id'>> => {
+    if (!exercise.exerciseId) {
         throw new ApiError('Exercise ID is required for each exercise');
     }
 
     return {
-        workout_session_plan_id: workoutSessionPlanId,
-        exercise_id: exercise.exercise_id,
+        id: exercise.id,
+        workoutSessionPlanId,
+        exerciseId: exercise.exerciseId,
         order,
-        planned_sets: exercise.sets.length,
-        planned_reps_per_set: exercise.sets.map(set => set.reps),
+        plannedSets: exercise.sets.length,
+        plannedRepsPerSet: exercise.sets.map(set => set.reps),
     }
 }
 
 const mapWorkoutSessionPlanExercisesToApiFormat = (exercises: {
     id?: number;
-    exercise_id: number | undefined;
+    exerciseId: number | undefined;
     sets: { reps: number }[];
-}[], workoutSessionPlanId: number): {
-    workout_session_plan_id: number;
-    exercise_id: number;
-    order: number;
-    planned_sets: number;
-    planned_reps_per_set: number[];
-}[] => {
+}[], workoutSessionPlanId: number): (Omit<WorkoutSessionPlanExercise, 'id'> & Partial<Pick<WorkoutSessionPlanExercise, 'id'>>)[] => {
     return exercises.map((exercise, index) => 
         mapWorkoutSessionPlanExerciseToApiFormat(exercise, workoutSessionPlanId, index + 1)
     );
@@ -93,9 +82,8 @@ const mapWorkoutSessionPlanExercisesToApiFormat = (exercises: {
 
 export const createWorkoutSessionPlan = async (workoutSessionPlan: WorkoutSessionPlanFormValues): Promise<WorkoutSessionPlan> => {
     try {
-        const workoutSessionPlanData = mapWorkoutSessionPlanToApiFormat(workoutSessionPlan);
-
-        const { data } = await api.post<WorkoutSessionPlan>(`${WORKOUT_SESSION_PLAN_ENDPOINTS.workoutSessionPlans}`, workoutSessionPlanData);
+        const mappedWorkoutSessionPlan = mapWorkoutSessionPlanToApiFormat(workoutSessionPlan);
+        const { data } = await api.post<WorkoutSessionPlan>(`${WORKOUT_SESSION_PLAN_ENDPOINTS.workoutSessionPlans}`, mappedWorkoutSessionPlan);
 
         const workoutSessionPlanId = data.id;
         const workoutSessionPlanExercises = mapWorkoutSessionPlanExercisesToApiFormat(workoutSessionPlan.exercises, workoutSessionPlanId);
@@ -109,8 +97,8 @@ export const createWorkoutSessionPlan = async (workoutSessionPlan: WorkoutSessio
 
 export const updateWorkoutSessionPlan = async (id: number, workoutSessionPlan: WorkoutSessionPlanFormValues): Promise<WorkoutSessionPlan> => {
     try {
-        const workoutSessionPlanData = mapWorkoutSessionPlanToApiFormat(workoutSessionPlan);
-        const { data } = await api.patch<WorkoutSessionPlan>(`${WORKOUT_SESSION_PLAN_ENDPOINTS.workoutSessionPlans}/${id}`, workoutSessionPlanData);
+        const mappedWorkoutSessionPlan = mapWorkoutSessionPlanToApiFormat(workoutSessionPlan);
+        const { data } = await api.patch<WorkoutSessionPlan>(`${WORKOUT_SESSION_PLAN_ENDPOINTS.workoutSessionPlans}/${id}`, mappedWorkoutSessionPlan);
 
         const workoutSessionPlanId = data.id;
         const workoutSessionPlanExercises = mapWorkoutSessionPlanExercisesToApiFormat(workoutSessionPlan.exercises, workoutSessionPlanId);

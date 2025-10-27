@@ -9,9 +9,15 @@ export class WorkoutSessionExerciseEntity extends AuditableEntity {
     @JoinColumn({ name: 'workout_session_id' })
     workoutSession: WorkoutSessionEntity;
 
+    @Column({ name: 'workout_session_id' })
+    workoutSessionId: number;
+
     @ManyToOne(() => ExerciseEntity)
     @JoinColumn({ name: 'exercise_id' })
     exercise: ExerciseEntity;
+
+    @Column({ name: 'exercise_id' })
+    exerciseId: number;
 
     @Column({ comment: 'Order of the exercise in the workout session' })
     order: number;
@@ -21,14 +27,14 @@ export class WorkoutSessionExerciseEntity extends AuditableEntity {
         type: 'json',
         comment: 'Actual reps performed per set',
     })
-    actualRepsPerSet: number[];
+    actualRepsPerSet: (number | null)[];
 
     @Column({
         name: 'actual_weight_per_set',
         type: 'json',
         comment: 'Actual weight lifted per set',
     })
-    actualWeightPerSet: number[];
+    actualWeightPerSet: (number | null)[];
 
     @Column({ type: 'text', nullable: true })
     notes?: string;

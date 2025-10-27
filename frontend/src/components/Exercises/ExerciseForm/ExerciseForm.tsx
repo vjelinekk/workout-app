@@ -44,10 +44,10 @@ export const ExerciseForm = ({ mode, id, initialData }: Props) => {
     const onSubmit = (data: ExerciseFormValues) => {
         const payload = {
             ...data,
-            category_id:
-                data.category_id === undefined
+            categoryId:
+                data.categoryId === undefined
                     ? undefined
-                    : Number(data.category_id),
+                    : Number(data.categoryId),
         } as ExerciseFormValues;
 
         if (mode === 'edit') {

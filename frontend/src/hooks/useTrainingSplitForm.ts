@@ -18,16 +18,16 @@ export const useTrainingSplitForm = (initialData?: TrainingSplit) => {
         ? {
             name: initialData.name ?? '',
             description: initialData.description ?? '',
-            is_public: initialData.is_public ?? false,
-            is_approved: initialData.is_approved ?? false,
-            training_split_days: initialData.training_split_days ?? [],
+            isPublic: initialData.isPublic ?? false,
+            isApproved: initialData.isApproved ?? false,
+            days: initialData.days ?? [],
         }
         : {
             name: '',
             description: '',
-            is_public: false,
-            is_approved: false,
-            training_split_days: [],
+            isPublic: false,
+            isApproved: false,
+            days: [],
         };
 
     const form = useForm<TrainingSplitFormValues>({

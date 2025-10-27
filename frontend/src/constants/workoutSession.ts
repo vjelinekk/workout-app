@@ -1,0 +1,2 @@
+export const DEFAULT_SYNC_INTERVAL_MS = 5000;
+export const DEBOUNCE_DELAY_MS = 1000;

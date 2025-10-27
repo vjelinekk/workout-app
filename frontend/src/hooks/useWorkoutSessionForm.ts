@@ -21,12 +21,12 @@ export const useWorkoutSessionForm = (initialData?: WorkoutSessionPlan) => {
         ? {
             name: initialData.name ?? '',
             description: initialData.description ?? '',
-            is_public: initialData.is_public ?? false,
-            is_approved: initialData.is_approved ?? false,
+            isPublic: initialData.isPublic ?? false,
+            isApproved: initialData.isApproved ?? false,
             exercises: initialData.exercises?.map((exercise) => ({
                 id: exercise.id,
-                exercise_id: exercise.exercise_id,
-                sets: exercise.planned_reps_per_set.map((reps) => ({
+                exerciseId: exercise.exerciseId,
+                sets: exercise.plannedRepsPerSet.map((reps) => ({
                     reps,
                 })),
             })) || [],
@@ -34,8 +34,8 @@ export const useWorkoutSessionForm = (initialData?: WorkoutSessionPlan) => {
         : {
             name: '',
             description: '',
-            is_public: false,
-            is_approved: false,
+            isPublic: false,
+            isApproved: false,
             exercises: [],
         };
 

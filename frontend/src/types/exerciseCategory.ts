@@ -1,8 +1,8 @@
 export interface ExerciseCategory {
     id: number;
-    created_at: Date;
-    updated_at: Date;
-    is_deleted: boolean;
+    createdAt: Date;
+    updatedAt: Date;
+    isDeleted: boolean;
     name: string;
     description: string;
 }

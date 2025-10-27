@@ -41,7 +41,7 @@ export const TrainingSplitFormFields = ({
 
             <BasicCheckbox<TrainingSplitFormValues>
                 control={control}
-                name="is_public"
+                name="isPublic"
                 label={t('isPublic')}
                 disabled={isViewMode}
             />
@@ -49,7 +49,7 @@ export const TrainingSplitFormFields = ({
             {(isViewMode || user?.roles.includes(UserRole.ADMIN)) && (
                 <BasicCheckbox<TrainingSplitFormValues>
                     control={control}
-                    name="is_approved"
+                    name="isApproved"
                     label={t('isApproved')}
                     disabled={isViewMode}
                 />

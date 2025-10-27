@@ -35,7 +35,7 @@ export const ExerciseCategoriesSelectBox = ({
     return (
         <>
             <BasicSelectBox<ExerciseFormValues>
-                name="category_id"
+                name="categoryId"
                 label={t('category')}
                 placeholder={
                     categoriesLoading ? 'Loading...' : t('placeholder.category')

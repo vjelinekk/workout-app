@@ -113,7 +113,6 @@ export const TrainingSplitForm = ({ mode, id, initialData }: Props) => {
                     <TrainingSplitDaysFormFields
                         control={form.control}
                         workoutSessionPlans={workoutSessionPlans}
-                        errors={form.formState.errors}
                         isViewMode={mode === 'view'}
                     />
                 )}

@@ -14,11 +14,11 @@ import { handleApiError } from "@/utils/apiError";
  * @returns User object
  */
 const transformLoginResponseToUser = (response: LoginResponse) => ({
-    id: response.user_id,
-    firstName: response.user_first_name,
-    lastName: response.user_last_name,
-    nickname: response.user_nickname,
-    email: response.user_email,
+    id: response.userId,
+    firstName: response.userFirstName,
+    lastName: response.userLastName,
+    nickname: response.userNickname,
+    email: response.userEmail,
     roles: response.roles,
 });
 
@@ -35,7 +35,7 @@ export const login = async (
         const response = await api.post<LoginResponse>(AUTH_ENDPOINTS.login, credentials);
 
         return {
-            token: response.data.access_token,
+            token: response.data.accessToken,
             user: transformLoginResponseToUser(response.data),
         }
     } catch (error: unknown) {

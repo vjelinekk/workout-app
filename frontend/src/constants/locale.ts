@@ -17,4 +17,6 @@ export const TRANSLATION_SECTION_KEYS = {
 	workoutSessionPlanForm: "WorkoutSessionPlanForm",
 	trainingSplitsPage: "TrainingSplitsPage",
 	trainingSplitsForm: "TrainingSplitsForm",
+	sessionLoggingPage: "SessionLoggingPage",
+	sessionLoggingSummaryPage: "SessionLoggingSummaryPage",
 }

@@ -27,9 +27,12 @@ export const fetchTrainingSplitById = async (id: number, signal?: AbortSignal): 
 
 export const QUERY_KEY_TRAINING_SPLIT_ASSIGNED_TO_USER = 'training-split-assigned-to-user';
 export const fetchTrainingSplitAssignedToUser = async (signal?: AbortSignal): Promise<TrainingSplit> => {
-    const { data } = await api.get<TrainingSplit>(`${TRAINING_SPLIT_ENDPOINTS.assigned}`, { signal });
-
-    return data;
+    try {
+        const { data } = await api.get<TrainingSplit>(`${TRAINING_SPLIT_ENDPOINTS.assigned}`, { signal });
+        return data;
+    } catch (error: unknown) {
+        handleApiError(error, 'Failed to fetch training split assigned to user');
+    }
 }
 
 const mapTrainingSplitToApiFormat = (trainingSplit: TrainingSplitFormValues): {

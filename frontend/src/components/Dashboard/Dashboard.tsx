@@ -15,7 +15,7 @@ import { TRANSLATION_SECTION_KEYS } from '@/constants/locale';
 export const Dashboard = () => {
     const t = useTranslations(TRANSLATION_SECTION_KEYS.dashboardPage);
 
-    const tiles = [
+    const allUsersTiles = [
         {
             id: 'exercises',
             title: t('exercises'),
@@ -49,7 +49,7 @@ export const Dashboard = () => {
     return (
         <div className="w-full max-w-screen-xl mx-auto">
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-                {tiles.map((t) => (
+                {allUsersTiles.map((t) => (
                     <Link key={t.id} href={t.href} className="block h-full">
                         <Card className="flex flex-col justify-between hover:shadow-lg transition-shadow cursor-pointer h-full">
                             <CardHeader>

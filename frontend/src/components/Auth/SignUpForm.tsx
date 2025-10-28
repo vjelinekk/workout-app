@@ -1,90 +1,85 @@
-import { RegisterFormValues, registerSchema } from '@/schemas/register';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useForm } from 'react-hook-form';
+import { SignUpFormValues } from '@/schemas/register';
 import { BasicInputField } from '../BasicForm/BasicInputField';
 import { BasicForm } from '../BasicForm/BasicForm';
-import { Dispatch, SetStateAction } from 'react';
+import { useSignUpForm } from '@/hooks/useSignUpForm';
+import { TRANSLATION_SECTION_KEYS } from '@/constants/locale';
+import { useTranslations } from 'next-intl';
+import { useSignUp } from '@/hooks/useSignUp';
+import { useAuth } from '@/contexts/AuthContext';
 
-interface Props {
-    setError: Dispatch<SetStateAction<string>>;
-}
+export const SignUpForm = () => {
+    const t = useTranslations(TRANSLATION_SECTION_KEYS.registerForm);
+    const form = useSignUpForm();
+    const { mutateAsync: signUp } = useSignUp();
+    const { signUp: signUpWithContext } = useAuth();
 
-export const RegisterForm = ({ setError }: Props) => {
-    const form = useForm<RegisterFormValues>({
-        resolver: zodResolver(registerSchema),
-        defaultValues: {
-            email: '',
-            firstName: '',
-            lastName: '',
-            nickName: '',
-            password: '',
-            confirmPassword: '',
-        },
-    });
-
-    const onSubmit = (data: RegisterFormValues): Promise<void> => {
-        // TODO: implement registration
-        void data;
-        setError(''); // Clear previous errors
-        return Promise.resolve();
+    const onSubmit = async (data: SignUpFormValues) => {
+        const result = await signUp(data);
+        await signUpWithContext(result);
     };
 
     return (
-        <BasicForm<RegisterFormValues>
+        <BasicForm<SignUpFormValues>
             form={form}
             onSubmit={(data) => void onSubmit(data)}
-            submitLabel="Register"
-            submittingLabel="Registering..."
+            submitLabel={t('submit')}
+            submittingLabel={t('registering')}
         >
-            <BasicInputField<RegisterFormValues>
+            <BasicInputField<SignUpFormValues>
                 name="email"
                 label="Email"
                 placeholder="user@example.com"
                 autoComplete="email"
                 control={form.control}
                 type="email"
+                required
             />
 
-            <BasicInputField<RegisterFormValues>
+            <BasicInputField<SignUpFormValues>
                 name="firstName"
                 label="First Name"
                 placeholder="John"
                 autoComplete="given-name"
                 control={form.control}
+                required
             />
 
-            <BasicInputField<RegisterFormValues>
+            <BasicInputField<SignUpFormValues>
                 name="lastName"
                 label="Last Name"
                 placeholder="Doe"
                 autoComplete="family-name"
                 control={form.control}
+                required
             />
 
-            <BasicInputField<RegisterFormValues>
-                name="nickName"
+            <BasicInputField<SignUpFormValues>
+                name="nickname"
                 label="Nickname"
                 placeholder="Johnny"
                 autoComplete="nickname"
                 control={form.control}
+                required
             />
 
-            <BasicInputField<RegisterFormValues>
+            <BasicInputField<SignUpFormValues>
                 name="password"
                 label="Password"
                 placeholder="********"
                 autoComplete="new-password"
                 control={form.control}
                 type="password"
+                required
             />
 
-            <BasicInputField<RegisterFormValues>
+            <BasicInputField<SignUpFormValues>
                 name="confirmPassword"
                 label="Confirm Password"
                 placeholder="********"
                 autoComplete="new-password"
                 control={form.control}
                 type="password"
+                required
             />
         </BasicForm>
     );

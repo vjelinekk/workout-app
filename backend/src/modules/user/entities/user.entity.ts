@@ -32,6 +32,12 @@ export class UserEntity extends BaseEntity {
     @Column({ comment: 'Hashed password of the user' })
     password: string;
 
+    @Column({ name: 'want_to_become_trainer', default: false })
+    wantToBecomeTrainer: boolean;
+
+    @Column({ name: 'become_trainer_reason', type: 'text', nullable: true })
+    becomeTrainerReason: string | null;
+
     // Relations
 
     @ManyToMany(() => RoleEntity, (role) => role.users)

@@ -15,6 +15,7 @@ interface AuthContextType extends AuthState {
     logout: () => void;
     loginWithGoogle: () => void;
     isGoogleLoading: boolean;
+    signUp: (data: LoginResponse) => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -73,6 +74,23 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         } catch (error) {
             throw error;
         }
+    }
+
+    const handleSignUp = async (data: LoginResponse) => {
+        storage.setToken(data.accessToken);
+        const user: User = {
+            id: data.userId,
+            firstName: data.userFirstName,
+            lastName: data.userLastName,
+            nickname: data.userNickname,
+            email: data.userEmail,
+            roles: data.roles,
+        };
+        storage.setUser(user);
+
+        setAuthData({ user, token: data.accessToken });
+        api.defaults.headers.common[AUTH_HEADER_KEY] = `Bearer ${data.accessToken}`;
+        router.push('/dashboard');
     }
 
     const handleGoogleLoginSuccess = useCallback(async (response: LoginResponse) => {
@@ -164,6 +182,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         isLoading,
         isGoogleLoading,
         login: handleLogin,
+        signUp: handleSignUp,
         logout: handleLogout,
         loginWithGoogle: handleLoginWithGoogle,
     }

@@ -16,7 +16,7 @@ export class LoginResponseDto {
 
     @ApiProperty({ example: 'John', description: 'First name of the user' })
     @IsString()
-    userFistName: string;
+    userFirstName: string;
 
     @ApiProperty({ example: 'Doe', description: 'Last name of the user' })
     @IsString()

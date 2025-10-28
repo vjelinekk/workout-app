@@ -6,6 +6,7 @@ import { AUTH_HEADER_KEY } from "@/constants/api";
 import axios from "axios";
 import { ApiErrorResponse } from "@/types/api";
 import { handleApiError } from "@/utils/apiError";
+import { SignUpFormValues } from "@/schemas/register";
 
 /**
  * Transforms the API login response to a User object.
@@ -56,5 +57,23 @@ export const logout = (): void => {
  */
 export const exchangeGoogleAuthCode = async (code: string): Promise<LoginResponse> => {
     const response = await api.post<LoginResponse>(AUTH_ENDPOINTS.googleExchangeAuthCode, { code });
+    return response.data;
+}
+
+/**
+ * Registers a new user.
+ * 
+ * @returns Promise resolving to LoginResponse
+ */
+export const signUp = async (data: SignUpFormValues) => {
+    const signUpData = {
+        firstName: data.firstName,
+        lastName: data.lastName,
+        nickname: data.nickname,
+        email: data.email,
+        password: data.password,
+    }
+
+    const response = await api.post<LoginResponse>(AUTH_ENDPOINTS.signUp, signUpData);
     return response.data;
 }

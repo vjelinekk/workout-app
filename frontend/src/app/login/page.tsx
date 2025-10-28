@@ -26,7 +26,7 @@ export default function LoginPage() {
     }, [isAuthenticated, router]);
 
     const handleRegister = () => {
-        router.push('/register');
+        router.push('/sign-up');
     };
 
     return (

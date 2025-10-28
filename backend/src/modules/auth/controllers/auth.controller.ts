@@ -25,6 +25,7 @@ import { AuthenticatedUser } from '../decorators/authenticated-user.decorator';
 import type { Response } from 'express';
 import { AuthCodeService } from '../services/auth-code.service';
 import { ConfigService } from '@nestjs/config';
+import { RegisterDto } from '../dtos/register.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -48,6 +49,20 @@ export class AuthController {
     })
     login(@AuthenticatedUser() user: UserEntity) {
         return this.authService.login(user);
+    }
+
+    @Public()
+    @Post('register')
+    @ApiOperation({ summary: 'Register a new user' })
+    @ApiBody({ type: RegisterDto, description: 'Registration data' })
+    @ApiOkResponse({
+        description: 'The user has been successfully registered.',
+        type: LoginResponseDto,
+    })
+    async register(
+        @Body() registerDto: RegisterDto,
+    ): Promise<LoginResponseDto> {
+        return await this.authService.register(registerDto);
     }
 
     @Public()

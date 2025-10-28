@@ -18,6 +18,11 @@
             "fri": "Fri",
             "sat": "Sat",
             "sun": "Sun"
+        },
+        "roles": {
+            "1": "Admin",
+            "2": "Trainee",
+            "3": "Trainer"
         }
     },
     "ErrorBoundary": {
@@ -33,14 +38,32 @@
         "signIn": "Sign In",
         "signingIn": "Signing In",
         "noAccount": "Don't have an account?",
-        "register": "Register",
+        "register": "Sign Up",
         "continueWithGoogle": "Or continue with Google",
         "signInWithGoogle": "Sign in with Google",
         "loginFailed": "Login failed. Please check your credentials.",
         "unexpectedError": "An unexpected error occurred. Please try again."
     },
     "TopBar": {
-        "logout": "Logout"
+        "logout": "Logout",
+        "profile": "Profile",
+        "becomeTrainer": "Become a Trainer",
+        "settings": "Settings",
+        "trainerApprovals": "Trainer Approvals"
+    },
+    "BecomeTrainerPage": {
+        "title": "Become a Trainer",
+        "reasonLabel": "Why do you want to become a trainer?",
+        "reasonErrorShort": "Reason must be at least 10 characters long",
+        "reasonErrorLong": "Reason cannot exceed 1000 characters",
+        "reasonPlaceholder": "I have a passion for fitness and want to help others achieve their goals...",
+        "submit": "Submit Application",
+        "submitting": "Submitting...",
+        "alreadyTrainerTitle": "You are already a trainer or admin",
+        "alreadyTrainerDescription": "You cannot apply to become a trainer if you already have trainer or admin privileges.",
+        "applicationSubmittedTitle": "Application Submitted",
+        "errorOccurred": "An error occurred when submitting your application.",
+        "unknownError": "An unexpected error occurred. Please try again."
     },
     "DashboardPage": {
         "exercises": "Exercises",
@@ -233,7 +256,10 @@
         "finishWorkout": "Finish Workout",
         "errorOccurred": "An error occurred while loading the workout session.",
         "unexpectedSummaryError": "An unexpected error occurred while loading the session summary. Please try again.",
-        "todayWorkout": "Today's Workout"
+        "todayWorkout": "Today's Workout",
+        "noActiveTrainingSplit": "No Active Training Split",
+        "errorLoadingTrainingSplit": "Error Loading Training Split",
+        "noActiveTrainingSplitDescription": "Please select a training split in your settings to start logging workouts."
     },
     "SessionLoggingSummaryPage": {
         "title": "Session Summary",
@@ -245,5 +271,42 @@
             "weightHeader": "Weight"
         },
         "weightWithKg": "{weight} kg"
+    },
+    "RegisterPage": {
+        "title": "Create an account",
+        "description": "Sign up to get started with your fitness journey."
+    },
+    "RegisterForm": {
+        "submit": "Sign Up",
+        "registering": "Signing Up...",
+        "validation": {
+            "emailInvalid": "Please enter a valid email address",
+            "firstNameRequired": "First name is required",
+            "lastNameRequired": "Last name is required",
+            "nickNameRequired": "Nickname is required",
+            "passwordMinLength": "Password must be at least 6 characters long",
+            "confirmPasswordRequired": "Confirm password is required",
+            "passwordsDoNotMatch": "Passwords do not match"
+        }
+    },
+    "TrainerApprovalsPage": {
+        "title": "Trainer Approvals",
+        "description": "Review and manage trainer applications.",
+        "viewProfile": "View Profile",
+        "approve": "Approve",
+        "deny": "Deny",
+        "noPendingApplications": "There are no pending trainer applications at the moment.",
+        "errorOccurred": "An error occurred while loading applications.",
+        "unknownError": "An unexpected error occurred. Please try again."
+    },
+    "ProfilePage": {
+        "title": "Profile",
+        "nickname": "Nickname",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "email": "Email",
+        "roles": "Roles",
+        "errorOccurred": "An error occurred while loading the profile.",
+        "unknownError": "An unexpected error occurred. Please try again."
     }
 }

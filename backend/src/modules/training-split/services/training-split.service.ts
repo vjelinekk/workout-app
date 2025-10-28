@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PublicAuthorizableCrudService } from 'src/common/services/public-authorizable-crud.service';
 import { TrainingSplitEntity } from '../entities/training-split.entity';
 import { TrainingSplitCreateDto } from '../dtos/training-split/trainin-split-create.dto';
@@ -9,6 +9,7 @@ import { TrainingSplitRepository } from '../repositories/training-split.reposito
 import { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
 import { TrainingSplitAssignmentRepository } from '../repositories/training-split-assignment.repository';
 import { TrainingSplitAssignmentStatusEnum } from '../enums/training-split-assignment-status.enum';
+import { NoAssignedTrainingSplitException } from '../exceptions/no-assigned-training-split.exception';
 
 @Injectable()
 export class TrainingSplitService extends PublicAuthorizableCrudService<
@@ -74,31 +75,33 @@ export class TrainingSplitService extends PublicAuthorizableCrudService<
     async findAssignedTrainingSplit(
         id: number,
     ): Promise<TrainingSplitResponseDto> {
-        const trainingSplit =
+        const trainingSplitAssignment =
             await this.trainingSplitAssignmentRepository.findOneActive({
                 where: {
                     traineeId: id,
                     status: TrainingSplitAssignmentStatusEnum.ACTIVE,
                 },
-                relations: [
-                    'trainingSplit',
-                    'trainingSplit.days',
-                    'trainingSplit.days.workoutSessionPlan',
-                    'trainingSplit.days.workoutSessionPlan.exercises',
-                    'trainingSplit.days.workoutSessionPlan.exercises.exercise',
-                ],
+                relations: {
+                    trainingSplit: {
+                        days: {
+                            workoutSessionPlan: {
+                                exercises: {
+                                    exercise: true,
+                                },
+                            },
+                        },
+                    },
+                },
             });
 
-        if (!trainingSplit) {
-            // TODO: error handling
-            throw new Error('No assigned training split found');
+        if (!trainingSplitAssignment) {
+            throw new NoAssignedTrainingSplitException();
         }
 
-        if (!trainingSplit.trainingSplit) {
-            // TODO: error handling
-            throw new Error('Assigned training split not found');
+        if (!trainingSplitAssignment.trainingSplit) {
+            throw new NotFoundException('Assigned training split not found');
         }
 
-        return this.toResponseDto(trainingSplit?.trainingSplit);
+        return this.toResponseDto(trainingSplitAssignment?.trainingSplit);
     }
 }

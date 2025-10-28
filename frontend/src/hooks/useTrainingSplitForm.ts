@@ -3,7 +3,6 @@ import { TrainingSplitFormValues, trainingSplitSchema } from "@/schemas/training
 import { TrainingSplit } from "@/types/trainingSplit";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useTranslations } from "next-intl";
-import { init } from "next/dist/compiled/webpack/webpack";
 import { useForm } from "react-hook-form";
 
 export const useTrainingSplitForm = (initialData?: TrainingSplit) => {

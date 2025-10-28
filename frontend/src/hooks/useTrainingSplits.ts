@@ -3,6 +3,7 @@ import { TrainingSplitFormValues } from "@/schemas/trainingSplit"
 import { ApiErrorResponse } from "@/types/api"
 import { Scope } from "@/types/scope"
 import { TrainingSplit } from "@/types/trainingSplit"
+import { ApiError } from "@/utils/apiError"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 export const useTrainingSplits = (scope: Scope) => {
@@ -24,9 +25,10 @@ export const useTrainingSplit = (id: number) => {
 }
 
 export const useTrainingSplitAssignedToUser = () => {
-    const { data, error, isLoading } = useQuery<TrainingSplit, ApiErrorResponse>({
+    const { data, error, isLoading } = useQuery<TrainingSplit, ApiError>({
         queryKey: [QUERY_KEY_TRAINING_SPLIT_ASSIGNED_TO_USER],
         queryFn: ({ signal }) => fetchTrainingSplitAssignedToUser(signal),
+        retry: 1,
     })
 
     return { data, error, isLoading }

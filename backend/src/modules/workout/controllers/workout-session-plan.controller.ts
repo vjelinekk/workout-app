@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import {
     ApiBadRequestResponse,
+    ApiBearerAuth,
     ApiBody,
     ApiForbiddenResponse,
     ApiNotFoundResponse,
@@ -39,6 +40,7 @@ export class WorkoutSessionPlanController {
     ) {}
 
     @Post()
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Create a new workout session plan' })
     @ApiBody({
         type: WorkoutSessionPlanCreateDto,
@@ -65,6 +67,7 @@ export class WorkoutSessionPlanController {
     }
 
     @Patch(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Patch a workout session plan' })
     @ApiParam({
         name: 'id',
@@ -97,6 +100,7 @@ export class WorkoutSessionPlanController {
     }
 
     @Put(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Update a workout session plan' })
     @ApiParam({
         name: 'id',
@@ -129,6 +133,7 @@ export class WorkoutSessionPlanController {
     }
 
     @Delete(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Delete a workout session plan' })
     @ApiParam({
         name: 'id',
@@ -150,6 +155,7 @@ export class WorkoutSessionPlanController {
     }
 
     @Get(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Get workout session plan by ID' })
     @ApiQuery({
         name: 'scope',
@@ -188,6 +194,7 @@ export class WorkoutSessionPlanController {
     }
 
     @Get()
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Get all workout session plans' })
     @ApiQuery({
         name: 'scope',
@@ -224,6 +231,7 @@ export class WorkoutSessionPlanController {
     }
 
     @Post('/:id/restore')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Restore a deleted workout session plan' })
     @ApiParam({
         name: 'id',

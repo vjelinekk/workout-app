@@ -9,15 +9,19 @@ import { UserRepository } from '../repositories/user.repository';
 import { RoleRepository } from '../repositories/role.repository';
 import { hashPassword } from 'src/common/utils/hash';
 import { RoleEnum } from '../enums/role.enum';
-import { FindManyOptions } from 'typeorm';
+import { FindOptionsWhere, In, Not } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
 import { UserResponseDto } from '../dtos/user-response.dto';
+import { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
+import { TrainerTraineeRepository } from '../repositories/trainer-trainee.repository';
+import { TrainerTraineeStatusEnum } from '../enums/trainer-trainee-status.enum';
 
 @Injectable()
 export class UserService {
     constructor(
         private readonly userRepository: UserRepository,
         private readonly rolesRepository: RoleRepository,
+        private readonly trainerTraineeRepository: TrainerTraineeRepository,
     ) {}
 
     async findByEmail(email: string): Promise<UserEntity> {
@@ -122,19 +126,62 @@ export class UserService {
         return user;
     }
 
-    async getAll(trainerRequests: boolean): Promise<UserResponseDto[]> {
-        const findOptions: FindManyOptions<UserEntity> = trainerRequests
-            ? {
-                  where: {
-                      wantToBecomeTrainer: true,
-                  },
-                  relations: {
-                      roles: true,
-                  },
-              }
-            : {};
+    async getAll(
+        user: JwtAuthenticatedUser,
+        trainerRequests?: boolean,
+        roles?: RoleEnum[],
+        notRecruitedOrPending?: boolean,
+    ): Promise<UserResponseDto[]> {
+        const where: FindOptionsWhere<UserEntity> = {};
 
-        const users = await this.userRepository.findActive(findOptions);
+        if (trainerRequests) {
+            where.wantToBecomeTrainer = true;
+        }
+
+        if (roles && roles.length > 0) {
+            where.roles = {
+                id: In(roles),
+            };
+        }
+
+        const isAdminOrTrainer =
+            user.roles.includes(RoleEnum.ADMIN) ||
+            user.roles.includes(RoleEnum.TRAINER);
+        if (
+            notRecruitedOrPending &&
+            roles &&
+            roles.includes(RoleEnum.TRAINEE) &&
+            isAdminOrTrainer
+        ) {
+            const existingTrainerTraineeRelations =
+                await this.trainerTraineeRepository.findActive({
+                    where: {
+                        trainerId: user.id,
+                        status: In([
+                            TrainerTraineeStatusEnum.ACTIVE,
+                            TrainerTraineeStatusEnum.PENDING,
+                        ]),
+                    },
+                    select: {
+                        traineeId: true,
+                    },
+                });
+
+            const excludedTraineeIds = existingTrainerTraineeRelations.map(
+                (relation) => relation.traineeId,
+            );
+
+            if (excludedTraineeIds.length > 0) {
+                where.id = Not(In(excludedTraineeIds));
+            }
+        }
+
+        const users = await this.userRepository.findActive({
+            where,
+            relations: {
+                roles: true,
+            },
+        });
 
         return users.map((user) => {
             const userDto = plainToInstance(UserResponseDto, user, {

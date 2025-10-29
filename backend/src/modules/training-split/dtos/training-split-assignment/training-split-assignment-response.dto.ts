@@ -2,7 +2,8 @@ import { ApiProperty } from '@nestjs/swagger';
 import { IsDateString, IsEnum, IsInt, IsOptional } from 'class-validator';
 import { BaseResponseDto } from 'src/common/dtos/base-response.dto';
 import { TrainingSplitAssignmentStatusEnum } from '../../enums/training-split-assignment-status.enum';
-import { Expose } from 'class-transformer';
+import { Expose, Type } from 'class-transformer';
+import { TrainingSplitResponseDto } from '../training-split/training-split-response.dto';
 
 export class TrainingSplitAssignmentResponseDto extends BaseResponseDto {
     @ApiProperty({
@@ -14,12 +15,12 @@ export class TrainingSplitAssignmentResponseDto extends BaseResponseDto {
     traineeId: number;
 
     @ApiProperty({
-        example: 1,
-        description: 'The ID of the training split',
+        type: [TrainingSplitResponseDto],
+        description: 'The training split assigned to the trainee',
     })
-    @IsInt()
+    @Type(() => TrainingSplitResponseDto)
     @Expose()
-    trainingSplitId: number;
+    trainingSplit: TrainingSplitResponseDto;
 
     @ApiProperty({
         example: 1,

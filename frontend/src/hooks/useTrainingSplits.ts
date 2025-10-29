@@ -7,7 +7,7 @@ import { ApiError } from "@/utils/apiError"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 export const useTrainingSplits = (scope: Scope) => {
-    const { data, error, isLoading } = useQuery<TrainingSplit[], ApiErrorResponse>({
+    const { data, error, isLoading } = useQuery<TrainingSplit[], ApiError>({
         queryKey: [QUERY_KEY_TRAINING_SPLITS, scope],
         queryFn: ({ signal }) => fetchAllTrainingSplits(scope, signal),
     })

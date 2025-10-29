@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import {
     ApiBadRequestResponse,
+    ApiBearerAuth,
     ApiBody,
     ApiForbiddenResponse,
     ApiNotFoundResponse,
@@ -37,6 +38,7 @@ export class TrainingSplitController {
     constructor(private readonly trainingSplitService: TrainingSplitService) {}
 
     @Post()
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Create a new training split' })
     @ApiBody({
         type: TrainingSplitCreateDto,
@@ -60,6 +62,7 @@ export class TrainingSplitController {
     }
 
     @Patch(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Patch a training split' })
     @ApiParam({
         name: 'id',
@@ -95,6 +98,7 @@ export class TrainingSplitController {
     }
 
     @Put(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Update a training split' })
     @ApiParam({
         name: 'id',
@@ -130,6 +134,7 @@ export class TrainingSplitController {
     }
 
     @Delete(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Delete a training split' })
     @ApiParam({
         name: 'id',
@@ -153,6 +158,7 @@ export class TrainingSplitController {
     }
 
     @Get()
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Get all training splits' })
     @ApiQuery({
         name: 'scope',
@@ -189,6 +195,7 @@ export class TrainingSplitController {
     }
 
     @Get('assigned')
+    @ApiBearerAuth()
     async getAssigned(
         @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<TrainingSplitResponseDto> {
@@ -198,6 +205,7 @@ export class TrainingSplitController {
     }
 
     @Get(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Get training split by ID' })
     @ApiQuery({
         name: 'scope',
@@ -253,6 +261,7 @@ export class TrainingSplitController {
     }
 
     @Post('/:id/restore')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Restore a deleted training split' })
     @ApiParam({
         name: 'id',

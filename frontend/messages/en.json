@@ -49,7 +49,9 @@
         "profile": "Profile",
         "becomeTrainer": "Become a Trainer",
         "settings": "Settings",
-        "trainerApprovals": "Trainer Approvals"
+        "trainerApprovals": "Trainer Approvals",
+        "assignTrainingSplit": "Assign Training Split",
+        "recruitTrainees": "Recruit Trainees"
     },
     "BecomeTrainerPage": {
         "title": "Become a Trainer",

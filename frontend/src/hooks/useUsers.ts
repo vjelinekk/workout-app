@@ -1,5 +1,6 @@
 import { becomeTrainer, fetchAllUsers, fetchUserById, resolveApplication } from "@/api/services/user"
 import { BecomeTrainerFormValues } from "@/schemas/becomeTrainer"
+import { UserRole } from "@/types/auth"
 import { UserResponse } from "@/types/user"
 import { ApiError } from "@/utils/apiError"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
@@ -11,10 +12,14 @@ export const useBecomeTrainer = () => {
 }
 
 export const QUERY_KEY_USERS = 'users'
-export const useUsers = (trainerRequests?: boolean) => {
+export const useUsers = (
+    trainerRequests?: boolean,
+    roles?: UserRole[],
+    notRecruitedOrPending?: boolean
+) => {
     const { data, error, isLoading, isError } =  useQuery<UserResponse[], ApiError>({
         queryKey: [QUERY_KEY_USERS],
-        queryFn: ({ signal }) => fetchAllUsers(trainerRequests, signal),
+        queryFn: ({ signal }) => fetchAllUsers(trainerRequests, roles, notRecruitedOrPending, signal),
     })
 
     return { data, error, isLoading, isError }

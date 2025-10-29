@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import {
     ApiBadRequestResponse,
+    ApiBearerAuth,
     ApiBody,
     ApiForbiddenResponse,
     ApiNotFoundResponse,
@@ -38,6 +39,7 @@ export class TrainingSplitDayController {
     ) {}
 
     @Post()
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Create a new training split day' })
     @ApiBody({
         type: TrainingSplitDayCreateDto,
@@ -64,6 +66,7 @@ export class TrainingSplitDayController {
     }
 
     @Post('bulk')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Create training split days in bulk' })
     @ApiBody({
         type: [TrainingSplitDayCreateDto],
@@ -86,6 +89,7 @@ export class TrainingSplitDayController {
     }
 
     @Patch(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Patch a training split day' })
     @ApiParam({
         name: 'id',
@@ -121,6 +125,7 @@ export class TrainingSplitDayController {
     }
 
     @Put('bulk')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Update training split days in bulk' })
     @ApiQuery({
         name: 'training_split_id',
@@ -154,6 +159,7 @@ export class TrainingSplitDayController {
     }
 
     @Put(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Update a training split day' })
     @ApiParam({
         name: 'id',
@@ -189,6 +195,7 @@ export class TrainingSplitDayController {
     }
 
     @Delete(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Delete a training split day' })
     @ApiParam({
         name: 'id',
@@ -212,6 +219,7 @@ export class TrainingSplitDayController {
     }
 
     @Get()
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Get all training split days' })
     @ApiQuery({
         name: 'trainingSplitId',
@@ -246,6 +254,7 @@ export class TrainingSplitDayController {
     }
 
     @Get(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Get training split day by ID' })
     @ApiOkResponse({
         description: 'The training split day with the specified ID',
@@ -271,6 +280,7 @@ export class TrainingSplitDayController {
     }
 
     @Post('/:id/restore')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Restore a deleted training split day' })
     @ApiParam({
         name: 'id',

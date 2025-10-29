@@ -3,6 +3,7 @@ import {
     Controller,
     Get,
     Param,
+    ParseArrayPipe,
     ParseBoolPipe,
     Post,
     Query,
@@ -14,6 +15,7 @@ import { JwtUser } from 'src/modules/auth/decorators/jwt-user.decorator';
 import type { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
 import {
     ApiBadRequestResponse,
+    ApiBearerAuth,
     ApiBody,
     ApiNotFoundResponse,
     ApiOkResponse,
@@ -49,6 +51,7 @@ export class UserController {
     @ApiBadRequestResponse({
         description: 'Invalid input data',
     })
+    @ApiBearerAuth()
     async requestBecomeTrainer(
         @JwtUser() jwtUser: JwtAuthenticatedUser,
         @Body() dto: BecomeTrainerDto,
@@ -66,9 +69,8 @@ export class UserController {
     }
 
     @Get('')
-    @Roles(RoleEnum.ADMIN)
     @ApiOperation({
-        summary: 'Get all users, optionally filtering by trainer requests',
+        summary: 'Get all users',
     })
     @ApiOkResponse({
         type: [UserResponseDto],
@@ -86,11 +88,39 @@ export class UserController {
         type: Boolean,
         description: 'Filter users who have requested to become trainers',
     })
+    @ApiQuery({
+        name: 'roles',
+        required: false,
+        description:
+            'Filter users by roles, mapping: ' +
+            Object.values(RoleEnum).join(', '),
+        type: 'number',
+        isArray: true,
+        enum: RoleEnum,
+    })
+    @ApiQuery({
+        name: 'notRecruitedOrPending',
+        required: false,
+        type: Boolean,
+        description:
+            'Filter users who are not yet recruited and do not have pending recruitment',
+    })
+    @ApiBearerAuth()
     async getAll(
+        @JwtUser() jwtUser: JwtAuthenticatedUser,
         @Query('trainerRequests', new ParseBoolPipe({ optional: true }))
-        trainerRequests: boolean,
+        trainerRequests?: boolean,
+        @Query('roles', new ParseArrayPipe({ optional: true, items: Number }))
+        roles?: RoleEnum[],
+        @Query('notRecruitedOrPending', new ParseBoolPipe({ optional: true }))
+        notRecruitedOrPending?: boolean,
     ): Promise<UserResponseDto[]> {
-        return await this.userService.getAll(trainerRequests);
+        return await this.userService.getAll(
+            jwtUser,
+            trainerRequests,
+            roles,
+            notRecruitedOrPending,
+        );
     }
 
     @Get('/:id')
@@ -111,6 +141,7 @@ export class UserController {
     @ApiNotFoundResponse({
         description: 'User not found',
     })
+    @ApiBearerAuth()
     async getOne(@Param('id') id: number): Promise<UserResponseDto> {
         return await this.userService.findByIdProfile(id);
     }
@@ -141,6 +172,7 @@ export class UserController {
     @ApiBadRequestResponse({
         description: 'Invalid input data',
     })
+    @ApiBearerAuth()
     async resolveApplication(
         @Param('id') id: number,
         @Query('approve') approve: boolean,

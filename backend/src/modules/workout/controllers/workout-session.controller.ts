@@ -14,6 +14,7 @@ import type { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authentica
 import { WorkoutSessionService } from '../services/workout-session.service';
 import {
     ApiBadRequestResponse,
+    ApiBearerAuth,
     ApiBody,
     ApiNotFoundResponse,
     ApiOkResponse,
@@ -33,6 +34,7 @@ export class WorkoutSessionController {
     ) {}
 
     @Post()
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Start a new workout session' })
     @ApiBody({
         type: WorkoutSessionCreateDto,
@@ -59,6 +61,7 @@ export class WorkoutSessionController {
     }
 
     @Get('in-progress')
+    @ApiBearerAuth()
     async getWorkoutSessionInProgress(
         @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<WorkoutSessionResponseDto> {
@@ -68,6 +71,7 @@ export class WorkoutSessionController {
     }
 
     @Get(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Get workout session by ID' })
     @ApiOkResponse({
         description: 'The workout session has been successfully retrieved.',
@@ -86,6 +90,7 @@ export class WorkoutSessionController {
     }
 
     @Put(':id/finish')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Finish workout session' })
     @ApiBody({
         type: WorkoutSessionLogProgressDto,
@@ -113,6 +118,7 @@ export class WorkoutSessionController {
     }
 
     @Put(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Log workout session progress' })
     @ApiBody({
         type: WorkoutSessionLogProgressDto,
@@ -141,6 +147,7 @@ export class WorkoutSessionController {
     }
 
     @Patch('time/sync')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Sync workout session time' })
     @ApiOkResponse({
         description: 'The workout session time has been successfully synced.',

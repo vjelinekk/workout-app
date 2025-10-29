@@ -4,7 +4,7 @@ import { UserRole } from '@/types/auth';
 
 export default function BecomeTrainerPage() {
     return (
-        <ProtectedRoute requiredRoles={[UserRole.TRAINEE]}>
+        <ProtectedRoute requiredRoles={[UserRole.TRAINEE, UserRole.ADMIN]}>
             <BecomeTrainer />
         </ProtectedRoute>
     );

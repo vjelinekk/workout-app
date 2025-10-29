@@ -11,6 +11,7 @@ import {
     DropdownMenuTrigger,
 } from '../ui/dropdown-menu';
 import { UserRole } from '@/types/auth';
+import { useAnyRole, useRole } from '@/hooks/useRole';
 
 export const UserDropDownMenu = () => {
     const t = useTranslations(TRANSLATION_SECTION_KEYS.topBar);
@@ -33,6 +34,14 @@ export const UserDropDownMenu = () => {
         router.push('/admin/trainer-approvals');
     };
 
+    const handleAssignTrainingSplit = () => {
+        router.push('/assign-training-split');
+    };
+
+    const handleRecruitTrainees = () => {
+        router.push('/recruit-trainees');
+    };
+
     const handleSettings = () => {
         router.push('/settings');
     };
@@ -43,14 +52,51 @@ export const UserDropDownMenu = () => {
     };
 
     const renderBecomeTrainer = () => {
-        const isTrainerOrAdmin = user.roles.some((role) =>
-            [UserRole.TRAINER, UserRole.ADMIN].includes(role),
-        );
+        const isTrainerOrAdmin = useAnyRole([UserRole.TRAINER, UserRole.ADMIN]);
         return (
             <>
                 {!isTrainerOrAdmin && (
                     <DropdownMenuItem onClick={handleBecomeTrainer}>
                         {t('becomeTrainer')}
+                    </DropdownMenuItem>
+                )}
+            </>
+        );
+    };
+
+    const renderAssignTrainingSplit = () => {
+        const isTrainerOrAdmin = useAnyRole([UserRole.TRAINER, UserRole.ADMIN]);
+        return (
+            <>
+                {isTrainerOrAdmin && (
+                    <DropdownMenuItem onClick={handleAssignTrainingSplit}>
+                        {t('assignTrainingSplit')}
+                    </DropdownMenuItem>
+                )}
+            </>
+        );
+    };
+
+    const renderTrainerApprovals = () => {
+        const isAdmin = useRole(UserRole.ADMIN);
+        return (
+            <>
+                {isAdmin && (
+                    <DropdownMenuItem onClick={handleTrainerApprovals}>
+                        {t('trainerApprovals')}
+                    </DropdownMenuItem>
+                )}
+            </>
+        );
+    };
+
+    const renderRecruitTrainees = () => {
+        const isTrainerOrAdmin = useAnyRole([UserRole.TRAINER, UserRole.ADMIN]);
+        return (
+            <>
+                {isTrainerOrAdmin && (
+                    <DropdownMenuItem onClick={handleRecruitTrainees}>
+                        {t('recruitTrainees')}
                     </DropdownMenuItem>
                 )}
             </>
@@ -69,11 +115,9 @@ export const UserDropDownMenu = () => {
                     {t('profile')}
                 </DropdownMenuItem>
                 {renderBecomeTrainer()}
-                {user?.roles.includes(UserRole.ADMIN) && (
-                    <DropdownMenuItem onClick={handleTrainerApprovals}>
-                        {t('trainerApprovals')}
-                    </DropdownMenuItem>
-                )}
+                {renderAssignTrainingSplit()}
+                {renderTrainerApprovals()}
+                {renderRecruitTrainees()}
                 <DropdownMenuItem onClick={handleSettings}>
                     {t('settings')}
                 </DropdownMenuItem>

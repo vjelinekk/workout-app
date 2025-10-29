@@ -11,6 +11,7 @@ import {
 } from '@nestjs/common';
 import {
     ApiBadRequestResponse,
+    ApiBearerAuth,
     ApiBody,
     ApiForbiddenResponse,
     ApiNotFoundResponse,
@@ -36,6 +37,7 @@ export class ExerciseCategoryController {
     ) {}
 
     @Post()
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Create a new exercise category' })
     @ApiBody({
         type: ExerciseCategoryCreateDto,
@@ -62,6 +64,7 @@ export class ExerciseCategoryController {
     }
 
     @Patch(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Patch an exercise category' })
     @ApiParam({
         name: 'id',
@@ -94,6 +97,7 @@ export class ExerciseCategoryController {
     }
 
     @Put(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Update an exercise category' })
     @ApiParam({
         name: 'id',
@@ -126,6 +130,7 @@ export class ExerciseCategoryController {
     }
 
     @Delete(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Delete an exercise category' })
     @ApiParam({
         name: 'id',
@@ -143,6 +148,7 @@ export class ExerciseCategoryController {
     }
 
     @Get(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Get exercise category by ID' })
     @ApiOkResponse({
         description: 'The exercise category with the specified ID',
@@ -164,6 +170,7 @@ export class ExerciseCategoryController {
     }
 
     @Get()
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Get all exercise categories' })
     @ApiOkResponse({
         description: 'List of all exercise categories',

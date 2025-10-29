@@ -8,6 +8,9 @@ import { RoleRepository } from './repositories/role.repository';
 import { TrainerTraineeEntity } from './entities/trainer-trainee.entity';
 import { MailModule } from '../mail/mail.module';
 import { UserController } from './controllers/user.controller';
+import { TrainerTraineeController } from './controllers/trainer-trainee.controller';
+import { TrainerTraineeService } from './services/trainer-trainee.service';
+import { TrainerTraineeRepository } from './repositories/trainer-trainee.repository';
 
 @Module({
     imports: [
@@ -18,8 +21,19 @@ import { UserController } from './controllers/user.controller';
         ]),
         MailModule,
     ],
-    controllers: [UserController],
-    exports: [UserService, UserRepository, RoleRepository],
-    providers: [UserService, UserRepository, RoleRepository],
+    controllers: [UserController, TrainerTraineeController],
+    exports: [
+        UserService,
+        UserRepository,
+        RoleRepository,
+        TrainerTraineeRepository,
+    ],
+    providers: [
+        UserService,
+        UserRepository,
+        RoleRepository,
+        TrainerTraineeRepository,
+        TrainerTraineeService,
+    ],
 })
 export class UserModule {}

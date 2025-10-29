@@ -10,12 +10,16 @@ export const fetchAllTrainingSplits = async (
     scope: Scope = Scope.ALL,
     signal?: AbortSignal
 ) => {
-    const data = await api.get<TrainingSplit[]>(TRAINING_SPLIT_ENDPOINTS.trainingSplits, {
-        params: { scope },
-        signal,
-    });
+    try {
+        const data = await api.get<TrainingSplit[]>(TRAINING_SPLIT_ENDPOINTS.trainingSplits, {
+            params: { scope },
+            signal,
+        });
 
-    return data.data;
+        return data.data;
+    } catch (error: unknown) {
+        handleApiError(error, 'Failed to fetch training splits');
+    }
 }
 
 export const QUERY_KEY_TRAINING_SPLIT = 'training-split';

@@ -15,6 +15,7 @@ import { SessionLoggingStart } from './SessionLoggingStart';
 import { useTranslations } from 'next-intl';
 import { TRANSLATION_SECTION_KEYS } from '@/constants/locale';
 import Link from 'next/link';
+import { TRAINING_SPLIT_ERROR_CODES } from '@/constants/trainingSplit';
 
 export const TrainingSplitAssigned = () => {
     const t = useTranslations(TRANSLATION_SECTION_KEYS.sessionLoggingPage);
@@ -32,7 +33,10 @@ export const TrainingSplitAssigned = () => {
         );
     }
 
-    if (error && error.errorCode !== 'NO_ASSIGNED_TRAINING_SPLIT') {
+    if (
+        error &&
+        error.errorCode !== TRAINING_SPLIT_ERROR_CODES.noAssignedTrainingSplit
+    ) {
         return (
             <Card className="w-full max-w-2xl mx-auto">
                 <CardHeader>
@@ -46,7 +50,10 @@ export const TrainingSplitAssigned = () => {
     }
 
     // Handle case when no active split
-    if (!trainingSplit || error?.errorCode === 'NO_ASSIGNED_TRAINING_SPLIT') {
+    if (
+        !trainingSplit ||
+        error?.errorCode === TRAINING_SPLIT_ERROR_CODES.noAssignedTrainingSplit
+    ) {
         return (
             <Card className="w-full max-w-2xl mx-auto">
                 <CardHeader>

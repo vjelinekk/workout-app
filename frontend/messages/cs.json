@@ -24,7 +24,12 @@
         "unexpectedError": "Došlo k neočekávané chybě. Zkuste to prosím znovu."
     },
     "TopBar": {
-        "logout": "Odhlásit se"
+        "logout": "Odhlásit se",
+        "profile": "Profil",
+        "becomeTrainer": "Stát se trenérem",
+        "settings": "Nastavení",
+        "trainerApprovals": "Schválení trenérů",
+        "assignTrainingSplit": "Přiřadit tréninkový split"
     },
     "DashboardPage": {
         "exercises": "Cviky",

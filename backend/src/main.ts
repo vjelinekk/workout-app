@@ -50,7 +50,7 @@ async function bootstrap() {
         .setTitle('Gym Workout API')
         .setDescription('API for logging and managing workouts')
         .setVersion('1.0')
-        .addBearerAuth() // if you use JWT authentication
+        .addBearerAuth()
         .build();
 
     const document = SwaggerModule.createDocument(app, config);

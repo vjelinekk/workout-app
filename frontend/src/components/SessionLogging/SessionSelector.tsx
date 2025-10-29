@@ -35,9 +35,11 @@ export const SessionSelector = ({
 
     return (
         <div className="space-y-2">
-            <label htmlFor="session-select" className="text-sm font-medium">
-                {t('todayWorkout')}
-            </label>
+            <div>
+                <label htmlFor="session-select" className="text-sm font-medium">
+                    {t('todayWorkout')}
+                </label>
+            </div>
 
             <div className="flex items-center gap-2">
                 <Select

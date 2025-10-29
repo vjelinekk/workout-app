@@ -3,6 +3,7 @@ import { api } from "../axios";
 import { USER_ENDPOINTS } from "../endpoints/user";
 import { handleApiError } from "@/utils/apiError";
 import { UserResponse } from "@/types/user";
+import { UserRole } from "@/types/auth";
 
 export const becomeTrainer = async (becomeTrainerData: BecomeTrainerFormValues): Promise<void> => {
     try {
@@ -12,9 +13,30 @@ export const becomeTrainer = async (becomeTrainerData: BecomeTrainerFormValues):
     }
 }
 
-export const fetchAllUsers = async (trainerRequests?: boolean, signal?: AbortSignal): Promise<UserResponse[]> => {
+export const fetchAllUsers = async (
+    trainerRequests?: boolean,
+    roles?: UserRole[],
+    notRecruitedOrPending?: boolean,
+    signal?: AbortSignal
+): Promise<UserResponse[]> => {
     try {
-        const params = trainerRequests ? { trainerRequests: true } : {};
+        const params: {
+            trainerRequests?: boolean;
+            roles?: string;
+            notRecruitedOrPending?: boolean;
+        } = {};
+
+        if (trainerRequests !== undefined) {
+            params.trainerRequests = trainerRequests;
+        }
+
+        if (roles !== undefined && roles.length > 0) {
+            params.roles = roles.join('&roles=');
+        }
+
+        if (notRecruitedOrPending !== undefined) {
+            params.notRecruitedOrPending = notRecruitedOrPending;
+        }
 
         const { data } = await api.get<UserResponse[]>(`${USER_ENDPOINTS.users}`, { signal, params });
 

@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import {
     ApiBadRequestResponse,
+    ApiBearerAuth,
     ApiBody,
     ApiForbiddenResponse,
     ApiNotFoundResponse,
@@ -35,6 +36,7 @@ export class ExerciseController {
     constructor(private readonly exerciseService: ExerciseService) {}
 
     @Post()
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Create a new exercise' })
     @ApiBody({ type: ExerciseCreateDto, description: 'Exercise creation data' })
     @ApiOkResponse({
@@ -58,6 +60,7 @@ export class ExerciseController {
     }
 
     @Patch(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Patch an exercise' })
     @ApiParam({
         name: 'id',
@@ -93,6 +96,7 @@ export class ExerciseController {
     }
 
     @Put(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Update an exercise' })
     @ApiParam({
         name: 'id',
@@ -128,6 +132,7 @@ export class ExerciseController {
     }
 
     @Delete(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Delete an exercise' })
     @ApiParam({
         name: 'id',
@@ -151,6 +156,7 @@ export class ExerciseController {
     }
 
     @Get(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Get exercise by ID' })
     @ApiQuery({
         name: 'scope',
@@ -189,6 +195,7 @@ export class ExerciseController {
     }
 
     @Get()
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Get all exercises' })
     @ApiQuery({
         name: 'scope',
@@ -225,6 +232,7 @@ export class ExerciseController {
     }
 
     @Post('/:id/restore')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Restore a deleted exercise' })
     @ApiParam({
         name: 'id',

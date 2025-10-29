@@ -15,6 +15,7 @@ import { TrainingSplitAssignmentRepository } from './repositories/training-split
 import { WorkoutSessionPlanRepository } from '../workout/repositories/workout-session-plan.repository';
 import { WorkoutSessionPlanEntity } from '../workout/entities/workout-session-plan.entity';
 import { UserEntity } from '../user/entities/user.entity';
+import { UserModule } from '../user/user.module';
 
 @Module({
     imports: [
@@ -25,6 +26,7 @@ import { UserEntity } from '../user/entities/user.entity';
             WorkoutSessionPlanEntity,
             UserEntity,
         ]),
+        UserModule,
     ],
     controllers: [
         TrainingSplitController,

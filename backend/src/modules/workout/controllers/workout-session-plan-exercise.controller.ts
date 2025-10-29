@@ -12,6 +12,7 @@ import {
 } from '@nestjs/common';
 import {
     ApiBadRequestResponse,
+    ApiBearerAuth,
     ApiBody,
     ApiForbiddenResponse,
     ApiNotFoundResponse,
@@ -40,6 +41,7 @@ export class WorkoutSessionPlanExerciseController {
     ) {}
 
     @Post()
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Create a new workout session plan exercise' })
     @ApiBody({
         type: WorkoutSessionPlanExerciseCreateDto,
@@ -67,6 +69,7 @@ export class WorkoutSessionPlanExerciseController {
     }
 
     @Post('bulk')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Create multiple workout session plan exercises' })
     @ApiBody({
         type: [WorkoutSessionPlanExerciseCreateDto],
@@ -93,6 +96,7 @@ export class WorkoutSessionPlanExerciseController {
     }
 
     @Patch(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Patch a workout session plan exercise' })
     @ApiParam({
         name: 'id',
@@ -126,6 +130,7 @@ export class WorkoutSessionPlanExerciseController {
     }
 
     @Put('bulk')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Update multiple workout session plan exercises' })
     @ApiQuery({
         name: 'workoutSessionPlanId',
@@ -162,6 +167,7 @@ export class WorkoutSessionPlanExerciseController {
     }
 
     @Put(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Update a workout session plan exercise' })
     @ApiParam({
         name: 'id',
@@ -195,6 +201,7 @@ export class WorkoutSessionPlanExerciseController {
     }
 
     @Delete(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Delete a workout session plan exercise' })
     @ApiParam({
         name: 'id',
@@ -220,6 +227,7 @@ export class WorkoutSessionPlanExerciseController {
     }
 
     @Get()
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Get all workout session plan exercises' })
     @ApiQuery({
         name: 'workout_session_plan_id',
@@ -258,6 +266,7 @@ export class WorkoutSessionPlanExerciseController {
     }
 
     @Get(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Get workout session plan exercise by ID' })
     @ApiOkResponse({
         description: 'The workout session plan exercise with the specified ID',

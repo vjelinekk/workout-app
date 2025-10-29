@@ -4,19 +4,23 @@ import {
     Delete,
     Get,
     Param,
+    ParseArrayPipe,
     ParseIntPipe,
     Patch,
     Post,
     Put,
+    Query,
 } from '@nestjs/common';
 import {
     ApiBadRequestResponse,
+    ApiBearerAuth,
     ApiBody,
     ApiForbiddenResponse,
     ApiNotFoundResponse,
     ApiOkResponse,
     ApiOperation,
     ApiParam,
+    ApiQuery,
     ApiTags,
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -27,6 +31,7 @@ import { TrainingSplitAssignmentPatchDto } from '../dtos/training-split-assignme
 import { TrainingSplitAssignmentUpdateDto } from '../dtos/training-split-assignment/training-split-assignment-update.dto';
 import { JwtUser } from 'src/modules/auth/decorators/jwt-user.decorator';
 import type { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
+import { TrainingSplitAssignmentStatusEnum } from '../enums/training-split-assignment-status.enum';
 
 @ApiTags('Training Split Assignments')
 @Controller('training-split-assignments')
@@ -36,6 +41,7 @@ export class TrainingSplitAssignmentController {
     ) {}
 
     @Post()
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Create a new training split assignment' })
     @ApiBody({
         type: TrainingSplitAssignmentCreateDto,
@@ -56,13 +62,14 @@ export class TrainingSplitAssignmentController {
         @Body() createDto: TrainingSplitAssignmentCreateDto,
         @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<TrainingSplitAssignmentResponseDto> {
-        return await this.trainingSplitAssignmentService.createMapped(
+        return await this.trainingSplitAssignmentService.createValidated(
             createDto,
-            user.id,
+            user,
         );
     }
 
     @Patch(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Patch a training split assignment' })
     @ApiParam({
         name: 'id',
@@ -99,6 +106,7 @@ export class TrainingSplitAssignmentController {
     }
 
     @Put(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Update a training split assignment' })
     @ApiParam({
         name: 'id',
@@ -135,6 +143,7 @@ export class TrainingSplitAssignmentController {
     }
 
     @Delete(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Delete a training split assignment' })
     @ApiParam({
         name: 'id',
@@ -162,6 +171,7 @@ export class TrainingSplitAssignmentController {
     }
 
     @Get(':id')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Get training split assignment by ID' })
     @ApiOkResponse({
         description: 'The training split assignment with the specified ID',
@@ -187,10 +197,20 @@ export class TrainingSplitAssignmentController {
     }
 
     @Get()
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Get all training split assignments' })
     @ApiOkResponse({
         description: 'List of all training split assignments',
         type: [TrainingSplitAssignmentResponseDto],
+    })
+    @ApiQuery({
+        name: 'statuses',
+        required: false,
+        description:
+            'Filter assignments by their statuses (e.g., PENDING, ACCEPTED, DECLINED)',
+        type: 'string',
+        enum: TrainingSplitAssignmentStatusEnum,
+        isArray: true,
     })
     @ApiNotFoundResponse({
         description: 'No training split assignments found',
@@ -201,11 +221,64 @@ export class TrainingSplitAssignmentController {
     @ApiBadRequestResponse({
         description: 'Invalid request',
     })
-    async getAll(): Promise<TrainingSplitAssignmentResponseDto[]> {
-        return await this.trainingSplitAssignmentService.findAllActiveMapped();
+    async getAll(
+        @JwtUser() user: JwtAuthenticatedUser,
+        @Query('statuses', new ParseArrayPipe({ optional: true }))
+        statuses?: TrainingSplitAssignmentStatusEnum[],
+    ): Promise<TrainingSplitAssignmentResponseDto[]> {
+        return await this.trainingSplitAssignmentService.findAllActiveForUserMapped(
+            user.id,
+            statuses,
+        );
+    }
+
+    @Post('/:id/resolve')
+    @ApiBearerAuth()
+    @ApiOperation({ summary: 'Resolve a training split assignment' })
+    @ApiParam({
+        name: 'id',
+        type: Number,
+        description: 'The ID of the training split assignment to resolve',
+    })
+    @ApiBody({
+        schema: {
+            type: 'object',
+            properties: {
+                accept: {
+                    type: 'boolean',
+                    description: 'Whether to accept or decline the assignment',
+                },
+            },
+            required: ['accept'],
+        },
+    })
+    @ApiOkResponse({
+        description:
+            'The training split assignment has been successfully resolved.',
+    })
+    @ApiBadRequestResponse({
+        description: 'Invalid input data',
+    })
+    @ApiNotFoundResponse({
+        description: 'Training split assignment not found',
+    })
+    @ApiUnauthorizedResponse({
+        description: 'Unauthorized',
+    })
+    async resolveAssignment(
+        @Param('id', ParseIntPipe) id: number,
+        @Body() body: { accept: boolean },
+        @JwtUser() user: JwtAuthenticatedUser,
+    ) {
+        return await this.trainingSplitAssignmentService.resolveAssignment(
+            id,
+            body.accept,
+            user,
+        );
     }
 
     @Post('/:id/restore')
+    @ApiBearerAuth()
     @ApiOperation({ summary: 'Restore a deleted training split assignment' })
     @ApiParam({
         name: 'id',

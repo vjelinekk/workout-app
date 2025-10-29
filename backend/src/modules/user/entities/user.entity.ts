@@ -1,7 +1,9 @@
-import { Column, Entity, JoinTable, ManyToMany } from 'typeorm';
+import { Column, Entity, JoinTable, ManyToMany, OneToMany } from 'typeorm';
 import { RoleEntity } from './role.entity';
 import { Exclude } from 'class-transformer';
 import { BaseEntity } from 'src/common/entities/base.entity';
+import { TrainingSplitAssignmentEntity } from 'src/modules/training-split/entities/training-split-assignment.entity';
+import { TrainerTraineeEntity } from './trainer-trainee.entity';
 
 @Entity('user')
 export class UserEntity extends BaseEntity {
@@ -47,4 +49,13 @@ export class UserEntity extends BaseEntity {
         inverseJoinColumn: { name: 'role_id', referencedColumnName: 'id' },
     })
     roles: RoleEntity[];
+
+    @OneToMany(
+        () => TrainingSplitAssignmentEntity,
+        (assignment) => assignment.trainee,
+    )
+    trainingSplitAssignments: TrainingSplitAssignmentEntity[];
+
+    @OneToMany(() => TrainerTraineeEntity, (tt) => tt.trainer)
+    trainerTrainee: TrainerTraineeEntity[];
 }

@@ -9,9 +9,15 @@ export class TrainerTraineeEntity extends BaseEntity {
     @JoinColumn({ name: 'trainer_id' })
     trainer: UserEntity;
 
+    @Column({ name: 'trainer_id' })
+    trainerId: number;
+
     @ManyToOne(() => UserEntity)
     @JoinColumn({ name: 'trainee_id' })
     trainee: UserEntity;
+
+    @Column({ name: 'trainee_id' })
+    traineeId: number;
 
     @Column({
         type: 'enum',

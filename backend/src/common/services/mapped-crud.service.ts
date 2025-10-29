@@ -103,7 +103,6 @@ export abstract class MappedCrudService<
 
         // Map DTO fields to entity fields
         const mappedFields = this.toEntityUpdate(dto);
-        console.log(mappedFields);
 
         // Update timestamp and apply mapped fields
         entity.updatedAt = new Date();

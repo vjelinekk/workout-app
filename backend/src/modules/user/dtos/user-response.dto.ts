@@ -65,10 +65,10 @@ export class UserResponseDto {
     becomeTrainerReason?: string;
 
     @ApiProperty({
-        example: ['user', 'admin'],
+        example: [1, 2],
         description: 'Roles of the user',
     })
-    @IsString({ each: true })
+    @IsNumber({}, { each: true })
     @Expose()
     roles: RoleEnum[];
 }

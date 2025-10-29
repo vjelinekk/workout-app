@@ -113,6 +113,12 @@ export const SessionLoggingStart = ({ activeTrainingSplit }: Props) => {
                             Rest day or no workout assigned for today.
                         </p>
                     </div>
+                    <SessionSelector
+                        currentSessionKey={currentSessionKey}
+                        setCurrentSessionKey={setCurrentSessionKey}
+                        availableSessions={availableSessions}
+                        currentSession={currentSession}
+                    />
                 </CardContent>
             </Card>
         );

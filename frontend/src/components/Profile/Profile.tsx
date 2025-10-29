@@ -14,7 +14,6 @@ interface Props {
 export const Profile = ({ nickname, firstName, lastName, roles }: Props) => {
     const t = useTranslations(TRANSLATION_SECTION_KEYS.profilePage);
     const tRoles = useTranslations(TRANSLATION_SECTION_KEYS.common);
-    console.log(roles);
 
     return (
         <div className="w-full max-w-md mx-auto p-4">

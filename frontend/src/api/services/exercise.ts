@@ -50,3 +50,28 @@ export const deleteExercise = async (id: number): Promise<Exercise> => {
         handleApiError(error, 'Failed to delete exercise');
     }
 }
+
+import { LOCAL_STORAGE_KEYS } from '@/constants/localStorage';
+
+export const uploadExerciseImage = async (file: File): Promise<{ imageUrl: string }> => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.authToken);
+
+        const { data } = await api.post<{ imageUrl: string }>(
+            EXERCISE_ENDPOINTS.uploadImage,
+            formData,
+            {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    Authorization: `Bearer ${token}`,
+                },
+            },
+        );
+        return data;
+    } catch (error: unknown) {
+        handleApiError(error, 'Failed to upload image');
+    }
+};

@@ -60,7 +60,6 @@ export class ExerciseCreateDto {
         required: false,
     })
     @IsString()
-    @IsUrl()
     @IsOptional()
     imageUrl?: string;
 

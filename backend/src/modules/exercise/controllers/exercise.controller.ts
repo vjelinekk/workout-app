@@ -9,7 +9,12 @@ import {
     Post,
     Put,
     Query,
+    UploadedFile,
+    UseInterceptors,
 } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
 import {
     ApiBadRequestResponse,
     ApiBearerAuth,
@@ -34,6 +39,29 @@ import { FindAllScopes } from 'src/common/enums/find-all-scopes.enum';
 @Controller('exercises')
 export class ExerciseController {
     constructor(private readonly exerciseService: ExerciseService) {}
+
+    @Post('upload-image')
+    @ApiBearerAuth()
+    @UseInterceptors(
+        FileInterceptor('file', {
+            storage: diskStorage({
+                destination: './public/uploads/exercises',
+                filename: (req, file, cb) => {
+                    const randomName = Array(32)
+                        .fill(null)
+                        .map(() => Math.round(Math.random() * 16).toString(16))
+                        .join('');
+                    return cb(null, `${randomName}${extname(file.originalname)}`);
+                },
+            }),
+        }),
+    )
+    uploadImage(@UploadedFile() file) {
+        console.log(file);
+        return {
+            imageUrl: `/uploads/exercises/${file.filename}`,
+        };
+    }
 
     @Post()
     @ApiBearerAuth()

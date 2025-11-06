@@ -7,6 +7,8 @@ import { JwtAuthGuard } from './modules/auth/guards/jwt-auth.guard';
 import { ExerciseModule } from './modules/exercise/exercise.module';
 import { WorkoutModule } from './modules/workout/workout.module';
 import { TrainingSplitModule } from './modules/training-split/training-split.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
     imports: [
@@ -31,6 +33,9 @@ import { TrainingSplitModule } from './modules/training-split/training-split.mod
         ExerciseModule,
         WorkoutModule,
         TrainingSplitModule,
+        ServeStaticModule.forRoot({
+            rootPath: join(process.cwd(), 'public'),
+        }),
     ],
     providers: [
         {

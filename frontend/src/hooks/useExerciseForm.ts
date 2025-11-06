@@ -23,6 +23,7 @@ export const useExerciseForm = (initialData?: Exercise) => {
             equipment: initialData.equipment ?? '',
             description: initialData.description ?? '',
             categoryId: initialData.categoryId ?? undefined,
+            imageUrl: initialData.imageUrl ?? undefined,
             imageFile: undefined,
             isPublic: initialData.isPublic ?? false,
             isApproved: initialData.isApproved ?? false,

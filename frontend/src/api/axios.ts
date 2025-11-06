@@ -1,4 +1,5 @@
-import axios from "axios";
+import { storage } from '@/utils/storage';
+import axios from 'axios';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL;
 
@@ -13,3 +14,16 @@ export const api = axios.create({
         'Content-Type': 'application/json',
     },
 });
+
+api.interceptors.request.use(
+    (config) => {
+        const token = storage.getToken();
+        if (token) {
+            config.headers['Authorization'] = `Bearer ${token}`;
+        }
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
+    },
+);

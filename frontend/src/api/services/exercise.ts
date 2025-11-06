@@ -4,6 +4,7 @@ import { EXERCISE_ENDPOINTS } from "../endpoints/exercise";
 import { Scope } from "@/types/scope";
 import { ExerciseFormValues } from "@/schemas/exercise";
 import { handleApiError } from "@/utils/apiError";
+import { LOCAL_STORAGE_KEYS } from '@/constants/localStorage';
 
 export const QUERY_KEY_EXERCISES = 'exercises';
 export const fetchAllExercises = async (
@@ -51,22 +52,17 @@ export const deleteExercise = async (id: number): Promise<Exercise> => {
     }
 }
 
-import { LOCAL_STORAGE_KEYS } from '@/constants/localStorage';
-
 export const uploadExerciseImage = async (file: File): Promise<{ imageUrl: string }> => {
     const formData = new FormData();
     formData.append('file', file);
 
     try {
-        const token = localStorage.getItem(LOCAL_STORAGE_KEYS.authToken);
-
         const { data } = await api.post<{ imageUrl: string }>(
             EXERCISE_ENDPOINTS.uploadImage,
             formData,
             {
                 headers: {
                     'Content-Type': 'multipart/form-data',
-                    Authorization: `Bearer ${token}`,
                 },
             },
         );

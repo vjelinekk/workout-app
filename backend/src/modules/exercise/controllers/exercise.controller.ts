@@ -1,4 +1,5 @@
 import {
+    BadRequestException,
     Body,
     Controller,
     Delete,
@@ -45,7 +46,8 @@ export class ExerciseController {
     @UseInterceptors(
         FileInterceptor('file', {
             storage: diskStorage({
-                destination: './public/uploads/exercises',
+                destination:
+                    process.env.IMAGE_UPLOAD_PATH || './public/uploads/exercises',
                 filename: (req, file, cb) => {
                     const randomName = Array(32)
                         .fill(null)
@@ -54,6 +56,18 @@ export class ExerciseController {
                     return cb(null, `${randomName}${extname(file.originalname)}`);
                 },
             }),
+            fileFilter: (req, file, cb) => {
+                if (!file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
+                    return cb(
+                        new BadRequestException('Only image files are allowed!'),
+                        false,
+                    );
+                }
+                cb(null, true);
+            },
+            limits: {
+                fileSize: 1024 * 1024 * 5, // 5 MB
+            },
         }),
     )
     uploadImage(@UploadedFile() file) {

@@ -3,7 +3,6 @@
 import { api } from "@/api/axios";
 import { AUTH_ENDPOINTS } from "@/api/endpoints/auth";
 import { login, logout } from "@/api/services/auth";
-import { AUTH_HEADER_KEY } from "@/constants/api";
 import { AUTH_MESSAGE_TYPES } from "@/constants/authMessages";
 import { AuthState, LoginCredentials, User, LoginResponse } from "@/types/auth";
 import { storage } from "@/utils/storage";
@@ -32,7 +31,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
         if (storedToken && storedUser) {
             setAuthData({ user: storedUser, token: storedToken });
-            api.defaults.headers.common[AUTH_HEADER_KEY] = `Bearer ${storedToken}`;
+
         }
 
         setIsLoading(false);
@@ -69,7 +68,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             storage.setUser(user);
 
             setAuthData({ user, token });
-            api.defaults.headers.common[AUTH_HEADER_KEY] = `Bearer ${token}`;
+
             router.push('/dashboard');
         } catch (error) {
             throw error;
@@ -89,7 +88,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         storage.setUser(user);
 
         setAuthData({ user, token: data.accessToken });
-        api.defaults.headers.common[AUTH_HEADER_KEY] = `Bearer ${data.accessToken}`;
+
         router.push('/dashboard');
     }
 
@@ -108,7 +107,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         storage.setUser(user);
 
         setAuthData({ user, token });
-        api.defaults.headers.common[AUTH_HEADER_KEY] = `Bearer ${token}`;
+
         setIsGoogleLoading(false);
         router.push('/dashboard');
     }, [router]);

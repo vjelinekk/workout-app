@@ -16,9 +16,17 @@ interface Props {
     control: Control<ExerciseFormValues>;
     user: User | null;
     isViewMode?: boolean;
+    isUploadingImage?: boolean;
+    imageUrl?: string;
 }
 
-export const ExerciseFormFields = ({ control, user, isViewMode }: Props) => {
+export const ExerciseFormFields = ({
+    control,
+    user,
+    isViewMode,
+    isUploadingImage,
+    imageUrl,
+}: Props) => {
     const {
         data: exerciseCategories,
         error: categoriesError,
@@ -86,6 +94,17 @@ export const ExerciseFormFields = ({ control, user, isViewMode }: Props) => {
                     control={control}
                     name="imageFile"
                 />
+            )}
+
+            {isUploadingImage && <p>{t('uploading')}</p>}
+            {imageUrl && (
+                <div className="mt-4">
+                    <img
+                        src={`${process.env.NEXT_PUBLIC_API_URL}${imageUrl}`}
+                        alt="Exercise image"
+                        className="h-48 w-auto rounded-md border border-input"
+                    />
+                </div>
             )}
 
             <BasicCheckbox<ExerciseFormValues>

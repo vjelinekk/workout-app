@@ -1,4 +1,7 @@
 import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { promises as fs } from 'fs';
+import { join } from 'path';
+import { ConfigService } from '@nestjs/config';
 import { ExerciseRepository } from '../repositories/exercise.repository';
 import { ExerciseCreateDto } from '../dtos/exercise/exercise-create.dto';
 import { ExerciseEntity } from '../entities/exercise.entity';
@@ -18,7 +21,10 @@ export class ExerciseService extends PublicAuthorizableCrudService<
     ExerciseResponseDto,
     ExerciseRepository
 > {
-    constructor(protected readonly exerciseRepository: ExerciseRepository) {
+    constructor(
+        protected readonly exerciseRepository: ExerciseRepository,
+        private readonly configService: ConfigService,
+    ) {
         super(exerciseRepository);
     }
 
@@ -68,5 +74,44 @@ export class ExerciseService extends PublicAuthorizableCrudService<
     ): void {
         void entity;
         void user;
+    }
+
+    async deleteValidated(
+        id: number,
+        user: JwtAuthenticatedUser,
+    ): Promise<ExerciseResponseDto> {
+        const entity = await this.repository.findOneBy({ id } as any);
+        if (entity && entity.imageUrl) {
+            const imagePath = join(process.cwd(), entity.imageUrl);
+            try {
+                await fs.unlink(imagePath);
+            } catch (error) {
+                // Ignore errors if the file doesn't exist, e.g., was already deleted
+            }
+        }
+
+        return super.deleteValidated(id, user);
+    }
+
+    async updateValidated(
+        id: number,
+        dto: ExerciseUpdateDto | ExercisePatchDto,
+        user: JwtAuthenticatedUser,
+    ): Promise<ExerciseResponseDto> {
+        const oldEntity = await this.repository.findOneBy({ id } as any);
+        const oldImageUrl = oldEntity?.imageUrl;
+
+        const updatedExercise = await super.updateValidated(id, dto, user);
+
+        if (oldImageUrl && oldImageUrl !== updatedExercise.imageUrl) {
+            const imagePath = join(process.cwd(), oldImageUrl);
+            try {
+                await fs.unlink(imagePath);
+            } catch (error) {
+                // Ignore errors if the file doesn't exist
+            }
+        }
+
+        return updatedExercise;
     }
 }

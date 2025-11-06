@@ -4,6 +4,7 @@ import { EXERCISE_ENDPOINTS } from "../endpoints/exercise";
 import { Scope } from "@/types/scope";
 import { ExerciseFormValues } from "@/schemas/exercise";
 import { handleApiError } from "@/utils/apiError";
+import { LOCAL_STORAGE_KEYS } from '@/constants/localStorage';
 
 export const QUERY_KEY_EXERCISES = 'exercises';
 export const fetchAllExercises = async (
@@ -50,3 +51,23 @@ export const deleteExercise = async (id: number): Promise<Exercise> => {
         handleApiError(error, 'Failed to delete exercise');
     }
 }
+
+export const uploadExerciseImage = async (file: File): Promise<{ imageUrl: string }> => {
+    const formData = new FormData();
+    formData.append('file', file);
+
+    try {
+        const { data } = await api.post<{ imageUrl: string }>(
+            EXERCISE_ENDPOINTS.uploadImage,
+            formData,
+            {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                },
+            },
+        );
+        return data;
+    } catch (error: unknown) {
+        handleApiError(error, 'Failed to upload image');
+    }
+};

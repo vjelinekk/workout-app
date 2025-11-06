@@ -6,6 +6,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { TRANSLATION_SECTION_KEYS } from '@/constants/locale';
 import { ExerciseFormValues } from '@/schemas/exercise';
 import { useCreateExercise, useUpdateExercise } from '@/hooks/useExercises';
+import { useMutation } from '@tanstack/react-query';
+import { uploadExerciseImage } from '@/api/services/exercise';
 import { Exercise } from '@/types/exercise';
 import { ExerciseFormFields } from './ExerciseFormFields';
 import { useExerciseForm } from '@/hooks/useExerciseForm';
@@ -34,6 +36,20 @@ export const ExerciseForm = ({ mode, id, initialData }: Props) => {
         error: updateError,
     } = useUpdateExercise();
     const form = useExerciseForm(initialData);
+    const imageFile = form.watch('imageFile');
+
+    const { mutate: uploadImage, isPending: isUploadingImage } = useMutation({
+        mutationFn: uploadExerciseImage,
+        onSuccess: (data) => {
+            form.setValue('imageUrl', data.imageUrl);
+        },
+    });
+
+    useEffect(() => {
+        if (imageFile instanceof File) {
+            uploadImage(imageFile);
+        }
+    }, [imageFile, uploadImage]);
 
     useEffect(() => {
         if (isSuccessCreate) {
@@ -42,8 +58,10 @@ export const ExerciseForm = ({ mode, id, initialData }: Props) => {
     }, [isSuccessCreate, form]);
 
     const onSubmit = (data: ExerciseFormValues) => {
+        const { imageFile, ...rest } = data;
+
         const payload = {
-            ...data,
+            ...rest,
             categoryId:
                 data.categoryId === undefined
                     ? undefined
@@ -88,6 +106,8 @@ export const ExerciseForm = ({ mode, id, initialData }: Props) => {
                     control={form.control}
                     user={user}
                     isViewMode={mode === 'view'}
+                    isUploadingImage={isUploadingImage}
+                    imageUrl={form.watch('imageUrl')}
                 />
             </BasicForm>
         </div>

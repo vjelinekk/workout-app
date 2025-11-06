@@ -2,9 +2,6 @@ import { LoginCredentials, LoginResponse, LoginResult } from "@/types/auth";
 import { api } from "../axios";
 import { AUTH_ENDPOINTS } from "../endpoints/auth";
 import { storage } from "@/utils/storage";
-import { AUTH_HEADER_KEY } from "@/constants/api";
-import axios from "axios";
-import { ApiErrorResponse } from "@/types/api";
 import { handleApiError } from "@/utils/apiError";
 import { SignUpFormValues } from "@/schemas/register";
 
@@ -46,7 +43,6 @@ export const login = async (
 
 export const logout = (): void => {
     storage.clearAuth();
-    delete api.defaults.headers.common[AUTH_HEADER_KEY];
 }
 
 /**

@@ -13,7 +13,8 @@ export const exerciseSchema = (
     description: z.string().min(1, descriptionValidation),
     // category is optional — allow undefined when no category is chosen
     categoryId: z.number().int().positive(categoryIdPositiveValidation).optional(),
-    imageFile: z.file().optional(),
+    imageUrl: z.string().optional(),
+    imageFile: z.any().optional(),
     isPublic: z.boolean(),
     isApproved: z.boolean(),
 });

@@ -208,5 +208,60 @@
         "creationSuccess": "Tréninkový split byl úspěšně vytvořen!",
         "updateSuccess": "Tréninkový split byl úspěšně aktualizován!",
         "updateFailed": "Aktualizace tréninkového splitu selhala. Zkuste to prosím znovu."
+    },
+    "SessionLoggingPage": {
+        "title": "TODO: Translate",
+        "startSession": "TODO: Translate",
+        "unexpectedStartError": "TODO: Translate",
+        "reps": "TODO: Translate",
+        "repsLabel": "TODO: Translate",
+        "set": "TODO: Translate",
+        "activeTrainingSplit": "TODO: Translate",
+        "weightWithKg": "TODO: Translate",
+        "lastReps": "TODO: Translate",
+        "weightColumnTitle": "TODO: Translate",
+        "finishWorkout": "TODO: Translate",
+        "errorOccurred": "TODO: Translate",
+        "unexpectedSummaryError": "TODO: Translate",
+        "todayWorkout": "TODO: Translate",
+        "noActiveTrainingSplit": "TODO: Translate",
+        "errorLoadingTrainingSplit": "TODO: Translate",
+        "noActiveTrainingSplitDescription": "TODO: Translate",
+        "sessionInProgress": "TODO: Translate",
+        "continueWorkout": "TODO: Translate",
+        "noWorkoutScheduled": "TODO: Translate",
+        "noWorkoutScheduledDescription": "TODO: Translate",
+        "selectWorkoutSessionPlaceholder": "TODO: Translate",
+        "openPlanNewTab": "TODO: Translate"
+    },
+    "SettingsPage": {
+        "title": "TODO: Translate",
+        "description": "TODO: Translate",
+        "activeTrainingSplit": {
+            "title": "TODO: Translate",
+            "description": "TODO: Translate",
+            "selectPlaceholder": "TODO: Translate",
+            "errorAssigned": "TODO: Translate",
+            "errorAvailable": "TODO: Translate",
+            "errorCreate": "TODO: Translate",
+            "error": "TODO: Translate"
+        },
+        "proposedSplits": {
+            "title": "TODO: Translate",
+            "descriptionWithTrainer": "TODO: Translate",
+            "accept": "TODO: Translate",
+            "decline": "TODO: Translate",
+            "noProposals": "TODO: Translate",
+            "errorLoading": "TODO: Translate"
+        },
+        "trainers": {
+            "title": "TODO: Translate",
+            "description": "TODO: Translate",
+            "current": "TODO: Translate",
+            "accept": "TODO: Translate",
+            "deny": "TODO: Translate",
+            "noTrainers": "TODO: Translate",
+            "errorLoading": "TODO: Translate"
+        }
     }
 }

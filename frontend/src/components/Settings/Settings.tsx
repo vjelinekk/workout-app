@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import {
     useRespondToTrainerRequest,
     useTrainerTrainees,
@@ -25,8 +26,10 @@ import { TrainingSplit } from '@/types/trainingSplit';
 import { ActiveTrainingSplitSection } from './ActiveTrainingSplitSelection/ActiveTrainingSplitSection';
 import { TrainersManagementSection } from './TrainersManagementSection/TrainersManagementSection';
 import { ProposedTrainingSplitsSection } from './ProposedTrainingSplitsSection/ProposedTrainingSplitsSection';
+import { TRANSLATION_SECTION_KEYS } from '@/constants/locale';
 
 export const Settings = () => {
+    const t = useTranslations(TRANSLATION_SECTION_KEYS.settingsPage);
     const { user } = useAuth();
     const {
         data: assignedSplit,
@@ -139,10 +142,10 @@ export const Settings = () => {
             <div className="mx-auto max-w-2xl space-y-6">
                 <div>
                     <h1 className="text-3xl font-bold tracking-tight">
-                        Settings
+                        {t('title')}
                     </h1>
                     <p className="text-muted-foreground mt-1">
-                        Manage your training preferences and trainers
+                        {t('description')}
                     </p>
                 </div>
 

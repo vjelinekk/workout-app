@@ -250,6 +250,7 @@
         "startSession": "Start New Session",
         "unexpectedStartError": "An unexpected error occurred while starting the session. Please try again.",
         "reps": "reps",
+        "repsLabel": "Reps",
         "set": "Set {setNumber}",
         "activeTrainingSplit": "Active Training Split",
         "weightWithKg": "{weight} kg",
@@ -261,7 +262,13 @@
         "todayWorkout": "Today's Workout",
         "noActiveTrainingSplit": "No Active Training Split",
         "errorLoadingTrainingSplit": "Error Loading Training Split",
-        "noActiveTrainingSplitDescription": "Please select a training split in your settings to start logging workouts."
+        "noActiveTrainingSplitDescription": "Please select a training split in your settings to start logging workouts.",
+        "sessionInProgress": "There is a workout session in progress",
+        "continueWorkout": "Continue Workout",
+        "noWorkoutScheduled": "No Workout Scheduled",
+        "noWorkoutScheduledDescription": "Rest day or no workout assigned for today.",
+        "selectWorkoutSessionPlaceholder": "Select a workout session",
+        "openPlanNewTab": "Open plan in new tab"
     },
     "SessionLoggingSummaryPage": {
         "title": "Session Summary",
@@ -310,5 +317,35 @@
         "roles": "Roles",
         "errorOccurred": "An error occurred while loading the profile.",
         "unknownError": "An unexpected error occurred. Please try again."
+    },
+    "SettingsPage": {
+        "title": "Settings",
+        "description": "Manage your training preferences and trainers",
+        "activeTrainingSplit": {
+            "title": "Active Training Split",
+            "description": "Select your current training program",
+            "selectPlaceholder": "Select a training split",
+            "errorAssigned": "Error loading assigned training split:",
+            "errorAvailable": "Error loading available training splits:",
+            "errorCreate": "Error",
+            "error": "Error"
+        },
+        "proposedSplits": {
+            "title": "Proposed Training Splits",
+            "descriptionWithTrainer": "Programs suggested by {firstName} {lastName}",
+            "accept": "Accept",
+            "decline": "Decline",
+            "noProposals": "No proposed training splits at the moment.",
+            "errorLoading": "Error loading proposed training splits:"
+        },
+        "trainers": {
+            "title": "Trainers",
+            "description": "Manage your training coaches",
+            "current": "Current",
+            "accept": "Accept",
+            "deny": "Deny",
+            "noTrainers": "No trainers found.",
+            "errorLoading": "Error loading trainers:"
+        }
     }
 }

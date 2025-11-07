@@ -71,13 +71,13 @@ export const SessionLoggingStart = ({ activeTrainingSplit }: Props) => {
                     <div className="text-center py-8 space-y-4">
                         <PlayCircle className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
                         <p className="text-lg font-medium mb-2">
-                            There is a workout session in progress
+                            {t('sessionInProgress')}
                         </p>
 
                         {/* Buttons */}
                         <div className="flex justify-center gap-4">
                             <Button onClick={handleContinueWorkout}>
-                                Continue Workout
+                                {t('continueWorkout')}
                             </Button>
                             <Button
                                 variant="destructive"
@@ -89,7 +89,7 @@ export const SessionLoggingStart = ({ activeTrainingSplit }: Props) => {
                                     })
                                 }
                             >
-                                Finish Workout
+                                {t('finishWorkout')}
                             </Button>
                         </div>
                     </div>
@@ -107,10 +107,10 @@ export const SessionLoggingStart = ({ activeTrainingSplit }: Props) => {
                     <div className="text-center py-8">
                         <Dumbbell className="h-12 w-12 mx-auto mb-4 text-muted-foreground" />
                         <p className="text-lg font-medium mb-2">
-                            No Workout Scheduled
+                            {t('noWorkoutScheduled')}
                         </p>
                         <p className="text-sm text-muted-foreground">
-                            Rest day or no workout assigned for today.
+                            {t('noWorkoutScheduledDescription')}
                         </p>
                     </div>
                     <SessionSelector

@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import {
     Card,
     CardContent,
@@ -19,6 +20,7 @@ import { TRAINING_SPLIT_ERROR_CODES } from '@/constants/trainingSplit';
 import { TrainingSplit } from '@/types/trainingSplit';
 import { ApiError } from '@/utils/apiError';
 import { BasicFormAlert } from '@/components/BasicForm/BasicFormAlert';
+import { TRANSLATION_SECTION_KEYS } from '@/constants/locale';
 
 interface Props {
     activeSplit?: TrainingSplit;
@@ -43,12 +45,14 @@ export const ActiveTrainingSplitSection = ({
     isCreating,
     onSplitChange,
 }: Props) => {
+    const t = useTranslations(TRANSLATION_SECTION_KEYS.settingsPage + '.activeTrainingSplit');
+
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Active Training Split</CardTitle>
+                <CardTitle>{t('title')}</CardTitle>
                 <CardDescription>
-                    Select your current training program
+                    {t('description')}
                 </CardDescription>
             </CardHeader>
             {isLoadingAssigned && (
@@ -60,8 +64,7 @@ export const ActiveTrainingSplitSection = ({
                 assignedError?.errorCode !==
                     TRAINING_SPLIT_ERROR_CODES.noAssignedTrainingSplit && (
                     <CardContent className="text-red-500">
-                        Error loading assigned training split:{' '}
-                        {assignedError?.message}
+                        {t('errorAssigned')} {assignedError?.message}
                     </CardContent>
                 )}
             {isLoadingAvailable && (
@@ -71,15 +74,14 @@ export const ActiveTrainingSplitSection = ({
             )}
             {availableError && (
                 <CardContent className="text-red-500">
-                    Error loading available training splits:{' '}
-                    {availableError?.message}
+                    {t('errorAvailable')} {availableError?.message}
                 </CardContent>
             )}
             {createError && (
                 <CardContent className="text-red-500">
                     <BasicFormAlert
                         show={createError != null}
-                        title="Error"
+                        title={t('errorCreate')}
                         description={createError?.message}
                         autoDismiss={false}
                     />
@@ -93,7 +95,7 @@ export const ActiveTrainingSplitSection = ({
                         disabled={isCreating}
                     >
                         <SelectTrigger className="w-full">
-                            <SelectValue placeholder="Select a training split" />
+                            <SelectValue placeholder={t('selectPlaceholder')} />
                         </SelectTrigger>
                         <SelectContent>
                             {availableSplits?.map((split) => (

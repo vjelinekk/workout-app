@@ -115,7 +115,7 @@ export const SessionLoggingRunning = ({ workoutSession }: Props) => {
                                                     htmlFor={`reps-${exercise.id}-${index + 1}`}
                                                     className="text-xs font-medium"
                                                 >
-                                                    Reps
+                                                    {t('repsLabel')}
                                                 </Label>
                                                 <Input
                                                     id={`reps-${exercise.id}-${index + 1}`}

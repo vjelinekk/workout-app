@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import {
     Card,
     CardContent,
@@ -17,6 +18,7 @@ import {
 import Link from 'next/link';
 import { StatusBadge } from '../StatusBadge/StatusBadge';
 import { ApiError } from '@/utils/apiError';
+import { TRANSLATION_SECTION_KEYS } from '@/constants/locale';
 
 interface Props {
     trainers?: TrainerTraineeResponse[];
@@ -33,11 +35,13 @@ export const TrainersManagementSection = ({
     onAcceptTrainer,
     onDenyTrainer,
 }: Props) => {
+    const t = useTranslations(TRANSLATION_SECTION_KEYS.settingsPage + '.trainers');
+
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Trainers</CardTitle>
-                <CardDescription>Manage your training coaches</CardDescription>
+                <CardTitle>{t('title')}</CardTitle>
+                <CardDescription>{t('description')}</CardDescription>
             </CardHeader>
             <CardContent>
                 <div className="space-y-3">
@@ -48,17 +52,17 @@ export const TrainersManagementSection = ({
                     )}
                     {error && (
                         <div className="text-red-500">
-                            Error loading trainers: {error?.message}
+                            {t('errorLoading')} {error?.message}
                         </div>
                     )}
                     {!trainers && (
                         <div className="text-muted-foreground">
-                            No trainers found.
+                            {t('noTrainers')}
                         </div>
                     )}
                     {trainers && trainers.length === 0 && !isLoading && (
                         <div className="text-muted-foreground">
-                            No trainers found.
+                            {t('noTrainers')}
                         </div>
                     )}
 
@@ -84,7 +88,7 @@ export const TrainersManagementSection = ({
                                                 TrainerTraineeStatus.ACTIVE && (
                                                 <div className="flex items-center gap-1 text-sm text-muted-foreground">
                                                     <UserCheck className="h-4 w-4" />
-                                                    <span>Current</span>
+                                                    <span>{t('current')}</span>
                                                 </div>
                                             )}
                                         </Link>
@@ -107,7 +111,7 @@ export const TrainersManagementSection = ({
                                                     className="gap-1"
                                                 >
                                                     <Check className="h-4 w-4" />
-                                                    Accept
+                                                    {t('accept')}
                                                 </Button>
                                                 <Button
                                                     size="sm"
@@ -120,7 +124,7 @@ export const TrainersManagementSection = ({
                                                     className="gap-1"
                                                 >
                                                     <X className="h-4 w-4" />
-                                                    Deny
+                                                    {t('deny')}
                                                 </Button>
                                             </>
                                         )}

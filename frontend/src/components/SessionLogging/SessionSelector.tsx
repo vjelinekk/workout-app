@@ -47,7 +47,7 @@ export const SessionSelector = ({
                     onValueChange={setCurrentSessionKey}
                 >
                     <SelectTrigger id="session-select">
-                        <SelectValue placeholder="Select a workout session" />
+                        <SelectValue placeholder={t('selectWorkoutSessionPlaceholder')} />
                     </SelectTrigger>
                     <SelectContent>
                         {availableSessions.map((session) => (
@@ -65,7 +65,7 @@ export const SessionSelector = ({
                         size="icon"
                         asChild
                         className="shrink-0"
-                        aria-label="Open plan in new tab"
+                        aria-label={t('openPlanNewTab')}
                     >
                         <Link
                             href={`/plans/${currentSession.id}`}

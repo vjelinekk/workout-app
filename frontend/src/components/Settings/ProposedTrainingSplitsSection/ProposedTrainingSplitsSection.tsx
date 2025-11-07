@@ -1,5 +1,6 @@
 'use client';
 
+import { useTranslations } from 'next-intl';
 import {
     Card,
     CardContent,
@@ -13,6 +14,7 @@ import { Spinner } from '@/components/ui/icons/spinner';
 import { TrainerTraineeResponse } from '@/types/trainerTrainee';
 import { TrainingSplitAssignmentResponse } from '@/types/trainingSplitAssignment';
 import { ApiError } from '@/utils/apiError';
+import { TRANSLATION_SECTION_KEYS } from '@/constants/locale';
 
 interface Props {
     activeTrainer?: TrainerTraineeResponse;
@@ -31,6 +33,8 @@ export const ProposedTrainingSplitsSection = ({
     onAcceptProposal,
     onDenyProposal,
 }: Props) => {
+    const t = useTranslations(TRANSLATION_SECTION_KEYS.settingsPage + '.proposedSplits');
+
     if (!activeTrainer) {
         return null;
     }
@@ -38,10 +42,12 @@ export const ProposedTrainingSplitsSection = ({
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Proposed Training Splits</CardTitle>
+                <CardTitle>{t('title')}</CardTitle>
                 <CardDescription>
-                    Programs suggested by {activeTrainer.trainer.firstName}{' '}
-                    {activeTrainer.trainer.lastName}
+                    {t('descriptionWithTrainer', {
+                        firstName: activeTrainer.trainer.firstName,
+                        lastName: activeTrainer.trainer.lastName,
+                    })}
                 </CardDescription>
             </CardHeader>
             {isLoading && (
@@ -51,7 +57,7 @@ export const ProposedTrainingSplitsSection = ({
             )}
             {error && (
                 <CardContent className="text-red-500">
-                    Error loading proposed training splits: {error?.message}
+                    {t('errorLoading')} {error?.message}
                 </CardContent>
             )}
             {proposedSplits && proposedSplits.length > 0 && !isLoading && (
@@ -80,7 +86,7 @@ export const ProposedTrainingSplitsSection = ({
                                         className="gap-1"
                                     >
                                         <Check className="h-4 w-4" />
-                                        Accept
+                                        {t('accept')}
                                     </Button>
                                     <Button
                                         size="sm"
@@ -91,7 +97,7 @@ export const ProposedTrainingSplitsSection = ({
                                         className="gap-1"
                                     >
                                         <X className="h-4 w-4" />
-                                        Decline
+                                        {t('decline')}
                                     </Button>
                                 </div>
                             </div>
@@ -101,7 +107,7 @@ export const ProposedTrainingSplitsSection = ({
             )}
             {proposedSplits && proposedSplits.length === 0 && (
                 <CardContent className="text-muted-foreground">
-                    No proposed training splits at the moment.
+                    {t('noProposals')}
                 </CardContent>
             )}
         </Card>

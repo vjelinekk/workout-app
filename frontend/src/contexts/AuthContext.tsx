@@ -7,7 +7,7 @@ import { AUTH_MESSAGE_TYPES } from "@/constants/authMessages";
 import { AuthState, LoginCredentials, User, LoginResponse } from "@/types/auth";
 import { storage } from "@/utils/storage";
 import { useRouter } from "next/navigation";
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
 
 interface AuthContextType extends AuthState {
     login: (credentials: LoginCredentials) => Promise<void>;
@@ -25,6 +25,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [isGoogleLoading, setIsGoogleLoading] = useState<boolean>(false);
     const router = useRouter();
 
+    // Flag to prevent race conditions in 401 interceptor
+    // Ensures logout only happens once even if multiple requests fail simultaneously
+    const isLoggingOutRef = useRef<boolean>(false);
+
     useEffect(() => {
         const storedToken = storage.getToken();
         const storedUser = storage.getUser();
@@ -35,19 +39,29 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
 
         setIsLoading(false);
-    }, [])
+    }, [setAuthData, setIsLoading])
 
 
     const handleLogout = useCallback(() => {
+        // Prevent multiple concurrent logouts (race condition)
+        if (isLoggingOutRef.current) {
+            return;
+        }
+        isLoggingOutRef.current = true;
+
         setAuthData({ user: null, token: null });
         logout();
         router.push('/login');
     }, [router]);
 
     useEffect(() => {
+        // Setup response interceptor to handle 401 (unauthorized) errors
+        // The handleLogout function includes a guard to prevent race conditions
         const interceptor = api.interceptors.response.use(
             response => response,
             error => {
+                // When token expires, backend returns 401
+                // handleLogout will only execute once due to isLoggingOutRef guard
                 if (error.response?.status === 401) {
                     handleLogout();
                 }

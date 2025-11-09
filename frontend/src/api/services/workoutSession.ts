@@ -1,8 +1,12 @@
 import { SessionLoggingData, WorkoutSession } from "@/types/workoutSession"
 import { api } from "../axios"
 import { WORKOUT_SESSION_ENDPOINTS } from "../endpoints/workoutSession"
-import { handleApiError } from "@/utils/apiError"
 
+/**
+ * Fetches a single workout session by ID.
+ * Errors are automatically transformed to ApiError by axios interceptor.
+ * @throws ApiError if fetch fails
+ */
 export const fetchWorkoutSessionById = async (
     workoutSessionId: number,
     signal?: AbortSignal,
@@ -12,20 +16,21 @@ export const fetchWorkoutSessionById = async (
     return data;
 }
 
+/**
+ * Starts a new workout session.
+ * Errors are automatically transformed to ApiError by axios interceptor.
+ * @throws ApiError if start fails
+ */
 export const startWorkoutSession = async (
     workoutSessionPlanId: number,
     trainingSplitId: number
 ): Promise<WorkoutSession> => {
-    try {
-        const { data } = await api.post<WorkoutSession>(`${WORKOUT_SESSION_ENDPOINTS.start}`, {
-            workoutSessionPlanId,
-            trainingSplitId
-        })
+    const { data } = await api.post<WorkoutSession>(`${WORKOUT_SESSION_ENDPOINTS.start}`, {
+        workoutSessionPlanId,
+        trainingSplitId
+    })
 
-        return data;
-    } catch (error: unknown) {
-        handleApiError(error, 'Failed to start workout session');
-    }
+    return data;
 }
 
 export const logWorkoutSessionProgress = async (

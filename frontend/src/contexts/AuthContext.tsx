@@ -75,18 +75,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     }, [handleLogout])
 
     const handleLogin = async (credentials: LoginCredentials) => {
-        try {
-            const { token, user } = await login(credentials);
+        const { token, user } = await login(credentials);
 
-            storage.setToken(token);
-            storage.setUser(user);
+        storage.setToken(token);
+        storage.setUser(user);
 
-            setAuthData({ user, token });
+        setAuthData({ user, token });
 
-            router.push('/dashboard');
-        } catch (error) {
-            throw error;
-        }
+        router.push('/dashboard');
     }
 
     const handleSignUp = async (data: LoginResponse) => {

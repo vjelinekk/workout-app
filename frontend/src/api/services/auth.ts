@@ -2,7 +2,6 @@ import { LoginCredentials, LoginResponse, LoginResult } from "@/types/auth";
 import { api } from "../axios";
 import { AUTH_ENDPOINTS } from "../endpoints/auth";
 import { storage } from "@/utils/storage";
-import { handleApiError } from "@/utils/apiError";
 import { SignUpFormValues } from "@/schemas/register";
 
 /**
@@ -22,22 +21,20 @@ const transformLoginResponseToUser = (response: LoginResponse) => ({
 
 /**
  * Logs in a user with the provided credentials.
- * 
+ * Errors are automatically transformed to ApiError by axios interceptor.
+ *
  * @param credentials LoginCredentials for the API
- * @returns Promise resolving to LoginResult 
+ * @returns Promise resolving to LoginResult
+ * @throws ApiError if login fails
  */
 export const login = async (
     credentials: LoginCredentials
 ): Promise<LoginResult> => {
-    try {
-        const response = await api.post<LoginResponse>(AUTH_ENDPOINTS.login, credentials);
+    const response = await api.post<LoginResponse>(AUTH_ENDPOINTS.login, credentials);
 
-        return {
-            token: response.data.accessToken,
-            user: transformLoginResponseToUser(response.data),
-        }
-    } catch (error: unknown) {
-        handleApiError(error, 'Login failed');
+    return {
+        token: response.data.accessToken,
+        user: transformLoginResponseToUser(response.data),
     }
 }
 

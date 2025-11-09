@@ -9,7 +9,7 @@ import { BasicInputField } from '../BasicForm/BasicInputField';
 import { BasicForm } from '../BasicForm/BasicForm';
 import { useTranslations } from 'next-intl';
 import { TRANSLATION_SECTION_KEYS } from '@/constants/locale';
-import { ApiError, handleApiError } from '@/utils/apiError';
+import { ApiError } from '@/utils/apiError';
 
 interface Props {
     setError: Dispatch<SetStateAction<string>>;
@@ -32,15 +32,12 @@ export const LoginForm = ({ setError }: Props) => {
         try {
             await login(data);
         } catch (err: unknown) {
-            try {
-                handleApiError(err, t('loginFailed'));
-            } catch (apiError) {
-                if (apiError instanceof ApiError) {
-                    setError(apiError.message);
-                } else {
-                    setError(t('unexpectedError'));
-                }
+            if (err instanceof ApiError) {
+                setError(err.message);
+                return;
             }
+
+            setError(t('unexpectedError'));
         }
     };
 

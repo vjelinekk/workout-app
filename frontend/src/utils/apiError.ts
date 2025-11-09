@@ -1,6 +1,18 @@
-import { ApiErrorResponse } from "@/types/api";
-import axios from "axios";
-
+/**
+ * Custom error class for API errors
+ *
+ * Errors are automatically transformed to ApiError by the axios response interceptor,
+ * so this class is used to represent all API errors consistently throughout the app.
+ *
+ * @example
+ * try {
+ *   await someApiCall();
+ * } catch (error) {
+ *   if (error instanceof ApiError) {
+ *     console.error(`API Error ${error.statusCode}: ${error.message}`);
+ *   }
+ * }
+ */
 export class ApiError extends Error {
     constructor(
         public message: string,
@@ -11,20 +23,4 @@ export class ApiError extends Error {
         super(message);
         this.name = 'ApiError';
     }
-}
-
-export function handleApiError(error: unknown, defaultMessage: string): never {
-    if (axios.isAxiosError<ApiErrorResponse>(error)) {
-        const message = error.response?.data?.message?.message;
-        const statusCode = error.response?.status;
-        const errorCode = error.response?.data?.message?.error;
-
-        const errorMessage = Array.isArray(message)
-            ? message.join(' ')
-            : message || defaultMessage;
-
-        throw new ApiError(errorMessage, statusCode, errorCode, error);
-    }
-
-    throw new ApiError(defaultMessage, undefined, undefined, error);
 }

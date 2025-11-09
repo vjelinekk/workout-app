@@ -1,35 +1,37 @@
 import { api } from "../axios";
 import { Scope } from "@/types/scope";
-import { ApiError, handleApiError } from "@/utils/apiError";
+import { ApiError } from "@/utils/apiError";
 import { WorkoutSessionPlan, WorkoutSessionPlanExercise } from "@/types/workoutSessionPlan";
 import { WORKOUT_SESSION_PLAN_ENDPOINTS, WORKOUT_SESSION_PLAN_EXERCISES_ENDPOINTS } from "../endpoints/workoutSessionPlan";
 import { WorkoutSessionPlanFormValues } from "@/schemas/workoutSessionPlan";
 
 export const QUERY_KEY_WORKOUT_SESSION_PLANS = 'workout-session-plans';
+/**
+ * Fetches all workout session plans matching the given scope.
+ * Errors are automatically transformed to ApiError by axios interceptor.
+ * @throws ApiError if fetch fails
+ */
 export const fetchAllWorkoutSessionPlans = async (
     scope: Scope = Scope.ALL,
     signal?: AbortSignal
 ) => {
-    try {
-        const data = await api.get<WorkoutSessionPlan[]>(WORKOUT_SESSION_PLAN_ENDPOINTS.workoutSessionPlans, {
-            params: { scope },
-            signal,
-        });
+    const { data } = await api.get<WorkoutSessionPlan[]>(WORKOUT_SESSION_PLAN_ENDPOINTS.workoutSessionPlans, {
+        params: { scope },
+        signal,
+    });
 
-        return data.data;
-    } catch (error: unknown) {
-        handleApiError(error, 'Failed to fetch workout session plans');
-    }
+    return data;
 }
 
 export const QUERY_KEY_WORKOUT_SESSION_PLAN = 'workout-session-plan';
+/**
+ * Fetches a single workout session plan by ID.
+ * Errors are automatically transformed to ApiError by axios interceptor.
+ * @throws ApiError if fetch fails
+ */
 export const fetchWorkoutSessionPlanById = async (id: number, signal?: AbortSignal): Promise<WorkoutSessionPlan> => {
-    try {
-        const { data } = await api.get<WorkoutSessionPlan>(`${WORKOUT_SESSION_PLAN_ENDPOINTS.workoutSessionPlans}/${id}`, { signal });
-        return data;
-    } catch (error: unknown) {
-        handleApiError(error, 'Failed to fetch workout session plan');
-    }
+    const { data } = await api.get<WorkoutSessionPlan>(`${WORKOUT_SESSION_PLAN_ENDPOINTS.workoutSessionPlans}/${id}`, { signal });
+    return data;
 }
 
 const mapWorkoutSessionPlanToApiFormat = (workoutSessionPlan: WorkoutSessionPlanFormValues): {
@@ -75,45 +77,48 @@ const mapWorkoutSessionPlanExercisesToApiFormat = (exercises: {
     );
 }
 
+/**
+ * Creates a new workout session plan with associated exercises.
+ * Errors are automatically transformed to ApiError by axios interceptor.
+ * @throws ApiError if creation fails
+ */
 export const createWorkoutSessionPlan = async (workoutSessionPlan: WorkoutSessionPlanFormValues): Promise<WorkoutSessionPlan> => {
-    try {
-        const mappedWorkoutSessionPlan = mapWorkoutSessionPlanToApiFormat(workoutSessionPlan);
-        const { data } = await api.post<WorkoutSessionPlan>(`${WORKOUT_SESSION_PLAN_ENDPOINTS.workoutSessionPlans}`, mappedWorkoutSessionPlan);
+    const mappedWorkoutSessionPlan = mapWorkoutSessionPlanToApiFormat(workoutSessionPlan);
+    const { data } = await api.post<WorkoutSessionPlan>(`${WORKOUT_SESSION_PLAN_ENDPOINTS.workoutSessionPlans}`, mappedWorkoutSessionPlan);
 
-        const workoutSessionPlanId = data.id;
-        const workoutSessionPlanExercises = mapWorkoutSessionPlanExercisesToApiFormat(workoutSessionPlan.exercises, workoutSessionPlanId);
-        await api.post(`${WORKOUT_SESSION_PLAN_EXERCISES_ENDPOINTS.bulk}`, workoutSessionPlanExercises);
-        
-        return data;
-    } catch (error: unknown) {
-        handleApiError(error, 'Failed to create workout session plan');
-    }
+    const workoutSessionPlanId = data.id;
+    const workoutSessionPlanExercises = mapWorkoutSessionPlanExercisesToApiFormat(workoutSessionPlan.exercises, workoutSessionPlanId);
+    await api.post(`${WORKOUT_SESSION_PLAN_EXERCISES_ENDPOINTS.bulk}`, workoutSessionPlanExercises);
+
+    return data;
 }
 
+/**
+ * Updates an existing workout session plan and its exercises.
+ * Errors are automatically transformed to ApiError by axios interceptor.
+ * @throws ApiError if update fails
+ */
 export const updateWorkoutSessionPlan = async (id: number, workoutSessionPlan: WorkoutSessionPlanFormValues): Promise<WorkoutSessionPlan> => {
-    try {
-        const mappedWorkoutSessionPlan = mapWorkoutSessionPlanToApiFormat(workoutSessionPlan);
-        const { data } = await api.patch<WorkoutSessionPlan>(`${WORKOUT_SESSION_PLAN_ENDPOINTS.workoutSessionPlans}/${id}`, mappedWorkoutSessionPlan);
+    const mappedWorkoutSessionPlan = mapWorkoutSessionPlanToApiFormat(workoutSessionPlan);
+    const { data } = await api.patch<WorkoutSessionPlan>(`${WORKOUT_SESSION_PLAN_ENDPOINTS.workoutSessionPlans}/${id}`, mappedWorkoutSessionPlan);
 
-        const workoutSessionPlanId = data.id;
-        const workoutSessionPlanExercises = mapWorkoutSessionPlanExercisesToApiFormat(workoutSessionPlan.exercises, workoutSessionPlanId);
-        await api.put(`${WORKOUT_SESSION_PLAN_EXERCISES_ENDPOINTS.bulk}`, workoutSessionPlanExercises, {
-            params: {
-                workoutSessionPlanId
-            }
-        });
+    const workoutSessionPlanId = data.id;
+    const workoutSessionPlanExercises = mapWorkoutSessionPlanExercisesToApiFormat(workoutSessionPlan.exercises, workoutSessionPlanId);
+    await api.put(`${WORKOUT_SESSION_PLAN_EXERCISES_ENDPOINTS.bulk}`, workoutSessionPlanExercises, {
+        params: {
+            workoutSessionPlanId
+        }
+    });
 
-        return data;
-    } catch (error: unknown) {
-        handleApiError(error, 'Failed to update workout session plan');
-    }
+    return data;
 }
 
+/**
+ * Deletes a workout session plan.
+ * Errors are automatically transformed to ApiError by axios interceptor.
+ * @throws ApiError if deletion fails
+ */
 export const deleteWorkoutSessionPlan = async (id: number): Promise<WorkoutSessionPlan> => {
-    try {
-        const { data } = await api.delete(`${WORKOUT_SESSION_PLAN_ENDPOINTS.workoutSessionPlans}/${id}`);
-        return data;
-    } catch (error: unknown) {
-        handleApiError(error, 'Failed to delete workout session plan');
-    }
+    const { data } = await api.delete(`${WORKOUT_SESSION_PLAN_ENDPOINTS.workoutSessionPlans}/${id}`);
+    return data;
 }

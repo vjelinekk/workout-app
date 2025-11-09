@@ -1,21 +1,50 @@
 import { LOCAL_STORAGE_KEYS } from "@/constants/localStorage";
 import { User } from "@/types/auth";
 
+/**
+ * Centralized localStorage wrapper with error handling
+ *
+ * Handles:
+ * - Private browsing mode (Safari, Firefox throw SecurityError)
+ * - Storage quota exceeded (throws QuotaExceededError)
+ * - Cross-origin iframe restrictions
+ * - SSR safety (window is undefined)
+ */
 export const storage = {
     // Generic helpers
     get: (key: string): string | null => {
         if (typeof window === 'undefined') return null; // SSR safety
-        return localStorage.getItem(key);
+        try {
+            return localStorage.getItem(key);
+        } catch (error) {
+            // SecurityError: private browsing, blocked by settings
+            // QuotaExceededError: storage limit reached
+            console.warn(`[Storage] Failed to read key "${key}":`, error);
+            return null;
+        }
     },
 
     set: (key: string, value: string): void => {
         if (typeof window === 'undefined') return;
-        localStorage.setItem(key, value);
+        try {
+            localStorage.setItem(key, value);
+        } catch (error) {
+            // SecurityError: private browsing, blocked by settings
+            // QuotaExceededError: storage limit reached
+            console.warn(`[Storage] Failed to write key "${key}":`, error);
+            // Graceful degradation: fail silently, app continues without persistence
+        }
     },
 
     remove: (key: string): void => {
         if (typeof window === 'undefined') return;
-        localStorage.removeItem(key);
+        try {
+            localStorage.removeItem(key);
+        } catch (error) {
+            // SecurityError: private browsing, blocked by settings
+            console.warn(`[Storage] Failed to remove key "${key}":`, error);
+            // Graceful degradation: fail silently
+        }
     },
 
     // JSON helpers
@@ -24,13 +53,20 @@ export const storage = {
         if (!data) return null;
         try {
             return JSON.parse(data) as T;
-        } catch {
+        } catch (error) {
+            // Invalid JSON stored in localStorage
+            console.warn(`[Storage] Failed to parse JSON for key "${key}":`, error);
             return null;
         }
     },
 
     setJSON: <T>(key: string, value: T): void => {
-        storage.set(key, JSON.stringify(value));
+        try {
+            storage.set(key, JSON.stringify(value));
+        } catch (error) {
+            // JSON.stringify failure (circular references, etc.)
+            console.warn(`[Storage] Failed to stringify value for key "${key}":`, error);
+        }
     },
 
     // Auth-specific helpers

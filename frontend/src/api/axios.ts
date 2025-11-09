@@ -1,3 +1,4 @@
+import { TIMEOUT_MS } from '@/constants/axios';
 import { storage } from '@/utils/storage';
 import axios from 'axios';
 
@@ -9,7 +10,7 @@ if (!API_URL) {
 
 export const api = axios.create({
     baseURL: API_URL,
-    timeout: 10000,
+    timeout: TIMEOUT_MS,
     headers: {
         'Content-Type': 'application/json',
     },

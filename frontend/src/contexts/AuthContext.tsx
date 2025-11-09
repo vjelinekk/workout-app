@@ -139,10 +139,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             return;
         }
 
+        // Whitelist of allowed origins for postMessage security
+        // Includes both frontend and backend origins
+        const allowedOrigins = [
+            window.location.origin,  // Frontend: http://localhost:3000 or https://app.example.com
+            backendUrl,              // Backend: http://localhost:3001 or https://api.example.com
+        ];
+
         // Listen for messages from the popup
         const handleMessage = (event: MessageEvent) => {
-            // Verify the origin for security
-            if (event.origin !== window.location.origin) {
+            // Verify the origin for security - only accept from whitelisted origins
+            if (!allowedOrigins.includes(event.origin)) {
+                console.warn('[Auth] Rejected postMessage from unauthorized origin:', event.origin);
                 return;
             }
 

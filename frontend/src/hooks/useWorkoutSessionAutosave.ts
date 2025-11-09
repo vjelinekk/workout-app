@@ -1,9 +1,9 @@
 import { SessionLoggingData } from "@/types/workoutSession";
-import { debounce } from "@/utils/debounce";
-import { useCallback, useEffect, useState } from "react";
+import { useDebouncedCallback } from "@/utils/debounce";
+import { useEffect, useState } from "react";
 import { useFinishWorkoutSession, useLogSessionProgress } from "./useWorkoutSessions";
 import { DEBOUNCE_DELAY_MS, DEFAULT_SYNC_INTERVAL_MS } from "@/constants/workoutSession";
-
+import { getDraftFromStorage, removeDraftFromStorage, saveDraftToStorage } from "@/utils/workoutSessionAutosave";
 
 interface Args {
     workoutSessionId: number;
@@ -18,9 +18,14 @@ export const useWorkoutSessionAutosave = ({
     const { mutate: logSessionProgress } = useLogSessionProgress();
     const { mutate: finishWorkoutSession } = useFinishWorkoutSession();
 
-    const debouncedSync = useCallback(debounce((id: number, progressData: SessionLoggingData) => {
-        logSessionProgress({ id, progressData });
-    }, DEBOUNCE_DELAY_MS), [logSessionProgress]);
+    // Use the new React-compatible debounce hook with proper dependency tracking
+    const debouncedSync = useDebouncedCallback(
+        (id: number, progressData: SessionLoggingData) => {
+            logSessionProgress({ id, progressData });
+        },
+        DEBOUNCE_DELAY_MS,
+        [logSessionProgress] // ✅ Now properly included!
+    );
 
     const handleInputChange = (
         exerciseId: number,
@@ -39,8 +44,8 @@ export const useWorkoutSessionAutosave = ({
 
             const newData = { ...prev, [exerciseId]: newExerciseData };
 
-            // Save immediately to localStorage
-            localStorage.setItem(`workout_session_${workoutSessionId}_draft`, JSON.stringify(newData));
+            // Save immediately to localStorage with error handling
+            saveDraftToStorage(`workout_session_${workoutSessionId}_draft`, newData);
 
             // Sync to backend (debounced)
             debouncedSync(workoutSessionId, newData);
@@ -52,31 +57,45 @@ export const useWorkoutSessionAutosave = ({
     // Periodic sync in case something is still unsaved
     useEffect(() => {
         const interval = setInterval(() => {
-            const draft = localStorage.getItem(`workout_session_${workoutSessionId}_draft`);
+            const draft = getDraftFromStorage(`workout_session_${workoutSessionId}_draft`);
             if (!draft) {
                 return;
             }
 
-            logSessionProgress({ id: workoutSessionId, progressData: JSON.parse(draft) });
+            try {
+                const parsedData = JSON.parse(draft);
+                logSessionProgress({ id: workoutSessionId, progressData: parsedData });
+            } catch (error) {
+                console.warn(`[Autosave] Failed to parse draft data:`, error);
+            }
         }, syncIntervalMs);
 
         return () => clearInterval(interval);
-    }, [workoutSessionId, syncIntervalMs]);
+    }, [workoutSessionId, syncIntervalMs, logSessionProgress]);
 
     // Load initial draft from localStorage if present
     useEffect(() => {
-        const draft = localStorage.getItem(`workout_session_${workoutSessionId}_draft`);
+        const draft = getDraftFromStorage(`workout_session_${workoutSessionId}_draft`);
         if (draft) {
-            setSessionData(JSON.parse(draft));
+            try {
+                setSessionData(JSON.parse(draft));
+            } catch (error) {
+                console.warn(`[Autosave] Failed to parse initial draft:`, error);
+            }
         }
     }, [workoutSessionId]);
 
     // Expose helper to mark workout finished
     const finishWorkout = async () => {
-        const draft = localStorage.getItem(`workout_session_${workoutSessionId}_draft`);
+        const draft = getDraftFromStorage(`workout_session_${workoutSessionId}_draft`);
         if (draft) {
-            logSessionProgress({ id: workoutSessionId, progressData: JSON.parse(draft) });
-            localStorage.removeItem(`workout_session_${workoutSessionId}_draft`);
+            try {
+                const parsedData = JSON.parse(draft);
+                logSessionProgress({ id: workoutSessionId, progressData: parsedData });
+            } catch (error) {
+                console.warn(`[Autosave] Failed to parse draft on finish:`, error);
+            }
+            removeDraftFromStorage(`workout_session_${workoutSessionId}_draft`);
         }
 
         finishWorkoutSession({ workoutSessionId, progressData: sessionData });

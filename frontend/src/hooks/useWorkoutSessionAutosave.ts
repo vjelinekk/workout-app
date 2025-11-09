@@ -18,9 +18,9 @@ export const useWorkoutSessionAutosave = ({
     const { mutate: logSessionProgress } = useLogSessionProgress();
     const { mutate: finishWorkoutSession } = useFinishWorkoutSession();
 
-    const debouncedSync = useCallback(debounce((data: SessionLoggingData) => {
-        logSessionProgress({ id: workoutSessionId, progressData: data });
-    }, DEBOUNCE_DELAY_MS), []);
+    const debouncedSync = useCallback(debounce((id: number, progressData: SessionLoggingData) => {
+        logSessionProgress({ id, progressData });
+    }, DEBOUNCE_DELAY_MS), [logSessionProgress]);
 
     const handleInputChange = (
         exerciseId: number,
@@ -43,7 +43,7 @@ export const useWorkoutSessionAutosave = ({
             localStorage.setItem(`workout_session_${workoutSessionId}_draft`, JSON.stringify(newData));
 
             // Sync to backend (debounced)
-            debouncedSync(newData);
+            debouncedSync(workoutSessionId, newData);
 
             return newData;
         });

@@ -10,6 +10,8 @@ import {
     AlertDialogTitle,
     AlertDialogTrigger,
 } from '../ui/alert-dialog';
+import { useTranslations } from 'next-intl';
+import { TRANSLATION_SECTION_KEYS } from '@/constants/locale';
 
 interface Props {
     title: string;
@@ -24,6 +26,8 @@ export const DeleteConfirm = ({
     onConfirm,
     onCancel,
 }: Props) => {
+    const t = useTranslations(TRANSLATION_SECTION_KEYS.common);
+
     return (
         <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -38,10 +42,10 @@ export const DeleteConfirm = ({
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                     <AlertDialogCancel onClick={onCancel}>
-                        Cancel
+                        {t('cancel')}
                     </AlertDialogCancel>
                     <AlertDialogAction onClick={onConfirm}>
-                        Continue
+                        {t('continue')}
                     </AlertDialogAction>
                 </AlertDialogFooter>
             </AlertDialogContent>

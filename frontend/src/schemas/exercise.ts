@@ -14,7 +14,7 @@ export const exerciseSchema = (
     // category is optional — allow undefined when no category is chosen
     categoryId: z.number().int().positive(categoryIdPositiveValidation).optional(),
     imageUrl: z.string().optional(),
-    imageFile: z.any().optional(),
+    imageFile: z.file().optional(),
     isPublic: z.boolean(),
     isApproved: z.boolean(),
 });

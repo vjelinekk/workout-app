@@ -112,7 +112,7 @@ export const TrainerApprovals = () => {
                                         {/* Reason */}
                                         <div className="space-y-2">
                                             <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
-                                                Reason
+                                                {t('reasonLabel')}
                                             </p>
                                             <p className="text-sm leading-relaxed text-foreground md:text-base">
                                                 {

@@ -18,6 +18,9 @@ export const UserDropDownMenu = () => {
     const { user, logout } = useAuth();
     const router = useRouter();
 
+    const isTrainerOrAdmin = useAnyRole([UserRole.TRAINER, UserRole.ADMIN]);
+    const isAdmin = useRole(UserRole.ADMIN);
+
     if (!user) {
         return null;
     }
@@ -51,58 +54,6 @@ export const UserDropDownMenu = () => {
         router.push('/login');
     };
 
-    const renderBecomeTrainer = () => {
-        const isTrainerOrAdmin = useAnyRole([UserRole.TRAINER, UserRole.ADMIN]);
-        return (
-            <>
-                {!isTrainerOrAdmin && (
-                    <DropdownMenuItem onClick={handleBecomeTrainer}>
-                        {t('becomeTrainer')}
-                    </DropdownMenuItem>
-                )}
-            </>
-        );
-    };
-
-    const renderAssignTrainingSplit = () => {
-        const isTrainerOrAdmin = useAnyRole([UserRole.TRAINER, UserRole.ADMIN]);
-        return (
-            <>
-                {isTrainerOrAdmin && (
-                    <DropdownMenuItem onClick={handleAssignTrainingSplit}>
-                        {t('assignTrainingSplit')}
-                    </DropdownMenuItem>
-                )}
-            </>
-        );
-    };
-
-    const renderTrainerApprovals = () => {
-        const isAdmin = useRole(UserRole.ADMIN);
-        return (
-            <>
-                {isAdmin && (
-                    <DropdownMenuItem onClick={handleTrainerApprovals}>
-                        {t('trainerApprovals')}
-                    </DropdownMenuItem>
-                )}
-            </>
-        );
-    };
-
-    const renderRecruitTrainees = () => {
-        const isTrainerOrAdmin = useAnyRole([UserRole.TRAINER, UserRole.ADMIN]);
-        return (
-            <>
-                {isTrainerOrAdmin && (
-                    <DropdownMenuItem onClick={handleRecruitTrainees}>
-                        {t('recruitTrainees')}
-                    </DropdownMenuItem>
-                )}
-            </>
-        );
-    };
-
     return (
         <DropdownMenu>
             <DropdownMenuTrigger asChild>
@@ -114,10 +65,26 @@ export const UserDropDownMenu = () => {
                 <DropdownMenuItem onClick={handleProfile}>
                     {t('profile')}
                 </DropdownMenuItem>
-                {renderBecomeTrainer()}
-                {renderAssignTrainingSplit()}
-                {renderTrainerApprovals()}
-                {renderRecruitTrainees()}
+                {!isTrainerOrAdmin && (
+                    <DropdownMenuItem onClick={handleBecomeTrainer}>
+                        {t('becomeTrainer')}
+                    </DropdownMenuItem>
+                )}
+                {isTrainerOrAdmin && (
+                    <DropdownMenuItem onClick={handleAssignTrainingSplit}>
+                        {t('assignTrainingSplit')}
+                    </DropdownMenuItem>
+                )}
+                {isAdmin && (
+                    <DropdownMenuItem onClick={handleTrainerApprovals}>
+                        {t('trainerApprovals')}
+                    </DropdownMenuItem>
+                )}
+                {isTrainerOrAdmin && (
+                    <DropdownMenuItem onClick={handleRecruitTrainees}>
+                        {t('recruitTrainees')}
+                    </DropdownMenuItem>
+                )}
                 <DropdownMenuItem onClick={handleSettings}>
                     {t('settings')}
                 </DropdownMenuItem>

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import { useTranslations } from 'next-intl';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card } from '@/components/ui/card';
@@ -9,8 +10,10 @@ import { useUsers } from '@/hooks/useUsers';
 import { UserRole } from '@/types/auth';
 import { Spinner } from '../ui/icons/spinner';
 import { useSendTrainerRequest } from '@/hooks/useTrainerTrainees';
+import { TRANSLATION_SECTION_KEYS } from '@/constants/locale';
 
 export const RecruitTrainees = () => {
+    const t = useTranslations(TRANSLATION_SECTION_KEYS.recruitTraineesPage);
     const [searchQuery, setSearchQuery] = useState('');
     const {
         data: trainees,
@@ -57,22 +60,19 @@ export const RecruitTrainees = () => {
             <div className="flex flex-col gap-6 p-4 sm:p-6 md:p-8">
                 <div className="space-y-2">
                     <h1 className="text-3xl font-bold text-foreground">
-                        Recruit Trainees
+                        {t('title')}
                     </h1>
-                    <p className="text-muted-foreground">
-                        Find and connect with talented trainees to join your
-                        team
-                    </p>
+                    <p className="text-muted-foreground">{t('description')}</p>
                 </div>
                 <Card className="p-8 text-center space-y-4">
                     <p className="text-destructive font-semibold">
-                        Failed to load trainees
+                        {t('failedToLoad')}
                     </p>
                     <p className="text-muted-foreground text-sm">
                         {errorTrainees.message}
                     </p>
                     <Button onClick={() => window.location.reload()}>
-                        Try Again
+                        {t('tryAgain')}
                     </Button>
                 </Card>
             </div>
@@ -85,15 +85,14 @@ export const RecruitTrainees = () => {
                 {/* Header */}
                 <div className="space-y-2">
                     <h1 className="text-3xl font-bold text-foreground">
-                        Recruit Trainees
+                        {t('title')}
                     </h1>
-                    <p className="text-muted-foreground">
-                        Find and connect with talented trainees to join your
-                        team
-                    </p>
+                    <p className="text-muted-foreground">{t('description')}</p>
                 </div>
                 <Card className="p-8 text-center">
-                    <p className="text-muted-foreground">No trainees found.</p>
+                    <p className="text-muted-foreground">
+                        {t('noTraineesFound')}
+                    </p>
                 </Card>
             </div>
         );
@@ -105,12 +104,9 @@ export const RecruitTrainees = () => {
                 {/* Header */}
                 <div className="space-y-2">
                     <h1 className="text-3xl font-bold text-foreground">
-                        Recruit Trainees
+                        {t('title')}
                     </h1>
-                    <p className="text-muted-foreground">
-                        Find and connect with talented trainees to join your
-                        team
-                    </p>
+                    <p className="text-muted-foreground">{t('description')}</p>
                 </div>
 
                 {/* Search Field */}
@@ -118,7 +114,7 @@ export const RecruitTrainees = () => {
                     <div className="relative">
                         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
                         <Input
-                            placeholder="Search by name, email, or specialty..."
+                            placeholder={t('searchPlaceholder')}
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                             className="pl-10"
@@ -128,8 +124,10 @@ export const RecruitTrainees = () => {
 
                 {/* Results count */}
                 <div className="text-sm text-muted-foreground">
-                    Showing {filteredTrainees.length} of {trainees.length}{' '}
-                    trainees
+                    {t('showingCount', {
+                        count: filteredTrainees.length,
+                        total: trainees.length,
+                    })}
                 </div>
 
                 {/* Trainees List */}
@@ -164,7 +162,7 @@ export const RecruitTrainees = () => {
                                     >
                                         <>
                                             <UserPlus className="h-4 w-4" />
-                                            Send Request
+                                            {t('sendRequest')}
                                         </>
                                     </Button>
                                 </Card>
@@ -173,7 +171,7 @@ export const RecruitTrainees = () => {
                     ) : (
                         <Card className="p-8 text-center">
                             <p className="text-muted-foreground">
-                                No trainees found matching your search.
+                                {t('noTraineesMatchingSearch')}
                             </p>
                         </Card>
                     )}

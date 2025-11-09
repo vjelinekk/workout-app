@@ -1,12 +1,12 @@
 import { QUERY_KEY_EXERCISE, QUERY_KEY_EXERCISES, createExercise, deleteExercise, fetchAllExercises, fetchExerciseById, updateExercise } from "@/api/services/exercise"
 import { ExerciseFormValues } from "@/schemas/exercise"
-import { ApiErrorResponse } from "@/types/api"
+import { ApiError } from "@/utils/apiError";
 import { Exercise } from "@/types/exercise"
 import { Scope } from "@/types/scope"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 export const useExercises = (scope: Scope) => {
-    const { data, error, isLoading } = useQuery<Exercise[], ApiErrorResponse>({
+    const { data, error, isLoading } = useQuery<Exercise[], ApiError>({
         queryKey: [QUERY_KEY_EXERCISES, scope],
         queryFn: ({ signal }) => fetchAllExercises(scope, signal),
     })
@@ -15,7 +15,7 @@ export const useExercises = (scope: Scope) => {
 }
 
 export const useExercise = (id: number) => {
-    const { data, error, isLoading } = useQuery<Exercise, ApiErrorResponse>({
+    const { data, error, isLoading } = useQuery<Exercise, ApiError>({
         queryKey: [QUERY_KEY_EXERCISES, QUERY_KEY_EXERCISE, id],
         queryFn: ({ signal }) => fetchExerciseById(id, signal),
     })

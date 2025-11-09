@@ -2,25 +2,48 @@
     "Common": {
         "optional": "volitelné",
         "doYouWantToDelete": "Opravdu chcete smazat {name}?",
-        "deleteDescription": "Tuto akci nelze vrátit zpět."
+        "deleteDescription": "Tuto akci nelze vzít zpět.",
+        "days": {
+            "monday": "Pondělí",
+            "tuesday": "Úterý",
+            "wednesday": "Středa",
+            "thursday": "Čtvrtek",
+            "friday": "Pátek",
+            "saturday": "Sobota",
+            "sunday": "Neděle",
+            "mon": "Po",
+            "tue": "Út",
+            "wed": "St",
+            "thu": "Čt",
+            "fri": "Pá",
+            "sat": "So",
+            "sun": "Ne"
+        },
+        "roles": {
+            "1": "Admin",
+            "2": "Cvičenec",
+            "3": "Trenér"
+        },
+        "cancel": "Zrušit",
+        "continue": "Pokračovat"
     },
     "ErrorBoundary": {
         "title": "Jejda! Něco se pokazilo",
         "description": "Došlo k neočekávané chybě",
-        "tryAgain": "Zkuste znovu"
+        "tryAgain": "Zkusit znovu"
     },
     "LoginPage": {
         "title": "Vítejte zpět",
-        "description": "Přihlaste se ke svému účtu pro pokračování.",
-        "email": "Email",
+        "description": "Pro pokračování se přihlaste ke svému účtu.",
+        "email": "E-mail",
         "password": "Heslo",
         "signIn": "Přihlásit se",
-        "signingIn": "Přihlašování…",
+        "signingIn": "Probíhá přihlašování",
         "noAccount": "Nemáte účet?",
-        "register": "Registrovat se",
-        "continueWithGoogle": "Nebo pokračujte přes Google",
-        "signInWithGoogle": "Přihlásit se přes Google",
-        "loginFailed": "Přihlášení selhalo. Zkontrolujte své údaje.",
+        "register": "Zaregistrovat se",
+        "continueWithGoogle": "Nebo pokračovat s Googlem",
+        "signInWithGoogle": "Přihlásit se pomocí Google",
+        "loginFailed": "Přihlášení se nezdařilo. Zkontrolujte prosím své přihlašovací údaje.",
         "unexpectedError": "Došlo k neočekávané chybě. Zkuste to prosím znovu."
     },
     "TopBar": {
@@ -29,17 +52,32 @@
         "becomeTrainer": "Stát se trenérem",
         "settings": "Nastavení",
         "trainerApprovals": "Schválení trenérů",
-        "assignTrainingSplit": "Přiřadit tréninkový split"
+        "assignTrainingSplit": "Přiřadit tréninkový split",
+        "recruitTrainees": "Nábor cvičenců"
+    },
+    "BecomeTrainerPage": {
+        "title": "Stát se trenérem",
+        "reasonLabel": "Proč se chcete stát trenérem?",
+        "reasonErrorShort": "Důvod musí mít alespoň 10 znaků",
+        "reasonErrorLong": "Důvod nesmí přesáhnout 1000 znaků",
+        "reasonPlaceholder": "Mám vášeň pro fitness a chci pomáhat ostatním dosáhnout jejich cílů...",
+        "submit": "Odeslat žádost",
+        "submitting": "Odesílání...",
+        "alreadyTrainerTitle": "Již jste trenérem nebo adminem",
+        "alreadyTrainerDescription": "Nemůžete žádat o pozici trenéra, pokud již máte oprávnění trenéra nebo admina.",
+        "applicationSubmittedTitle": "Žádost odeslána",
+        "errorOccurred": "Při odesílání vaší žádosti došlo k chybě.",
+        "unknownError": "Došlo k neočekávané chybě. Zkuste to prosím znovu."
     },
     "DashboardPage": {
         "exercises": "Cviky",
-        "exercisesSubtitle": "Prohlížejte a spravujte své cviky.",
-        "workoutSessionPlans": "Plány tréninku",
-        "workoutSessionPlansSubtitle": "Vytvářejte a upravujte plány tréninku.",
+        "exercisesSubtitle": "Procházejte a spravujte své cviky.",
+        "workoutSessionPlans": "Tréninkové plány",
+        "workoutSessionPlansSubtitle": "Vytvářejte a přizpůsobte si své tréninkové plány.",
         "trainingSplits": "Tréninkové splity",
         "trainingSplitsSubtitle": "Efektivně organizujte své tréninkové splity.",
-        "sessionLogging": "Záznam tréninku",
-        "sessionLoggingSubtitle": "Zaznamenávejte své tréninkové jednotky a sledujte pokrok."
+        "sessionLogging": "Záznam cvičení",
+        "sessionLoggingSubtitle": "Zaznamenávejte svá cvičení a sledujte pokrok."
     },
     "ExercisesPage": {
         "title": "Cviky",
@@ -48,30 +86,30 @@
     "ExerciseForm": {
         "create": "Vytvořit cvik",
         "update": "Upravit cvik",
-        "creating": "Vytváření…",
+        "creating": "Vytváření...",
         "name": "Název",
-        "bodyPart": "Svalová skupina",
+        "bodyPart": "Část těla",
         "equipment": "Vybavení",
         "description": "Popis",
         "category": "Kategorie",
-        "imageFile": "Obrázek",
+        "imageFile": "Soubor obrázku",
         "noEquipment": "Žádné",
         "isPublic": "Označit jako veřejné",
         "isApproved": "Označit jako schválené",
         "placeholder": {
             "name": "Kliky",
-            "bodyPart": "Vyberte svalovou skupinu",
+            "bodyPart": "Vyberte část těla",
             "equipment": "Žádné",
-            "description": "Základní cvičení pro horní část těla",
+            "description": "Základní posilovací cvik na horní část těla",
             "category": "Vyberte kategorii"
         },
         "validation": {
             "nameRequired": "Název je povinný",
-            "bodyPartRequired": "Svalová skupina je povinná",
+            "bodyPartRequired": "Část těla je povinná",
             "equipmentRequired": "Vybavení je povinné",
             "descriptionRequired": "Popis je povinný",
             "categoryIdPositive": "ID kategorie musí být kladné",
-            "imageUrl": "Obrázek musí být platná URL"
+            "imageUrl": "Obrázek musí být platná URL adresa"
         },
         "bodyParts": {
             "chest": "Hrudník",
@@ -96,36 +134,36 @@
             "balance": "Rovnováha"
         },
         "unexpectedError": "Došlo k neočekávané chybě. Zkuste to prosím znovu.",
-        "unexpectedCategoryError": "Při načítání kategorií došlo k neočekávané chybě. Zkuste to prosím znovu.",
-        "retryLoadingCategories": "Znovu načíst kategorie",
-        "creationFailed": "Vytvoření cviku selhalo. Zkuste to prosím znovu.",
+        "unexpectedCategoryError": "Došlo k neočekávané chybě při načítání kategorií. Zkuste to prosím znovu.",
+        "retryLoadingCategories": "Zkusit znovu načíst kategorie",
+        "creationFailed": "Vytvoření cviku se nezdařilo. Zkuste to prosím znovu.",
         "creationSuccess": "Cvik byl úspěšně vytvořen!",
         "updateSuccess": "Cvik byl úspěšně aktualizován!",
-        "updateFailed": "Aktualizace cviku selhala. Zkuste to prosím znovu."
+        "updateFailed": "Aktualizace cviku se nezdařila. Zkuste to prosím znovu."
     },
     "ScopedResourceList": {
         "titlePrivate": "Moje {resource}",
         "errorLoadingPrivate": "Chyba při načítání soukromých {resource}.",
-        "emptyPrivateMessage": "Zatím nemáte žádné soukromé {resource}.",
+        "emptyPrivateMessage": "Zatím nemáte žádné soukromé zdroje {resource}.",
         "titlePublic": "Veřejné {resource}",
         "errorLoadingPublic": "Chyba při načítání veřejných {resource}.",
-        "emptyPublicMessage": "Žádné veřejné {resource} dostupné."
+        "emptyPublicMessage": "Nejsou k dispozici žádné veřejné zdroje {resource}."
     },
     "WorkoutSessionPlansPage": {
-        "title": "Plány tréninku",
+        "title": "Tréninkové plány",
         "createButton": "Vytvořit plán"
     },
     "WorkoutSessionPlanForm": {
-        "create": "Vytvořit plán tréninku",
-        "update": "Upravit plán tréninku",
-        "creating": "Vytváření…",
+        "create": "Vytvořit tréninkový plán",
+        "update": "Upravit tréninkový plán",
+        "creating": "Vytváření...",
         "name": "Název",
         "description": "Popis",
         "isPublic": "Označit jako veřejné",
         "isApproved": "Označit jako schválené",
         "placeholder": {
-            "name": "Full Body Blast",
-            "description": "Komplexní trénink pro celé tělo",
+            "name": "Full Body Nálož",
+            "description": "Komplexní tréninkový plán pro celé tělo",
             "exercise": "Vyberte cvik"
         },
         "validation": {
@@ -133,7 +171,7 @@
             "descriptionRequired": "Popis je povinný",
             "oneExerciseValidation": "Je vyžadován alespoň jeden cvik",
             "oneSetValidation": "Pro každý cvik je vyžadována alespoň jedna série",
-            "exerciseRequired": "Vyberte cvik",
+            "exerciseRequired": "Prosím, vyberte cvik",
             "oneExerciseRequired": "Je vyžadován alespoň jeden cvik",
             "setsRequired": "Počet sérií je povinný",
             "oneSetRequired": "Je vyžadována alespoň jedna série",
@@ -141,21 +179,21 @@
             "repsRequired": "Opakování jsou povinná pro všechny série",
             "repsMinimum": "Je vyžadováno alespoň 1 opakování",
             "youHaveToAddAtLeastOneExercise": "Je vyžadován alespoň jeden cvik",
-            "eachExerciseHasToHaveAtLeastOneSet": "Každý cvik musí mít alespoň jednu sérii"
+            "eachExerciseHasToHaveAtLeastOneSet": "Je vyžadována alespoň jedna série"
         },
         "unexpectedError": "Došlo k neočekávané chybě. Zkuste to prosím znovu.",
-        "creationFailed": "Vytvoření plánu tréninku selhalo. Zkuste to prosím znovu.",
-        "creationSuccess": "Plán tréninku byl úspěšně vytvořen!",
-        "updateSuccess": "Plán tréninku byl úspěšně aktualizován!",
-        "updateFailed": "Aktualizace plánu tréninku selhala. Zkuste to prosím znovu.",
+        "creationFailed": "Vytvoření tréninkového plánu se nezdařilo. Zkuste to prosím znovu.",
+        "creationSuccess": "Tréninkový plán byl úspěšně vytvořen!",
+        "updateSuccess": "Tréninkový plán byl úspěšně aktualizován!",
+        "updateFailed": "Aktualizace tréninkového plánu se nezdařila. Zkuste to prosím znovu.",
         "exercises": "Cviky",
         "addExercise": "Přidat cvik",
         "selectExercise": "Vyberte cvik",
         "sets": "Série",
         "reps": "Opakování",
         "set": "Série",
-        "removeExercise": "Odstranit cvik",
-        "noExercisesAdded": "Zatím nebyl přidán žádný cvik. Klikněte na 'Přidat cvik' pro začátek.",
+        "removeExercise": "Odebrat cvik",
+        "noExercisesAdded": "Zatím nebyly přidány žádné cviky. Klikněte na 'Přidat cvik' pro začátek.",
         "exercise": "Cvik",
         "addSet": "Přidat sérii"
     },
@@ -166,14 +204,14 @@
     "TrainingSplitsForm": {
         "create": "Vytvořit tréninkový split",
         "update": "Upravit tréninkový split",
-        "creating": "Vytváření…",
+        "creating": "Vytváření...",
         "name": "Název",
         "description": "Popis",
         "isPublic": "Označit jako veřejné",
         "isApproved": "Označit jako schválené",
         "placeholder": {
-            "name": "Upper/Lower Split",
-            "description": "Tréninkový split zaměřený na horní a dolní část těla"
+            "name": "Split Horní/Dolní část těla",
+            "description": "Tréninkový split zaměřený na cvičení horní a dolní části těla"
         },
         "validation": {
             "nameRequired": "Název je povinný",
@@ -195,73 +233,149 @@
             "sat": "So",
             "sun": "Ne"
         },
-        "restDay": "Den odpočinku",
+        "restDay": "Odpočinkový den",
         "oneWorkout": "1 trénink",
         "workouts": "tréninky",
         "weeklySchedule": "Týdenní rozvrh",
-        "noWorkoutsScheduled": "Pro tento den nejsou naplánovány žádné tréninky",
-        "selectWorkoutPlan": "Vyberte plán tréninku",
-        "addWorkoutPlan": "Přidat tréninkový plán",
-        "totalWorkoutDays": "Celkový počet tréninkových dnů:",
+        "noWorkoutsScheduled": "Na tento den nejsou naplánovány žádné tréninky",
+        "selectWorkoutPlan": "Vyberte tréninkový plán",
+        "addWorkoutPlan": "Přidat trénink",
+        "totalWorkoutDays": "Celkem tréninkových dnů:",
         "unexpectedError": "Došlo k neočekávané chybě. Zkuste to prosím znovu.",
-        "creationFailed": "Vytvoření tréninkového splitu selhalo. Zkuste to prosím znovu.",
+        "creationFailed": "Vytvoření tréninkového splitu se nezdařilo. Zkuste to prosím znovu.",
         "creationSuccess": "Tréninkový split byl úspěšně vytvořen!",
         "updateSuccess": "Tréninkový split byl úspěšně aktualizován!",
-        "updateFailed": "Aktualizace tréninkového splitu selhala. Zkuste to prosím znovu."
+        "updateFailed": "Aktualizace tréninkového splitu se nezdařila. Zkuste to prosím znovu."
     },
     "SessionLoggingPage": {
-        "title": "TODO: Translate",
-        "startSession": "TODO: Translate",
-        "unexpectedStartError": "TODO: Translate",
-        "reps": "TODO: Translate",
-        "repsLabel": "TODO: Translate",
-        "set": "TODO: Translate",
-        "activeTrainingSplit": "TODO: Translate",
-        "weightWithKg": "TODO: Translate",
-        "lastReps": "TODO: Translate",
-        "weightColumnTitle": "TODO: Translate",
-        "finishWorkout": "TODO: Translate",
-        "errorOccurred": "TODO: Translate",
-        "unexpectedSummaryError": "TODO: Translate",
-        "todayWorkout": "TODO: Translate",
-        "noActiveTrainingSplit": "TODO: Translate",
-        "errorLoadingTrainingSplit": "TODO: Translate",
-        "noActiveTrainingSplitDescription": "TODO: Translate",
-        "sessionInProgress": "TODO: Translate",
-        "continueWorkout": "TODO: Translate",
-        "noWorkoutScheduled": "TODO: Translate",
-        "noWorkoutScheduledDescription": "TODO: Translate",
-        "selectWorkoutSessionPlaceholder": "TODO: Translate",
-        "openPlanNewTab": "TODO: Translate"
+        "title": "Záznam cvičení",
+        "startSession": "Začít novou lekci",
+        "unexpectedStartError": "Došlo k neočekávané chybě při zahájení lekce. Zkuste to prosím znovu.",
+        "reps": "opakování",
+        "repsLabel": "Opakování",
+        "set": "Série {setNumber}",
+        "activeTrainingSplit": "Aktivní tréninkový split",
+        "weightWithKg": "{weight} kg",
+        "lastReps": "Poslední: {previousReps} opakování",
+        "weightColumnTitle": "Váha (kg)",
+        "finishWorkout": "Ukončit trénink",
+        "errorOccurred": "Došlo k chybě při načítání tréninku.",
+        "unexpectedSummaryError": "Došlo k neočekávané chybě při načítání souhrnu lekce. Zkuste to prosím znovu.",
+        "todayWorkout": "Dnešní trénink",
+        "noActiveTrainingSplit": "Žádný aktivní tréninkový split",
+        "errorLoadingTrainingSplit": "Chyba při načítání tréninkového splitu",
+        "noActiveTrainingSplitDescription": "Pro zahájení zaznamenávání tréninků si prosím vyberte tréninkový split v nastavení.",
+        "sessionInProgress": "Probíhá tréninková lekce",
+        "continueWorkout": "Pokračovat v tréninku",
+        "noWorkoutScheduled": "Žádný naplánovaný trénink",
+        "noWorkoutScheduledDescription": "Odpočinkový den nebo na dnešek není přiřazen žádný trénink.",
+        "selectWorkoutSessionPlaceholder": "Vyberte tréninkovou lekci",
+        "openPlanNewTab": "Otevřít plán v nové záložce"
+    },
+    "SessionLoggingSummaryPage": {
+        "title": "Souhrn cvičení",
+        "subtitle": "Dokončeno dne {date} v {time}",
+        "sessionPlan": "Tréninkový plán: {planName}",
+        "summaryTable": {
+            "setHeader": "Série",
+            "repsHeader": "Opakování",
+            "weightHeader": "Váha"
+        },
+        "weightWithKg": "{weight} kg"
+    },
+    "RegisterPage": {
+        "title": "Vytvořit účet",
+        "description": "Zaregistrujte se a začněte svou fitness cestu."
+    },
+    "RegisterForm": {
+        "submit": "Zaregistrovat se",
+        "registering": "Probíhá registrace...",
+        "validation": {
+            "emailInvalid": "Prosím, zadejte platnou e-mailovou adresu",
+            "firstNameRequired": "Jméno je povinné",
+            "lastNameRequired": "Příjmení je povinné",
+            "nickNameRequired": "Přezdívka je povinná",
+            "passwordMinLength": "Heslo musí mít alespoň 6 znaků",
+            "confirmPasswordRequired": "Potvrzení hesla je povinné",
+            "passwordsDoNotMatch": "Hesla se neshodují"
+        }
+    },
+    "TrainerApprovalsPage": {
+        "title": "Schválení trenérů",
+        "description": "Zkontrolujte a spravujte žádosti o pozici trenéra.",
+        "viewProfile": "Zobrazit profil",
+        "approve": "Schválit",
+        "deny": "Zamítnout",
+        "noPendingApplications": "Momentálně nejsou žádné nevyřízené žádosti o pozici trenéra.",
+        "errorOccurred": "Došlo k chybě při načítání žádostí.",
+        "unknownError": "Došlo k neočekávané chybě. Zkuste to prosím znovu.",
+        "reasonLabel": "Důvod"
+    },
+    "RecruitTraineesPage": {
+        "title": "Nábor cvičenců",
+        "description": "Najděte a spojte se s talentovanými cvičenci, aby se připojili k vašemu týmu",
+        "searchPlaceholder": "Hledat podle jména, e-mailu nebo specializace...",
+        "showingCount": "Zobrazeno {count} z {total} cvičenců",
+        "sendRequest": "Odeslat žádost",
+        "noTraineesFound": "Nebyly nalezeny žádní cvičenci.",
+        "noTraineesMatchingSearch": "Nebyly nalezeny žádní cvičenci odpovídající vašemu hledání.",
+        "failedToLoad": "Nepodařilo se načíst cvičence",
+        "tryAgain": "Zkusit znovu"
+    },
+    "AssignTrainingSplitPage": {
+        "title": "Přiřadit tréninkové splity",
+        "description": "Vyberte tréninkový split pro každého cvičence",
+        "noTraineesFound": "Nebyly nalezeny žádní cvičenci",
+        "noTraineesFoundDescription": "Momentálně nemáte žádné cvičence, kterým byste přiřadili tréninkové splity.",
+        "statusActive": "Aktivní",
+        "statusNotAssigned": "Nepřiřazený",
+        "activeSplitLabel": "Aktivní split:",
+        "selectSplitPlaceholder": "Vyberte split",
+        "statusActiveTag": "(Aktivní)",
+        "statusPendingTag": "(Čekající)",
+        "errorLoadingSplits": "Chyba při načítání tréninkových splitů",
+        "errorLoadingTrainees": "Chyba při načítání cvičenců",
+        "errorAssigningSplit": "Chyba při přiřazování tréninkového splitu",
+        "unknownError": "Neznámá chyba"
+    },
+    "ProfilePage": {
+        "title": "Profil",
+        "nickname": "Přezdívka",
+        "firstName": "Jméno",
+        "lastName": "Příjmení",
+        "email": "E-mail",
+        "roles": "Role",
+        "errorOccurred": "Došlo k chybě při načítání profilu.",
+        "unknownError": "Došlo k neočekávané chybě. Zkuste to prosím znovu."
     },
     "SettingsPage": {
-        "title": "TODO: Translate",
-        "description": "TODO: Translate",
+        "title": "Nastavení",
+        "description": "Spravujte své tréninkové preference a trenéry",
         "activeTrainingSplit": {
-            "title": "TODO: Translate",
-            "description": "TODO: Translate",
-            "selectPlaceholder": "TODO: Translate",
-            "errorAssigned": "TODO: Translate",
-            "errorAvailable": "TODO: Translate",
-            "errorCreate": "TODO: Translate",
-            "error": "TODO: Translate"
+            "title": "Aktivní tréninkový split",
+            "description": "Vyberte svůj aktuální tréninkový program",
+            "selectPlaceholder": "Vyberte tréninkový split",
+            "errorAssigned": "Chyba při načítání přiřazeného tréninkového splitu:",
+            "errorAvailable": "Chyba při načítání dostupných tréninkových splitů:",
+            "errorCreate": "Chyba",
+            "error": "Chyba"
         },
         "proposedSplits": {
-            "title": "TODO: Translate",
-            "descriptionWithTrainer": "TODO: Translate",
-            "accept": "TODO: Translate",
-            "decline": "TODO: Translate",
-            "noProposals": "TODO: Translate",
-            "errorLoading": "TODO: Translate"
+            "title": "Navrhované tréninkové splity",
+            "descriptionWithTrainer": "Programy navržené trenérem {firstName} {lastName}",
+            "accept": "Přijmout",
+            "decline": "Odmítnout",
+            "noProposals": "Momentálně nejsou žádné navrhované tréninkové splity.",
+            "errorLoading": "Chyba při načítání navrhovaných tréninkových splitů:"
         },
         "trainers": {
-            "title": "TODO: Translate",
-            "description": "TODO: Translate",
-            "current": "TODO: Translate",
-            "accept": "TODO: Translate",
-            "deny": "TODO: Translate",
-            "noTrainers": "TODO: Translate",
-            "errorLoading": "TODO: Translate"
+            "title": "Trenéři",
+            "description": "Spravujte své tréninkové kouče",
+            "current": "Současní",
+            "accept": "Přijmout",
+            "deny": "Odmítnout",
+            "noTrainers": "Nebyly nalezeny žádní trenéři.",
+            "errorLoading": "Chyba při načítání trenérů:"
         }
     }
 }

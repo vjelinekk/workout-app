@@ -33,7 +33,9 @@ export const ProposedTrainingSplitsSection = ({
     onAcceptProposal,
     onDenyProposal,
 }: Props) => {
-    const t = useTranslations(TRANSLATION_SECTION_KEYS.settingsPage + '.proposedSplits');
+    const t = useTranslations(
+        TRANSLATION_SECTION_KEYS.settingsPage + '.proposedSplits',
+    );
 
     if (!activeTrainer) {
         return null;

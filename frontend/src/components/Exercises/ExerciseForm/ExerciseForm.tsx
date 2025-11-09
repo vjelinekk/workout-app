@@ -59,6 +59,7 @@ export const ExerciseForm = ({ mode, id, initialData }: Props) => {
 
     const onSubmit = (data: ExerciseFormValues) => {
         const { imageFile, ...rest } = data;
+        void imageFile; // to avoid unused variable warning
 
         const payload = {
             ...rest,

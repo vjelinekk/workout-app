@@ -1,12 +1,12 @@
 import { createWorkoutSessionPlan, deleteWorkoutSessionPlan, fetchAllWorkoutSessionPlans, fetchWorkoutSessionPlanById, QUERY_KEY_WORKOUT_SESSION_PLAN, QUERY_KEY_WORKOUT_SESSION_PLANS, updateWorkoutSessionPlan } from "@/api/services/workoutSessionPlan"
 import { WorkoutSessionPlanFormValues } from "@/schemas/workoutSessionPlan"
-import { ApiErrorResponse } from "@/types/api"
+import { ApiError } from "@/utils/apiError";
 import { Scope } from "@/types/scope"
 import { WorkoutSessionPlan } from "@/types/workoutSessionPlan"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 
 export const useWorkoutSessionPlans = (scope: Scope) => {
-    const { data, error, isLoading } = useQuery<WorkoutSessionPlan[], ApiErrorResponse>({
+    const { data, error, isLoading } = useQuery<WorkoutSessionPlan[], ApiError>({
         queryKey: [QUERY_KEY_WORKOUT_SESSION_PLANS, scope],
         queryFn: ({ signal }) => fetchAllWorkoutSessionPlans(scope, signal),
     })
@@ -15,7 +15,7 @@ export const useWorkoutSessionPlans = (scope: Scope) => {
 }
 
 export const useWorkoutSessionPlan = (id: number) => {
-    const { data, error, isLoading } = useQuery<WorkoutSessionPlan, ApiErrorResponse>({
+    const { data, error, isLoading } = useQuery<WorkoutSessionPlan, ApiError>({
         queryKey: [QUERY_KEY_WORKOUT_SESSION_PLANS, QUERY_KEY_WORKOUT_SESSION_PLAN, id],
         queryFn: ({ signal }) => fetchWorkoutSessionPlanById(id, signal),
     })

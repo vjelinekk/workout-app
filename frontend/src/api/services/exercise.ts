@@ -11,18 +11,26 @@ export const fetchAllExercises = async (
     scope: Scope = Scope.ALL,
     signal?: AbortSignal
 ) => {
-    const data = await api.get<Exercise[]>(EXERCISE_ENDPOINTS.exercises, {
-        params: { scope },
-        signal,
-    });
+    try {
+        const data = await api.get<Exercise[]>(EXERCISE_ENDPOINTS.exercises, {
+            params: { scope },
+            signal,
+        });
 
-    return data.data;
+        return data.data;
+    } catch (error: unknown) {
+        handleApiError(error, 'Failed to fetch exercises');
+    }
 }
 
 export const QUERY_KEY_EXERCISE = 'exercise';
 export const fetchExerciseById = async (id: number, signal?: AbortSignal): Promise<Exercise> => {
-    const { data } = await api.get<Exercise>(`${EXERCISE_ENDPOINTS.exercises}/${id}`, { signal });
-    return data;
+    try {
+        const { data } = await api.get<Exercise>(`${EXERCISE_ENDPOINTS.exercises}/${id}`, { signal });
+        return data;
+    } catch (error: unknown) {
+        handleApiError(error, 'Failed to fetch exercise');
+    }
 }
 
 export const createExercise = async (exercise: ExerciseFormValues): Promise<Exercise> => {

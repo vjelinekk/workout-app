@@ -3,7 +3,7 @@ import { Button } from '../ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '../ui/card';
 import { Spinner } from '../ui/icons/spinner';
 import { useState } from 'react';
-import { ApiErrorResponse } from '@/types/api';
+import { ApiError } from '@/utils/apiError';
 import Link from 'next/link';
 import { DeleteConfirm } from './DeleteConfirm';
 import { useTranslations } from 'next-intl';
@@ -13,7 +13,7 @@ interface Props<T extends { id: number; name: string }> {
     title: string;
     entities?: T[];
     isLoading: boolean;
-    error: ApiErrorResponse | null;
+    error: ApiError | null;
     errorLabel: string;
     emptyMessage: string;
     detailLink: string;
@@ -55,7 +55,7 @@ export const ScopedResourceListCard = <T extends { id: number; name: string }>({
                     <CardContent>
                         {error && (
                             <p className="text-sm text-red-600">
-                                {errorLabel}: {error.message.message}
+                                {errorLabel}: {error.message}
                             </p>
                         )}
                         {isLoading && <Spinner />}

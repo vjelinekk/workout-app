@@ -35,7 +35,9 @@ export const TrainersManagementSection = ({
     onAcceptTrainer,
     onDenyTrainer,
 }: Props) => {
-    const t = useTranslations(TRANSLATION_SECTION_KEYS.settingsPage + '.trainers');
+    const t = useTranslations(
+        TRANSLATION_SECTION_KEYS.settingsPage + '.trainers',
+    );
 
     return (
         <Card>

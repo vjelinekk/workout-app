@@ -47,7 +47,9 @@ export const SessionSelector = ({
                     onValueChange={setCurrentSessionKey}
                 >
                     <SelectTrigger id="session-select">
-                        <SelectValue placeholder={t('selectWorkoutSessionPlaceholder')} />
+                        <SelectValue
+                            placeholder={t('selectWorkoutSessionPlaceholder')}
+                        />
                     </SelectTrigger>
                     <SelectContent>
                         {availableSessions.map((session) => (

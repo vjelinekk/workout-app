@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { useTranslations } from 'next-intl';
 import {
     Select,
     SelectContent,
@@ -15,8 +16,10 @@ import { Spinner } from '../ui/icons/spinner';
 import { useTrainees } from '@/hooks/useTrainerTrainees';
 import { Alert, AlertDescription, AlertTitle } from '../ui/alert';
 import { useCreateTrainingSplitAssignment } from '@/hooks/useTrainingSplitAssignments';
+import { TRANSLATION_SECTION_KEYS } from '@/constants/locale';
 
 export const AssignTrainingSplit = () => {
+    const t = useTranslations(TRANSLATION_SECTION_KEYS.assignTrainingSplitPage);
     const {
         data: availableSplits,
         isLoading: availableSplitsLoading,
@@ -59,9 +62,9 @@ export const AssignTrainingSplit = () => {
     if (availableSplitsError) {
         return (
             <Alert variant="destructive">
-                <AlertTitle>Error loading training splits</AlertTitle>
+                <AlertTitle>{t('errorLoadingSplits')}</AlertTitle>
                 <AlertDescription>
-                    {availableSplitsError?.message || 'Unknown error'}
+                    {availableSplitsError?.message || t('unknownError')}
                 </AlertDescription>
             </Alert>
         );
@@ -78,9 +81,9 @@ export const AssignTrainingSplit = () => {
     if (traineesError) {
         return (
             <Alert variant="destructive">
-                <AlertTitle>Error loading trainees</AlertTitle>
+                <AlertTitle>{t('errorLoadingTrainees')}</AlertTitle>
                 <AlertDescription>
-                    {traineesError.message || 'Unknown error'}
+                    {traineesError.message || t('unknownError')}
                 </AlertDescription>
             </Alert>
         );
@@ -91,11 +94,10 @@ export const AssignTrainingSplit = () => {
             <div className="min-h-screen bg-background p-4 md:p-8">
                 <div className="mx-auto max-w-2xl text-center">
                     <h1 className="text-2xl font-bold text-foreground md:text-3xl">
-                        No Trainees Found
+                        {t('noTraineesFound')}
                     </h1>
                     <p className="mt-2 text-sm text-muted-foreground">
-                        You currently have no trainees to assign training splits
-                        to.
+                        {t('noTraineesFoundDescription')}
                     </p>
                 </div>
             </div>
@@ -108,10 +110,10 @@ export const AssignTrainingSplit = () => {
                 {/* Header */}
                 <div className="mb-8">
                     <h1 className="text-2xl font-bold text-foreground md:text-3xl">
-                        Assign Training Splits
+                        {t('title')}
                     </h1>
                     <p className="mt-2 text-sm text-muted-foreground">
-                        Select a training split for each trainee
+                        {t('description')}
                     </p>
                 </div>
 
@@ -121,8 +123,8 @@ export const AssignTrainingSplit = () => {
                         const hasActiveTrainingSplit =
                             trainee.activeTrainingSplitId !== undefined;
                         const statusLabel = hasActiveTrainingSplit
-                            ? 'Active'
-                            : 'Not Assigned';
+                            ? t('statusActive')
+                            : t('statusNotAssigned');
                         const statusColor = hasActiveTrainingSplit
                             ? 'bg-green-100 text-green-800'
                             : 'bg-gray-100 text-gray-800';
@@ -138,11 +140,11 @@ export const AssignTrainingSplit = () => {
                                         className="w-full mb-2"
                                     >
                                         <AlertTitle>
-                                            Error assigning training split
+                                            {t('errorAssigningSplit')}
                                         </AlertTitle>
                                         <AlertDescription>
                                             {createError?.message ||
-                                                'Unknown error'}
+                                                t('unknownError')}
                                         </AlertDescription>
                                     </Alert>
                                 )}
@@ -170,14 +172,15 @@ export const AssignTrainingSplit = () => {
                                             undefined && (
                                             <div className="flex items-center gap-2">
                                                 <span className="text-xs font-medium">
-                                                    Active split:
+                                                    {t('activeSplitLabel')}
                                                 </span>
                                                 <span className="font-semibold text-foreground">
                                                     {availableSplits?.find(
                                                         (s) =>
                                                             s.id ===
                                                             trainee.activeTrainingSplitId,
-                                                    )?.name || 'Unknown'}
+                                                    )?.name ||
+                                                        t('unknownError')}
                                                 </span>
                                             </div>
                                         )}
@@ -192,7 +195,11 @@ export const AssignTrainingSplit = () => {
                                         }
                                     >
                                         <SelectTrigger className="bg-background w-full">
-                                            <SelectValue placeholder="Select split" />
+                                            <SelectValue
+                                                placeholder={t(
+                                                    'selectSplitPlaceholder',
+                                                )}
+                                            />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {availableSplits?.map((split) => {
@@ -215,12 +222,16 @@ export const AssignTrainingSplit = () => {
                                                             {split.name}
                                                             {isActive && (
                                                                 <span className="text-xs font-semibold text-green-700">
-                                                                    (Active)
+                                                                    {t(
+                                                                        'statusActiveTag',
+                                                                    )}
                                                                 </span>
                                                             )}
                                                             {isPending && (
                                                                 <span className="text-xs font-semibold text-yellow-700">
-                                                                    (Pending)
+                                                                    {t(
+                                                                        'statusPendingTag',
+                                                                    )}
                                                                 </span>
                                                             )}
                                                         </span>

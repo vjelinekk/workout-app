@@ -23,7 +23,9 @@
             "1": "Admin",
             "2": "Trainee",
             "3": "Trainer"
-        }
+        },
+        "cancel": "Cancel",
+        "continue": "Continue"
     },
     "ErrorBoundary": {
         "title": "Oops! Something went wrong",
@@ -306,7 +308,35 @@
         "deny": "Deny",
         "noPendingApplications": "There are no pending trainer applications at the moment.",
         "errorOccurred": "An error occurred while loading applications.",
-        "unknownError": "An unexpected error occurred. Please try again."
+        "unknownError": "An unexpected error occurred. Please try again.",
+        "reasonLabel": "Reason"
+    },
+    "RecruitTraineesPage": {
+        "title": "Recruit Trainees",
+        "description": "Find and connect with talented trainees to join your team",
+        "searchPlaceholder": "Search by name, email, or specialty...",
+        "showingCount": "Showing {count} of {total} trainees",
+        "sendRequest": "Send Request",
+        "noTraineesFound": "No trainees found.",
+        "noTraineesMatchingSearch": "No trainees found matching your search.",
+        "failedToLoad": "Failed to load trainees",
+        "tryAgain": "Try Again"
+    },
+    "AssignTrainingSplitPage": {
+        "title": "Assign Training Splits",
+        "description": "Select a training split for each trainee",
+        "noTraineesFound": "No Trainees Found",
+        "noTraineesFoundDescription": "You currently have no trainees to assign training splits to.",
+        "statusActive": "Active",
+        "statusNotAssigned": "Not Assigned",
+        "activeSplitLabel": "Active split:",
+        "selectSplitPlaceholder": "Select split",
+        "statusActiveTag": "(Active)",
+        "statusPendingTag": "(Pending)",
+        "errorLoadingSplits": "Error loading training splits",
+        "errorLoadingTrainees": "Error loading trainees",
+        "errorAssigningSplit": "Error assigning training split",
+        "unknownError": "Unknown error"
     },
     "ProfilePage": {
         "title": "Profile",

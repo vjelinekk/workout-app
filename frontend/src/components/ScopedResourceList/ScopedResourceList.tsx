@@ -1,6 +1,6 @@
 'use client';
 
-import { ApiErrorResponse } from '@/types/api';
+import { ApiError } from '@/utils/apiError';
 import { Button } from '../ui/button';
 import { ScopedResourceListCard } from './ScopedResourceListCard';
 import { useTranslations } from 'next-intl';
@@ -13,12 +13,12 @@ interface Props<T extends { id: number; name: string }> {
     privateInfo: {
         privateEntities?: T[];
         isLoadingPrivate: boolean;
-        errorPrivate: ApiErrorResponse | null;
+        errorPrivate: ApiError | null;
     };
     publicInfo: {
         publicEntities?: T[];
         isLoadingPublic: boolean;
-        errorPublic: ApiErrorResponse | null;
+        errorPublic: ApiError | null;
     };
     handleCreate: () => void;
     handleDelete: (id: number) => void;

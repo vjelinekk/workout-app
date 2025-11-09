@@ -45,15 +45,15 @@ export const ActiveTrainingSplitSection = ({
     isCreating,
     onSplitChange,
 }: Props) => {
-    const t = useTranslations(TRANSLATION_SECTION_KEYS.settingsPage + '.activeTrainingSplit');
+    const t = useTranslations(
+        TRANSLATION_SECTION_KEYS.settingsPage + '.activeTrainingSplit',
+    );
 
     return (
         <Card>
             <CardHeader>
                 <CardTitle>{t('title')}</CardTitle>
-                <CardDescription>
-                    {t('description')}
-                </CardDescription>
+                <CardDescription>{t('description')}</CardDescription>
             </CardHeader>
             {isLoadingAssigned && (
                 <CardContent className="flex justify-center items-center">

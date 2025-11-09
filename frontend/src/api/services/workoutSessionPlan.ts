@@ -10,31 +10,26 @@ export const fetchAllWorkoutSessionPlans = async (
     scope: Scope = Scope.ALL,
     signal?: AbortSignal
 ) => {
-    const data = await api.get<WorkoutSessionPlan[]>(WORKOUT_SESSION_PLAN_ENDPOINTS.workoutSessionPlans, {
-        params: { scope },
-        signal,
-    });
+    try {
+        const data = await api.get<WorkoutSessionPlan[]>(WORKOUT_SESSION_PLAN_ENDPOINTS.workoutSessionPlans, {
+            params: { scope },
+            signal,
+        });
 
-    return data.data;
+        return data.data;
+    } catch (error: unknown) {
+        handleApiError(error, 'Failed to fetch workout session plans');
+    }
 }
 
 export const QUERY_KEY_WORKOUT_SESSION_PLAN = 'workout-session-plan';
 export const fetchWorkoutSessionPlanById = async (id: number, signal?: AbortSignal): Promise<WorkoutSessionPlan> => {
-    const { data } = await api.get<WorkoutSessionPlan>(`${WORKOUT_SESSION_PLAN_ENDPOINTS.workoutSessionPlans}/${id}`, { signal });
-
-    const workoutSessionPlanId = data.id;
-    
-    const { data: exercisesData } = await api.get<WorkoutSessionPlanExercise[]>(`${WORKOUT_SESSION_PLAN_EXERCISES_ENDPOINTS.workoutSessionPlanExercises}`, {
-        params: { workout_session_plan_id: workoutSessionPlanId },
-        signal,
-    });
-
-    const result: WorkoutSessionPlan = {
-        ...data,
-        exercises: exercisesData,
+    try {
+        const { data } = await api.get<WorkoutSessionPlan>(`${WORKOUT_SESSION_PLAN_ENDPOINTS.workoutSessionPlans}/${id}`, { signal });
+        return data;
+    } catch (error: unknown) {
+        handleApiError(error, 'Failed to fetch workout session plan');
     }
-
-    return result;
 }
 
 const mapWorkoutSessionPlanToApiFormat = (workoutSessionPlan: WorkoutSessionPlanFormValues): {

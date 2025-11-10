@@ -2,6 +2,7 @@ import {
     BadRequestException,
     ForbiddenException,
     Injectable,
+    InternalServerErrorException,
 } from '@nestjs/common';
 import { ValidatedMappedCrudService } from 'src/common/services/validated-mapped-crud.service';
 import { TrainingSplitDayEntity } from '../entities/training-split-day.entity';
@@ -14,6 +15,7 @@ import { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-u
 import { TrainingSplitRepository } from '../repositories/training-split.repository';
 import { RoleEnum } from 'src/modules/user/enums/role.enum';
 import { WorkoutSessionPlanRepository } from 'src/modules/workout/repositories/workout-session-plan.repository';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class TrainingSplitDayService extends ValidatedMappedCrudService<
@@ -28,6 +30,7 @@ export class TrainingSplitDayService extends ValidatedMappedCrudService<
         protected readonly trainingSplitDayRepository: TrainingSplitDayRepository,
         protected readonly trainingSplitRepository: TrainingSplitRepository,
         protected readonly workoutSessionPlanRepository: WorkoutSessionPlanRepository,
+        private readonly dataSource: DataSource,
     ) {
         super(trainingSplitDayRepository);
     }
@@ -142,7 +145,9 @@ export class TrainingSplitDayService extends ValidatedMappedCrudService<
         const result = await this.trainingSplitDayRepository.insert(entities);
 
         if (result.identifiers.length !== createDtos.length) {
-            // TODO: exception
+            throw new InternalServerErrorException(
+                `Failed to insert all training split days. Expected ${createDtos.length}, inserted ${result.identifiers.length}`,
+            );
         }
     }
 
@@ -151,25 +156,39 @@ export class TrainingSplitDayService extends ValidatedMappedCrudService<
         createDtos: TrainingSplitDayCreateDto[],
         user: JwtAuthenticatedUser,
     ) {
-        const entities = createDtos.map((dto) => {
-            const entity = this.toEntity(dto);
-            entity.createdById = user.id;
-            return entity;
+        // Use a transaction to ensure atomicity
+        await this.dataSource.transaction(async (manager) => {
+            // Get the repository from the transaction manager
+            const trainingSplitDayRepo = manager.getRepository(TrainingSplitDayEntity);
+
+            // 1. Delete existing days for this training split
+            const deleteResult = await trainingSplitDayRepo.delete({
+                trainingSplitId,
+            });
+
+            // Optional: You can log or validate the deletion
+            if (!deleteResult.affected || deleteResult.affected === 0) {
+                throw new BadRequestException(
+                    `No training split days found to delete for training split ID ${trainingSplitId}`,
+                );
+            }
+
+            // 2. Create new entities
+            const entities = createDtos.map((dto) => {
+                const entity = this.toEntity(dto);
+                entity.createdById = user.id;
+                return entity;
+            });
+
+            // 3. Insert new days
+            const result = await trainingSplitDayRepo.insert(entities);
+
+            if (result.identifiers.length !== createDtos.length) {
+                throw new InternalServerErrorException(
+                    `Failed to insert all training split days. Expected ${createDtos.length}, inserted ${result.identifiers.length}`,
+                );
+            }
         });
-
-        const deleteResult = await this.trainingSplitDayRepository.delete({
-            trainingSplitId,
-        });
-
-        if (!deleteResult.affected || deleteResult.affected === 0) {
-            // TODO: exception
-        }
-
-        const result = await this.trainingSplitDayRepository.insert(entities);
-
-        if (result.identifiers.length !== createDtos.length) {
-            // TODO: exception
-        }
     }
 
     async findAllByTrainingSplitIdActiveMapped(

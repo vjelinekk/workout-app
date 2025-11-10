@@ -18,6 +18,7 @@ import { WorkoutSessionPlanEntity } from '../entities/workout-session-plan.entit
 import { WorkoutSessionStatusEnum } from '../enums/workout-session-status.enum';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
 import { WorkoutSessionLogProgressDto } from '../dtos/workout-session/workout-session-log-progess.dto';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class WorkoutSessionService extends ValidatedMappedCrudService<
@@ -32,6 +33,7 @@ export class WorkoutSessionService extends ValidatedMappedCrudService<
         protected readonly workoutSessionRepository: WorkoutSessionRepository,
         protected readonly workoutSessionExerciseRepository: WorkoutSessionExerciseRepository,
         protected readonly workoutSessionPlanRepository: WorkoutSessionPlanRepository,
+        private readonly dataSource: DataSource,
     ) {
         super(workoutSessionRepository);
     }
@@ -287,6 +289,7 @@ export class WorkoutSessionService extends ValidatedMappedCrudService<
         userId: number,
         finish: boolean = false,
     ): Promise<void> {
+        // Fetch and validate workout session outside transaction (read-only validation)
         const workoutSession =
             await this.workoutSessionRepository.findByIdActive(
                 workoutSessionId,
@@ -309,58 +312,68 @@ export class WorkoutSessionService extends ValidatedMappedCrudService<
             );
         }
 
-        const baseValueUpdate: QueryDeepPartialEntity<WorkoutSessionEntity> = {
-            updatedById: userId,
-            updatedAt: () => 'NOW()', // database-side timestamp
-        };
+        // Use transaction for all write operations
+        await this.dataSource.transaction(async (manager) => {
+            // Get repositories from transaction manager
+            const workoutSessionRepo = manager.getRepository(WorkoutSessionEntity);
+            const workoutSessionExerciseRepo = manager.getRepository(WorkoutSessionExerciseEntity);
 
-        if (finish) {
-            baseValueUpdate.status = WorkoutSessionStatusEnum.COMPLETED;
-            baseValueUpdate.finishedAt = () => 'NOW()';
-            baseValueUpdate.performedById = userId;
-        }
+            // 1. Update workout session status and metadata
+            const baseValueUpdate: QueryDeepPartialEntity<WorkoutSessionEntity> = {
+                updatedById: userId,
+                updatedAt: () => 'NOW()', // database-side timestamp
+            };
 
-        await this.workoutSessionRepository.update(
-            workoutSessionId,
-            baseValueUpdate,
-        );
-
-        const workoutSessionExercises = workoutSession.exercises;
-
-        for (const exercise of workoutSessionExercises) {
-            const exerciseProgress = logProgressDto.progressData[exercise.id];
-
-            if (exerciseProgress) {
-                const newReps = Object.values(exerciseProgress).map(
-                    (set) => set.reps ?? 0,
-                );
-                const newWeights = Object.values(exerciseProgress).map(
-                    (set) => set.weight ?? 0,
-                );
-
-                const updatedReps = exercise.actualRepsPerSet.map(
-                    (rep, index) => {
-                        return newReps[index] !== undefined
-                            ? newReps[index]
-                            : rep;
-                    },
-                );
-                const updatedWeights = exercise.actualWeightPerSet.map(
-                    (weight, index) => {
-                        return newWeights[index] !== undefined
-                            ? newWeights[index]
-                            : weight;
-                    },
-                );
-
-                exercise.actualRepsPerSet = updatedReps;
-                exercise.actualWeightPerSet = updatedWeights;
+            if (finish) {
+                baseValueUpdate.status = WorkoutSessionStatusEnum.COMPLETED;
+                baseValueUpdate.finishedAt = () => 'NOW()';
+                baseValueUpdate.performedById = userId;
             }
-        }
 
-        await this.workoutSessionExerciseRepository.save(
-            workoutSessionExercises,
-        );
+            await workoutSessionRepo.update(
+                workoutSessionId,
+                baseValueUpdate,
+            );
+
+            // 2. Update exercise progress
+            const workoutSessionExercises = workoutSession.exercises;
+
+            for (const exercise of workoutSessionExercises) {
+                const exerciseProgress = logProgressDto.progressData[exercise.id];
+
+                if (exerciseProgress) {
+                    const newReps = Object.values(exerciseProgress).map(
+                        (set) => set.reps ?? 0,
+                    );
+                    const newWeights = Object.values(exerciseProgress).map(
+                        (set) => set.weight ?? 0,
+                    );
+
+                    const updatedReps = exercise.actualRepsPerSet.map(
+                        (rep, index) => {
+                            return newReps[index] !== undefined
+                                ? newReps[index]
+                                : rep;
+                        },
+                    );
+                    const updatedWeights = exercise.actualWeightPerSet.map(
+                        (weight, index) => {
+                            return newWeights[index] !== undefined
+                                ? newWeights[index]
+                                : weight;
+                        },
+                    );
+
+                    exercise.actualRepsPerSet = updatedReps;
+                    exercise.actualWeightPerSet = updatedWeights;
+                }
+            }
+
+            // 3. Save all exercise updates
+            await workoutSessionExerciseRepo.save(
+                workoutSessionExercises,
+            );
+        });
     }
 
     async finishWorkoutSession(

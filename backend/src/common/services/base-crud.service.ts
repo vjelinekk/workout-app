@@ -25,14 +25,9 @@ export abstract class BaseCrudService<
      * Retrieves all entities.
      *
      * @returns All entities
-     * @throws NotFoundException if no entities are found
      */
     async findAllActive(): Promise<Entity[]> {
         const entities = await this.repository.findActive();
-
-        if (entities.length === 0) {
-            throw new NotFoundException('No entities found');
-        }
 
         return entities;
     }

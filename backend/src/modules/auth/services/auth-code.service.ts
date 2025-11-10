@@ -57,6 +57,9 @@ export class AuthCodeService {
         }
 
         this.authCodes.delete(authCode);
+
+        this.cleanupExpiredCodes();
+
         return data.loginResponse;
     }
 }

@@ -80,7 +80,11 @@ export class ExerciseService extends PublicAuthorizableCrudService<
         id: number,
         user: JwtAuthenticatedUser,
     ): Promise<ExerciseResponseDto> {
-        const entity = await this.repository.findOneBy({ id } as any);
+        const entity = await this.repository.findOneBy(
+            {
+                id,
+            }
+        );
         if (entity && entity.imageUrl) {
             const imagePath = join(process.cwd(), entity.imageUrl);
             try {

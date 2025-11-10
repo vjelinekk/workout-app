@@ -15,7 +15,7 @@ import { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-u
 import { TrainingSplitRepository } from '../repositories/training-split.repository';
 import { RoleEnum } from 'src/modules/user/enums/role.enum';
 import { WorkoutSessionPlanRepository } from 'src/modules/workout/repositories/workout-session-plan.repository';
-import { DataSource } from 'typeorm';
+import { DataSource, FindOptionsRelations } from 'typeorm';
 
 @Injectable()
 export class TrainingSplitDayService extends ValidatedMappedCrudService<
@@ -42,6 +42,18 @@ export class TrainingSplitDayService extends ValidatedMappedCrudService<
         return TrainingSplitDayResponseDto;
     }
 
+    /**
+     * Specifies relations to eager-load before validation.
+     *
+     * @returns FindOptionsRelations object with trainingSplit and workoutSessionPlan
+     */
+    protected getValidationRelations(): FindOptionsRelations<TrainingSplitDayEntity> {
+        return {
+            trainingSplit: true,
+            workoutSessionPlan: true,
+        };
+    }
+
     protected async validateEntityAccess(
         entity: TrainingSplitDayEntity,
         user: JwtAuthenticatedUser,
@@ -50,18 +62,11 @@ export class TrainingSplitDayService extends ValidatedMappedCrudService<
             return;
         }
 
-        const trainingSplitId = entity.trainingSplitId;
-        if (trainingSplitId === undefined) {
+        // Relations are eagerly loaded by getValidationRelations()
+        const trainingSplit = entity.trainingSplit;
+        if (!trainingSplit) {
             throw new BadRequestException(
-                'Cannot validate access to Training Split Day without Training Split ID loaded.',
-            );
-        }
-
-        const trainingSplit =
-            await this.trainingSplitRepository.findByIdActive(trainingSplitId);
-        if (trainingSplit === null) {
-            throw new BadRequestException(
-                `Cannot validate access to Training Split Day because associated Training Split with ID ${trainingSplitId} does not exist.`,
+                `Cannot validate access to Training Split Day because associated Training Split with ID ${entity.trainingSplitId} does not exist.`,
             );
         }
 
@@ -71,20 +76,10 @@ export class TrainingSplitDayService extends ValidatedMappedCrudService<
             );
         }
 
-        const workoutSessionPlanId = entity.workoutSessionPlanId;
-        if (workoutSessionPlanId === undefined) {
+        const workoutSessionPlan = entity.workoutSessionPlan;
+        if (!workoutSessionPlan) {
             throw new BadRequestException(
-                'Cannot validate access to Training Split Day without Workout Session Plan ID loaded.',
-            );
-        }
-
-        const workoutSessionPlan =
-            await this.workoutSessionPlanRepository.findByIdActive(
-                workoutSessionPlanId,
-            );
-        if (workoutSessionPlan === null) {
-            throw new BadRequestException(
-                `Cannot validate access to Training Split Day because associated Workout Session Plan with ID ${workoutSessionPlanId} does not exist.`,
+                `Cannot validate access to Training Split Day because associated Workout Session Plan with ID ${entity.workoutSessionPlanId} does not exist.`,
             );
         }
 

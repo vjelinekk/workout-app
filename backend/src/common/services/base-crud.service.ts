@@ -1,4 +1,4 @@
-import { DeepPartial, FindOptionsWhere } from 'typeorm';
+import { DeepPartial, FindOptionsWhere, FindOptionsRelations } from 'typeorm';
 import { BaseEntity } from '../entities/base.entity';
 import { BaseRepository } from '../repositories/base.repository';
 import { NotFoundException } from '@nestjs/common';
@@ -36,11 +36,15 @@ export abstract class BaseCrudService<
      * Retrieves an entity by its ID.
      *
      * @param id ID of entity to retrieve
+     * @param relations Optional relations to eagerly load
      * @returns Entity
      * @throws NotFoundException if the entity with the given ID does not exist
      */
-    async findOneActive(id: number): Promise<Entity> {
-        const entity = await this.repository.findByIdActive(id);
+    async findOneActive(
+        id: number,
+        relations?: FindOptionsRelations<Entity>,
+    ): Promise<Entity> {
+        const entity = await this.repository.findByIdActive(id, relations);
 
         if (!entity) {
             throw new NotFoundException(`Entity with ID ${id} not found`);
@@ -49,11 +53,25 @@ export abstract class BaseCrudService<
         return entity;
     }
 
-    async findOneInDeleted(id: number): Promise<Entity> {
-        const entity = await this.repository.findOneBy({
-            id,
-            isDeleted: true,
-        } as FindOptionsWhere<Entity>);
+    /**
+     * Retrieves a soft-deleted entity by its ID.
+     *
+     * @param id ID of entity to retrieve
+     * @param relations Optional relations to eagerly load
+     * @returns Entity
+     * @throws NotFoundException if the entity with the given ID does not exist
+     */
+    async findOneInDeleted(
+        id: number,
+        relations?: FindOptionsRelations<Entity>,
+    ): Promise<Entity> {
+        const entity = await this.repository.findOne({
+            where: {
+                id,
+                isDeleted: true,
+            } as FindOptionsWhere<Entity>,
+            relations,
+        });
 
         if (!entity) {
             throw new NotFoundException(`Entity with ID ${id} not found`);

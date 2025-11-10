@@ -2,7 +2,7 @@ import { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-u
 import { AuditableEntity } from '../entities/auditable.entity';
 import { BaseRepository } from '../repositories/base.repository';
 import { MappedCrudService } from './mapped-crud.service';
-import { FindOptionsWhere } from 'typeorm';
+import { FindOptionsWhere, FindOptionsRelations } from 'typeorm';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
 import { NotFoundException } from '@nestjs/common';
 
@@ -21,6 +21,29 @@ export abstract class ValidatedMappedCrudService<
     ResponseDto,
     Repo
 > {
+    /**
+     * Specifies which relations should be eager-loaded when fetching entities for validation.
+     * These relations will be loaded before validateEntityAccess() is called, eliminating N+1 queries.
+     *
+     * Override this method in subclasses to specify relations needed for access validation.
+     * Return undefined or empty object to load no relations (maintains current behavior).
+     *
+     * @returns FindOptionsRelations object specifying relations to load, or undefined for no relations
+     *
+     * @example
+     * ```typescript
+     * protected getValidationRelations(): FindOptionsRelations<TrainingSplitDayEntity> {
+     *   return {
+     *     trainingSplit: true,
+     *     workoutSessionPlan: true
+     *   };
+     * }
+     * ```
+     */
+    protected getValidationRelations(): FindOptionsRelations<Entity> | undefined {
+        return undefined; // Default: no relations loaded
+    }
+
     /**
      * Validates whether the authenticated user has access to the specified entity.
      * This hook is called before any operation that requires entity access (read, update, delete, restore).
@@ -147,7 +170,8 @@ export abstract class ValidatedMappedCrudService<
         dto: UpdateDto | PatchDto,
         user: JwtAuthenticatedUser,
     ): Promise<ResponseDto> {
-        const entity = await this.findOneActive(id);
+        const relations = this.getValidationRelations();
+        const entity = await this.findOneActive(id, relations);
 
         await this.validateEntityAccess(entity, user);
         await this.beforeUpdate(dto, entity, user);
@@ -207,7 +231,8 @@ export abstract class ValidatedMappedCrudService<
         id: number,
         user: JwtAuthenticatedUser,
     ): Promise<ResponseDto> {
-        const entity = await this.findOneActive(id);
+        const relations = this.getValidationRelations();
+        const entity = await this.findOneActive(id, relations);
 
         await this.validateEntityAccess(entity, user);
         await this.beforeDelete(entity, user);
@@ -245,7 +270,8 @@ export abstract class ValidatedMappedCrudService<
         id: number,
         user: JwtAuthenticatedUser,
     ): Promise<ResponseDto> {
-        const entity = await this.findOneInDeleted(id);
+        const relations = this.getValidationRelations();
+        const entity = await this.findOneInDeleted(id, relations);
 
         await this.validateEntityAccess(entity, user);
         await this.beforeRestore(entity, user);
@@ -268,7 +294,8 @@ export abstract class ValidatedMappedCrudService<
         id: number,
         user: JwtAuthenticatedUser,
     ): Promise<ResponseDto> {
-        const entity = await this.findOneActive(id);
+        const relations = this.getValidationRelations();
+        const entity = await this.findOneActive(id, relations);
         await this.validateEntityAccess(entity, user);
         return this.toResponseDto(entity);
     }
@@ -286,9 +313,13 @@ export abstract class ValidatedMappedCrudService<
         id: number,
         user: JwtAuthenticatedUser,
     ): Promise<ResponseDto> {
-        const entity = await this.repository.findOneBy({
-            id,
-        } as FindOptionsWhere<Entity>);
+        const relations = this.getValidationRelations();
+        const entity = await this.repository.findOne({
+            where: {
+                id,
+            } as FindOptionsWhere<Entity>,
+            relations,
+        });
 
         if (!entity) {
             throw new NotFoundException(`Entity with ID ${id} not found`);

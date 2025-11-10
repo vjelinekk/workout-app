@@ -55,9 +55,29 @@ export class ExerciseService extends PublicAuthorizableCrudService<
         entity: ExerciseEntity,
         user: JwtAuthenticatedUser,
     ): void {
-        void dto;
-        void entity;
-        void user;
+        // Only admins can change the approval status
+        if (
+            'isApproved' in dto &&
+            dto.isApproved !== undefined &&
+            dto.isApproved !== entity.isApproved &&
+            !user.roles.includes(RoleEnum.ADMIN)
+        ) {
+            throw new UnauthorizedException(
+                'Only admins can change the approval status of exercises.',
+            );
+        }
+
+        // Only admins can change the public visibility flag directly
+        if (
+            'isPublic' in dto &&
+            dto.isPublic !== undefined &&
+            dto.isPublic !== entity.isPublic &&
+            !user.roles.includes(RoleEnum.ADMIN)
+        ) {
+            throw new UnauthorizedException(
+                'Only admins can change the public visibility of exercises.',
+            );
+        }
     }
 
     protected beforeDelete(
@@ -80,21 +100,26 @@ export class ExerciseService extends PublicAuthorizableCrudService<
         id: number,
         user: JwtAuthenticatedUser,
     ): Promise<ExerciseResponseDto> {
-        const entity = await this.repository.findOneBy(
-            {
-                id,
-            }
-        );
-        if (entity && entity.imageUrl) {
-            const imagePath = join(process.cwd(), entity.imageUrl);
+        // Fetch before delete to capture the current image URL
+        const entityBeforeDelete = await this.repository.findByIdActive(id);
+        const imageUrl = entityBeforeDelete?.imageUrl;
+
+        // Perform the actual delete validation and soft-delete
+        const result = await super.deleteValidated(id, user);
+
+        // Clean up the image file after successful deletion
+        if (imageUrl) {
+            const imagePath = join(process.cwd(), imageUrl);
             try {
                 await fs.unlink(imagePath);
             } catch (error) {
                 // Ignore errors if the file doesn't exist, e.g., was already deleted
+                // Log the error for debugging purposes
+                console.warn(`Failed to delete image at ${imagePath}:`, error);
             }
         }
 
-        return super.deleteValidated(id, user);
+        return result;
     }
 
     async updateValidated(
@@ -102,7 +127,7 @@ export class ExerciseService extends PublicAuthorizableCrudService<
         dto: ExerciseUpdateDto | ExercisePatchDto,
         user: JwtAuthenticatedUser,
     ): Promise<ExerciseResponseDto> {
-        const oldEntity = await this.repository.findOneBy({ id } as any);
+        const oldEntity = await this.repository.findByIdActive(id);
         const oldImageUrl = oldEntity?.imageUrl;
 
         const updatedExercise = await super.updateValidated(id, dto, user);
@@ -111,8 +136,9 @@ export class ExerciseService extends PublicAuthorizableCrudService<
             const imagePath = join(process.cwd(), oldImageUrl);
             try {
                 await fs.unlink(imagePath);
-            } catch (error) {
+            } catch (error: unknown) {
                 // Ignore errors if the file doesn't exist
+                void error;
             }
         }
 

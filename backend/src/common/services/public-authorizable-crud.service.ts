@@ -195,6 +195,65 @@ export abstract class PublicAuthorizableCrudService<
     }
 
     /**
+     * Finds all entities available for the user with pagination support.
+     *
+     * @param userId ID of the user making the request
+     * @param userRoles Array of roles the user has
+     * @param scope The scope of access being requested
+     * @param offset Number of records to skip
+     * @param limit Number of records to return
+     * @returns Array of response DTOs representing the paginated entities
+     */
+    async findAllAvailableAuthorizedPaginated(
+        userId: number,
+        userRoles: RoleEnum[],
+        scope: FindAllScopes,
+        offset: number = 0,
+        limit: number = 20,
+    ): Promise<ResponseDto[]> {
+        const isAdmin = this.isAdmin(userRoles);
+
+        let entities: Entity[];
+        switch (scope) {
+            case FindAllScopes.AVAILABLE:
+                entities = await this.repository.findAllAvailablePaginated(
+                    userId,
+                    isAdmin,
+                    offset,
+                    limit,
+                );
+                break;
+            case FindAllScopes.MY:
+                entities = await this.repository.findAllPrivatePaginated(
+                    userId,
+                    isAdmin,
+                    offset,
+                    limit,
+                );
+                break;
+            case FindAllScopes.PUBLIC:
+                // Public scope doesn't use pagination by default, but we can add it
+                entities = await this.repository.findAllPublicAndApproved();
+                entities = entities.slice(offset, offset + limit);
+                break;
+            case FindAllScopes.ALL:
+            case FindAllScopes.DELETED:
+            default: {
+                // For ALL and DELETED, use the non-paginated version for now
+                const allEntities = await this.findAllByScope(
+                    userId,
+                    userRoles,
+                    scope,
+                );
+                entities = allEntities.slice(offset, offset + limit);
+                break;
+            }
+        }
+
+        return entities.map((entity) => this.toResponseDto(entity));
+    }
+
+    /**
      * Finds a single entity based on the user's role, the specified scope, and the entity ID.
      *
      * @param userId The ID of the user making the request

@@ -23,6 +23,22 @@ export abstract class PublicAuthorizableBaseRepository<
         });
     }
 
+    async findAllPrivatePaginated(
+        userId: number,
+        isAdmin: boolean,
+        offset: number = 0,
+        limit: number = 20,
+    ): Promise<T[]> {
+        let where = { createdById: userId } as FindManyOptions<T>['where'];
+        if (isAdmin) {
+            where = undefined;
+        }
+
+        return this.findActivePaginated(offset, limit, {
+            where,
+        });
+    }
+
     async findOnePrivate(
         userId: number,
         id: number,
@@ -53,6 +69,26 @@ export abstract class PublicAuthorizableBaseRepository<
         }
 
         return this.findActive({
+            where,
+        });
+    }
+
+    async findAllAvailablePaginated(
+        userId: number,
+        isAdmin: boolean,
+        offset: number = 0,
+        limit: number = 20,
+    ): Promise<T[]> {
+        let where = [
+            { isPublic: true, isApproved: true } as Partial<T>,
+            { createdById: userId } as Partial<T>,
+        ] as FindManyOptions<T>['where'];
+
+        if (isAdmin) {
+            where = undefined;
+        }
+
+        return this.findActivePaginated(offset, limit, {
             where,
         });
     }
@@ -156,13 +192,8 @@ export abstract class PublicAuthorizableBaseRepository<
         ] as FindManyOptions<T>['where'];
 
         if (isAdmin) {
-            where = [
-                {
-                    isPublic: true,
-                    isApproved: true,
-                    isDeleted: true,
-                } as Partial<T>,
-            ] as FindManyOptions<T>['where'];
+            // Admin can see all deleted entities
+            where = { isDeleted: true } as FindManyOptions<T>['where'];
         }
 
         return this.find({

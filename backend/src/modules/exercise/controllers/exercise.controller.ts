@@ -16,6 +16,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
+import { randomBytes } from 'crypto';
 import {
     ApiBadRequestResponse,
     ApiBearerAuth,
@@ -36,10 +37,20 @@ import type { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authentica
 import { ExercisePatchDto } from '../dtos/exercise/exercise-patch.dto';
 import { ExerciseUpdateDto } from '../dtos/exercise/exercise-update.dto';
 import { FindAllScopes } from 'src/common/enums/find-all-scopes.enum';
+import { ConfigService } from '@nestjs/config';
+import { getValidatedUploadDir } from 'src/common/utils/file';
 
 @Controller('exercises')
 export class ExerciseController {
-    constructor(private readonly exerciseService: ExerciseService) {}
+    private readonly uploadDir: string;
+
+    constructor(
+        private readonly exerciseService: ExerciseService,
+        configService: ConfigService,
+    ) {
+        // Validate and store the upload directory
+        this.uploadDir = getValidatedUploadDir(configService);
+    }
 
     @Post('upload-image')
     @ApiBearerAuth()
@@ -47,19 +58,22 @@ export class ExerciseController {
         FileInterceptor('file', {
             storage: diskStorage({
                 destination:
-                    process.env.IMAGE_UPLOAD_PATH || './public/uploads/exercises',
+                    process.env.IMAGE_UPLOAD_PATH ||
+                    './public/uploads/exercises',
                 filename: (req, file, cb) => {
-                    const randomName = Array(32)
-                        .fill(null)
-                        .map(() => Math.round(Math.random() * 16).toString(16))
-                        .join('');
-                    return cb(null, `${randomName}${extname(file.originalname)}`);
+                    const randomName = randomBytes(16).toString('hex');
+                    return cb(
+                        null,
+                        `${randomName}${extname(file.originalname)}`,
+                    );
                 },
             }),
             fileFilter: (req, file, cb) => {
                 if (!file.mimetype.match(/\/(jpg|jpeg|png|gif)$/)) {
                     return cb(
-                        new BadRequestException('Only image files are allowed!'),
+                        new BadRequestException(
+                            'Only image files are allowed!',
+                        ),
                         false,
                     );
                 }
@@ -70,8 +84,7 @@ export class ExerciseController {
             },
         }),
     )
-    uploadImage(@UploadedFile() file) {
-        console.log(file);
+    uploadImage(@UploadedFile() file: Express.Multer.File) {
         return {
             imageUrl: `/uploads/exercises/${file.filename}`,
         };
@@ -249,12 +262,23 @@ export class ExerciseController {
             default: FindAllScopes.AVAILABLE,
         },
     })
-    @ApiOkResponse({
-        description: 'List of all exercises',
-        type: [ExerciseResponseDto],
+    @ApiQuery({
+        name: 'offset',
+        description: 'Number of records to skip (pagination)',
+        required: false,
+        type: Number,
+        example: 0,
     })
-    @ApiNotFoundResponse({
-        description: 'No exercises found',
+    @ApiQuery({
+        name: 'limit',
+        description: 'Number of records to return (pagination, max 100)',
+        required: false,
+        type: Number,
+        example: 20,
+    })
+    @ApiOkResponse({
+        description: 'List of exercises (paginated)',
+        type: [ExerciseResponseDto],
     })
     @ApiUnauthorizedResponse({
         description: 'Unauthorized',

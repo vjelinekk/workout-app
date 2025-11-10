@@ -121,6 +121,25 @@ export abstract class BaseRepository<
     }
 
     /**
+     * Finds many active (non-deleted) entities with pagination support.
+     *
+     * @param offset Number of records to skip
+     * @param limit Number of records to return
+     * @param options Optional TypeORM find options (skip/take will be overridden)
+     * @returns Promise resolving to an array of active entities
+     */
+    async findActivePaginated(
+        offset: number = 0,
+        limit: number = 20,
+        options?: FindManyOptions<T>,
+    ): Promise<T[]> {
+        const opts = this.withActiveOptions(options);
+        opts.skip = offset;
+        opts.take = limit;
+        return this.find(opts);
+    }
+
+    /**
      * Finds a single active (non-deleted) entity using TypeORM find options.
      *
      * @param options TypeORM find-one options.

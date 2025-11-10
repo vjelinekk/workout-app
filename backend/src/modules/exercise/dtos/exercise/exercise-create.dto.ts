@@ -5,7 +5,6 @@ import {
     IsNumber,
     IsOptional,
     IsString,
-    IsUrl,
 } from 'class-validator';
 import { BodyPartEnum } from '../../enums/body-part.enum';
 import { ApiProperty } from '@nestjs/swagger';

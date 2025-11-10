@@ -190,7 +190,9 @@ export class WorkoutSessionPlanController {
             user.roles,
             scope,
             id,
-            ['exercises'],
+            {
+                exercises: true,
+            },
         );
     }
 

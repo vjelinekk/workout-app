@@ -242,12 +242,15 @@ export class TrainingSplitController {
                 user.roles,
                 scope,
                 id,
-                [
-                    'days',
-                    'days.workoutSessionPlan',
-                    'days.workoutSessionPlan.exercises',
-                    'days.workoutSessionPlan.exercises.exercise',
-                ],
+                {
+                    days: {
+                        workoutSessionPlan: {
+                            exercises: {
+                                exercise: true,
+                            },
+                        },
+                    },
+                },
             );
         }
 
@@ -256,7 +259,9 @@ export class TrainingSplitController {
             user.roles,
             scope,
             id,
-            ['days'],
+            {
+                days: true,
+            },
         );
     }
 

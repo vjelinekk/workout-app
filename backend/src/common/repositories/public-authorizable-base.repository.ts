@@ -3,7 +3,7 @@ import {
     PublicAuthorizableEntity,
     PublicAuthorizableRepository,
 } from '../interfaces/public-authorizable-repository.interface';
-import { FindManyOptions } from 'typeorm';
+import { FindManyOptions, FindOptionsRelations } from 'typeorm';
 
 export abstract class PublicAuthorizableBaseRepository<
         T extends PublicAuthorizableEntity,
@@ -43,7 +43,7 @@ export abstract class PublicAuthorizableBaseRepository<
         userId: number,
         id: number,
         isAdmin: boolean,
-        relations?: string[],
+        relations?: FindOptionsRelations<T>,
     ): Promise<T | null> {
         let where = { createdById: userId, id } as FindManyOptions<T>['where'];
         if (isAdmin) {
@@ -97,7 +97,7 @@ export abstract class PublicAuthorizableBaseRepository<
         userId: number,
         id: number,
         isAdmin: boolean,
-        relations?: string[],
+        relations?: FindOptionsRelations<T>,
     ): Promise<T | null> {
         let where = [
             { isPublic: true, isApproved: true, id } as Partial<T>,
@@ -125,7 +125,7 @@ export abstract class PublicAuthorizableBaseRepository<
 
     async findOnePublicAndApproved(
         id: number,
-        relations?: string[],
+        relations?: FindOptionsRelations<T>,
     ): Promise<T | null> {
         return this.findOneActive({
             where: {
@@ -160,7 +160,7 @@ export abstract class PublicAuthorizableBaseRepository<
         userId: number,
         id: number,
         isAdmin: boolean,
-        relations?: string[],
+        relations?: FindOptionsRelations<T>,
     ): Promise<T | null> {
         let where = [
             { isPublic: true, isApproved: true, id } as Partial<T>,
@@ -205,7 +205,7 @@ export abstract class PublicAuthorizableBaseRepository<
         userId: number,
         id: number,
         isAdmin: boolean,
-        relations?: string[],
+        relations?: FindOptionsRelations<T>,
     ): Promise<T | null> {
         let where = [
             {

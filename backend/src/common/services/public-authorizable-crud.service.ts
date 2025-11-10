@@ -9,6 +9,7 @@ import { PublicAuthorizableEntity } from '../interfaces/public-authorizable-repo
 import { PublicAuthorizableBaseRepository } from '../repositories/public-authorizable-base.repository';
 import { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
 import { ValidatedMappedCrudService } from './validated-mapped-crud.service';
+import { FindOptionsRelations } from 'typeorm';
 
 export abstract class PublicAuthorizableCrudService<
     Entity extends PublicAuthorizableEntity,
@@ -120,6 +121,7 @@ export abstract class PublicAuthorizableCrudService<
      * @param userRoles Array of roles the user has
      * @param scope The scope of access being requested
      * @param id ID of the entity to retrieve
+     * @param relations Optional relations to eagerly load
      * @returns The entity if found, null otherwise
      */
     private async findOneByScope(
@@ -127,7 +129,7 @@ export abstract class PublicAuthorizableCrudService<
         userRoles: RoleEnum[],
         scope: FindAllScopes,
         id: number,
-        relations?: string[],
+        relations?: FindOptionsRelations<Entity>,
     ): Promise<Entity | null> {
         const isAdmin = this.isAdmin(userRoles);
 
@@ -260,6 +262,7 @@ export abstract class PublicAuthorizableCrudService<
      * @param userRoles The roles of the user making the request
      * @param scope The scope of the request (e.g., ALL, AVAILABLE, MY, PUBLIC)
      * @param id The ID of the entity to retrieve
+     * @param relations Optional relations to eagerly load
      * @returns The entity as a response DTO
      * @throws NotFoundException if the entity is not found or the user does not have permission to access it
      */
@@ -268,7 +271,7 @@ export abstract class PublicAuthorizableCrudService<
         userRoles: RoleEnum[],
         scope: FindAllScopes,
         id: number,
-        relations?: string[],
+        relations?: FindOptionsRelations<Entity>,
     ): Promise<ResponseDto> {
         const entity = await this.findOneByScope(
             userId,

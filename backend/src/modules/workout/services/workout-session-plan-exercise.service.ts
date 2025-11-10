@@ -1,6 +1,7 @@
 import {
     ForbiddenException,
     Injectable,
+    InternalServerErrorException,
     NotFoundException,
 } from '@nestjs/common';
 import { WorkoutSessionPlanExerciseEntity } from '../entities/workout-session-plan-exercise.entity';
@@ -14,6 +15,7 @@ import { ValidatedMappedCrudService } from 'src/common/services/validated-mapped
 import { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
 import { WorkoutSessionPlanRepository } from '../repositories/workout-session-plan.repository';
 import { RoleEnum } from 'src/modules/user/enums/role.enum';
+import { DataSource } from 'typeorm';
 
 @Injectable()
 export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudService<
@@ -27,6 +29,7 @@ export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudServic
     constructor(
         protected readonly workoutSessionPlanExerciseRepository: WorkoutSessionPlanExerciseRepository,
         protected readonly workoutSessionPlanRepository: WorkoutSessionPlanRepository,
+        private readonly dataSource: DataSource,
     ) {
         super(workoutSessionPlanExerciseRepository);
     }
@@ -165,7 +168,9 @@ export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudServic
             await this.workoutSessionPlanExerciseRepository.insert(entities);
 
         if (result.identifiers.length !== createDtos.length) {
-            // TODO: exception
+            throw new InternalServerErrorException(
+                `Failed to insert all workout session plan exercises. Expected ${createDtos.length}, inserted ${result.identifiers.length}`,
+            )
         }
     }
 
@@ -174,26 +179,39 @@ export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudServic
         createDtos: WorkoutSessionPlanExerciseCreateDto[],
         user: JwtAuthenticatedUser,
     ): Promise<void> {
-        const entities = createDtos.map((dto) => {
-            const entity = this.toEntity(dto);
-            entity.createdById = user.id;
-            return entity;
-        });
+        // Use a transaction to ensure atomicity
+        await this.dataSource.transaction(async (manager) => {
+            // Get the repository from the transaction manager
+            const workoutSessionPlanExerciseRepo = manager.getRepository(
+                WorkoutSessionPlanExerciseEntity,
+            );
 
-        const deleteResult =
-            await this.workoutSessionPlanExerciseRepository.delete({
+            // 1. Delete existing exercises for this workout session plan
+            const deleteResult = await workoutSessionPlanExerciseRepo.delete({
                 workoutSessionPlanId,
             });
 
-        if (!deleteResult.affected || deleteResult.affected === 0) {
-            // TODO: exception
-        }
+            if (!deleteResult.affected || deleteResult.affected === 0) {
+                throw new NotFoundException(
+                    `No workout session plan exercises found for workout session plan ID ${workoutSessionPlanId} to update`,
+                );
+            }
 
-        const result =
-            await this.workoutSessionPlanExerciseRepository.insert(entities);
+            // 2. Create new entities
+            const entities = createDtos.map((dto) => {
+                const entity = this.toEntity(dto);
+                entity.createdById = user.id;
+                return entity;
+            });
 
-        if (result.identifiers.length !== createDtos.length) {
-            // TODO: exception
-        }
+            // 3. Insert new exercises
+            const result = await workoutSessionPlanExerciseRepo.insert(entities);
+
+            if (result.identifiers.length !== createDtos.length) {
+                throw new InternalServerErrorException(
+                    `Failed to insert all workout session plan exercises. Expected ${createDtos.length}, inserted ${result.identifiers.length}`,
+                );
+            }
+        });
     }
 }

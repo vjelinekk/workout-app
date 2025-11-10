@@ -222,43 +222,45 @@ export class WorkoutSessionService extends ValidatedMappedCrudService<
         dto: WorkoutSessionCreateDto,
         userId: number,
     ): Promise<WorkoutSessionResponseDto> {
-        const workoutSessionsInProgress =
-            await this.workoutSessionRepository.findOneActive({
-                where: {
-                    createdById: userId,
-                    status: WorkoutSessionStatusEnum.IN_PROGRESS,
-                },
-            });
+        return await this.dataSource.transaction(async () => {
+            const workoutSessionsInProgress =
+                await this.workoutSessionRepository.findOneActive({
+                    where: {
+                        createdById: userId,
+                        status: WorkoutSessionStatusEnum.IN_PROGRESS,
+                    },
+                });
 
-        if (workoutSessionsInProgress) {
-            throw new BadRequestException(
-                'Cannot start a new workout session while another is in progress',
-            );
-        }
+            if (workoutSessionsInProgress) {
+                throw new BadRequestException(
+                    'Cannot start a new workout session while another is in progress',
+                );
+            }
 
-        const entity = this.toEntity(dto);
+            const entity = this.toEntity(dto);
 
-        entity.createdById = userId;
-        entity.startedAt = new Date();
+            entity.createdById = userId;
+            entity.startedAt = new Date();
 
-        const workoutSession = await this.create(entity);
+            const workoutSession = await this.create(entity);
 
-        const workoutSessionId = workoutSession.id;
-        const { savedSessionExercises, workoutSessionPlan } =
-            await this.createExercisesForSession(
-                workoutSessionId,
-                dto.workoutSessionPlanId,
-                userId,
-            );
+            const workoutSessionId = workoutSession.id;
+            const { savedSessionExercises, workoutSessionPlan } =
+                await this.createExercisesForSession(
+                    workoutSessionId,
+                    dto.workoutSessionPlanId,
+                    userId,
+                );
 
-        workoutSession.exercises = savedSessionExercises;
-        workoutSession.workoutSessionPlan = workoutSessionPlan;
+            workoutSession.exercises = savedSessionExercises;
+            workoutSession.workoutSessionPlan = workoutSessionPlan;
 
-        const responseDto = this.toResponseDto(workoutSession);
+            const responseDto = this.toResponseDto(workoutSession);
 
-        await this.addPreviousRepsAndWeightsToExercises(responseDto);
+            await this.addPreviousRepsAndWeightsToExercises(responseDto);
 
-        return responseDto;
+            return responseDto;
+        })
     }
 
     async getWorkoutSessionById(

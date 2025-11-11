@@ -20,6 +20,11 @@ import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity
 import { WorkoutSessionLogProgressDto } from '../dtos/workout-session/workout-session-log-progess.dto';
 import { DataSource } from 'typeorm';
 
+/**
+ * Workout session service for managing user workout sessions and exercise logging.
+ * Handles session creation, progress tracking, and completion management.
+ * Supports loading previous session data for progress comparison and time synchronization.
+ */
 @Injectable()
 export class WorkoutSessionService extends ValidatedMappedCrudService<
     WorkoutSessionEntity,
@@ -218,6 +223,17 @@ export class WorkoutSessionService extends ValidatedMappedCrudService<
         }
     }
 
+    /**
+     * Starts a new workout session for the user.
+     * Creates a session, initializes exercises from the selected workout plan, and loads previous session data.
+     * Prevents starting a new session while another is in progress. Uses transactions for data consistency.
+     *
+     * @param dto The workout session creation data including workout plan ID
+     * @param userId The ID of the user starting the session
+     * @returns Workout session response DTO with exercises and previous session data
+     * @throws BadRequestException if a workout session is already in progress for the user
+     * @throws NotFoundException if the workout plan does not exist
+     */
     async startWorkoutSession(
         dto: WorkoutSessionCreateDto,
         userId: number,
@@ -263,6 +279,14 @@ export class WorkoutSessionService extends ValidatedMappedCrudService<
         })
     }
 
+    /**
+     * Retrieves a workout session by ID with all related data.
+     * Loads exercises and previous session data for progress comparison.
+     *
+     * @param id The ID of the workout session to retrieve
+     * @returns Workout session response DTO with exercises and previous session data
+     * @throws NotFoundException if the session does not exist
+     */
     async getWorkoutSessionById(
         id: number,
     ): Promise<WorkoutSessionResponseDto> {
@@ -285,6 +309,17 @@ export class WorkoutSessionService extends ValidatedMappedCrudService<
         return responseDto;
     }
 
+    /**
+     * Logs exercise progress for a workout session.
+     * Updates actual reps and weights for each exercise. Optionally marks session as completed.
+     * All updates are performed within a transaction to ensure data consistency.
+     *
+     * @param logProgressDto The progress data for each exercise (reps and weights per set)
+     * @param workoutSessionId The ID of the workout session being logged
+     * @param userId The ID of the user logging the progress
+     * @param finish Optional - if true, marks the session as completed
+     * @throws NotFoundException if the session does not exist or is already completed
+     */
     async logWorkoutSessionProgress(
         logProgressDto: WorkoutSessionLogProgressDto,
         workoutSessionId: number,
@@ -378,6 +413,15 @@ export class WorkoutSessionService extends ValidatedMappedCrudService<
         });
     }
 
+    /**
+     * Logs progress and completes a workout session.
+     * Convenience method that calls logWorkoutSessionProgress with finish flag set to true.
+     *
+     * @param finishDto The final progress data for exercises
+     * @param id The ID of the workout session to complete
+     * @param userId The ID of the user completing the session
+     * @throws NotFoundException if the session does not exist
+     */
     async finishWorkoutSession(
         finishDto: WorkoutSessionLogProgressDto,
         id: number,
@@ -386,6 +430,14 @@ export class WorkoutSessionService extends ValidatedMappedCrudService<
         await this.logWorkoutSessionProgress(finishDto, id, userId, true);
     }
 
+    /**
+     * Retrieves the user's currently active (in-progress) workout session.
+     * Loads exercises and previous session data for progress comparison.
+     *
+     * @param userId The ID of the user
+     * @returns Workout session response DTO for the active session
+     * @throws NotFoundException if no active session found for the user
+     */
     async getWorkoutSessionInProgress(
         userId: number,
     ): Promise<WorkoutSessionResponseDto> {
@@ -418,6 +470,14 @@ export class WorkoutSessionService extends ValidatedMappedCrudService<
         return responseDto;
     }
 
+    /**
+     * Synchronizes the duration of the active workout session based on elapsed time.
+     * Updates the session's duration in seconds and updated timestamp.
+     * Used to keep the session duration in sync with client-side timers.
+     *
+     * @param userId The ID of the user whose session duration should be synced
+     * @throws NotFoundException if no active session is found for the user
+     */
     async syncWorkoutSessionTime(userId: number): Promise<void> {
         const workoutSession =
             await this.workoutSessionRepository.findOneActive({

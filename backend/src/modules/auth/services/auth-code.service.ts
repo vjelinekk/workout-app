@@ -5,6 +5,11 @@ import { randomBytes } from 'crypto';
 
 const AUTH_CODE_EXPIRATION_MS = 5 * 60 * 1000; // 5 minutes
 
+/**
+ * Authentication code service for generating and managing temporary authentication codes.
+ * Provides temporary code-based authentication for OAuth flows and QR code login scenarios.
+ * Manages code expiration and cleanup of expired codes.
+ */
 @Injectable()
 export class AuthCodeService {
     private authCodes: Map<string, AuthCodeData> = new Map();

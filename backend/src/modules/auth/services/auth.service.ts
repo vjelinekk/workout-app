@@ -9,6 +9,11 @@ import { RegisterDto } from '../dtos/register.dto';
 import { RoleRepository } from 'src/modules/user/repositories/role.repository';
 import { hashPassword } from 'src/common/utils/hash';
 
+/**
+ * Authentication service for handling user login, registration, and credential validation.
+ * Manages JWT token generation and user credential verification using bcrypt.
+ * Provides core authentication functionality for the application.
+ */
 @Injectable()
 export class AuthService {
     constructor(
@@ -17,6 +22,15 @@ export class AuthService {
         private jwtService: JwtService,
     ) {}
 
+    /**
+     * Validates user credentials by email and password.
+     * Verifies the password against the stored hashed password using bcrypt.
+     *
+     * @param email The user's email address
+     * @param pass The user's plaintext password to verify
+     * @returns The user entity if credentials are valid
+     * @throws UnauthorizedException if email not found or password does not match
+     */
     async validateUser(email: string, pass: string): Promise<UserEntity> {
         const user = await this.userRepository.findByEmail(email);
         if (!user) {
@@ -31,6 +45,13 @@ export class AuthService {
         return user;
     }
 
+    /**
+     * Generates JWT login response with authentication token.
+     * Creates a signed JWT token containing user ID, nickname, and roles.
+     *
+     * @param user The authenticated user entity with loaded roles
+     * @returns Login response containing access token and user profile information
+     */
     login(user: UserEntity): LoginResponseDto {
         const roles = user.roles.map((role) => role.id);
 
@@ -51,6 +72,15 @@ export class AuthService {
         };
     }
 
+    /**
+     * Registers a new user with email and password authentication.
+     * Hashes the password using bcrypt and assigns the default user role.
+     * Returns a login response with JWT token for immediate authentication.
+     *
+     * @param registerDto Registration data containing email, password, firstName, lastName, and nickname
+     * @returns Login response with access token and user profile information
+     * @throws UnauthorizedException if the default role does not exist in the system
+     */
     async register(registerDto: RegisterDto) {
         const password = registerDto.password;
         const hashedPassword = hashPassword(password);

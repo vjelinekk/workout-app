@@ -14,6 +14,11 @@ import { TrainerTraineeResponseDto } from '../dtos/trainer-trainee-response.dto'
 import { TrainingSplitAssignmentStatusEnum } from 'src/modules/training-split/enums/training-split-assignment-status.enum';
 import { TrainerTraineeTraineeResponseDto } from '../dtos/trainer-trainee-trainee-response.dto';
 
+/**
+ * Trainer-trainee service for managing trainer-trainee relationships.
+ * Handles trainer requests, relationship acceptance/removal, and trainee management.
+ * Manages the assignment of trainers to trainees and tracks relationship status.
+ */
 @Injectable()
 export class TrainerTraineeService {
     constructor(
@@ -21,6 +26,15 @@ export class TrainerTraineeService {
         private readonly userRepository: UserRepository,
     ) {}
 
+    /**
+     * Sends a trainer request to a user (trainee) from a trainer.
+     * Validates that the trainer exists, the target is a trainee, and no prior request exists.
+     *
+     * @param traineeId The ID of the trainee to send a request to
+     * @param user The authenticated trainer user making the request
+     * @throws BadRequestException if trainee not found, user is not a trainee, or request already exists
+     * @throws UnauthorizedException if the user is not a trainer or admin
+     */
     async sendTrainerRequest(
         traineeId: number,
         user: JwtAuthenticatedUser,
@@ -77,6 +91,13 @@ export class TrainerTraineeService {
         await this.trainerTraineeRepository.save(trainerTrainee);
     }
 
+    /**
+     * Retrieves all active and pending trainer requests for a trainee.
+     * Returns trainer information for each non-removed request.
+     *
+     * @param userId The ID of the trainee to get requests for
+     * @returns Array of trainer request DTOs with trainer information
+     */
     async getTrainerRequests(
         userId: number,
     ): Promise<TrainerTraineeResponseDto[]> {
@@ -97,6 +118,16 @@ export class TrainerTraineeService {
         );
     }
 
+    /**
+     * Responds to a trainer request by accepting or declining it.
+     * Sets the relationship to ACTIVE if accepted, or REMOVED if declined.
+     *
+     * @param accept True to accept the trainer request, false to decline
+     * @param id The ID of the trainer request to respond to
+     * @param userId The ID of the trainee responding to the request
+     * @throws BadRequestException if the request is not found or already removed
+     * @throws UnauthorizedException if the user is not the target trainee
+     */
     async respondToTrainerRequest(
         accept: boolean,
         id: number,
@@ -130,6 +161,14 @@ export class TrainerTraineeService {
         await this.trainerTraineeRepository.save(request);
     }
 
+    /**
+     * Retrieves all active trainees for a specific trainer.
+     * Returns trainee information including active and pending training split assignments.
+     * Sorts trainees by their most recent training split assignment.
+     *
+     * @param id The ID of the trainer
+     * @returns Array of trainee information DTOs with training split assignment details
+     */
     async getTraineesForTrainer(
         id: number,
     ): Promise<TrainerTraineeTraineeResponseDto[]> {

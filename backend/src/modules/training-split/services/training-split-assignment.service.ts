@@ -18,6 +18,11 @@ import { TrainingSplitAlreadyPendingOrActiveException } from '../exceptions/trai
 import { TrainerTraineeRepository } from 'src/modules/user/repositories/trainer-trainee.repository';
 import { TrainerTraineeStatusEnum } from 'src/modules/user/enums/trainer-trainee-status.enum';
 
+/**
+ * Training split assignment service for managing workout plan assignments to trainees.
+ * Handles assignment creation, acceptance/rejection, and deactivation of assignments.
+ * Manages the relationship between trainees and their assigned training splits.
+ */
 @Injectable()
 export class TrainingSplitAssignmentService extends ValidatedMappedCrudService<
     TrainingSplitAssignmentEntity,
@@ -124,6 +129,17 @@ export class TrainingSplitAssignmentService extends ValidatedMappedCrudService<
         );
     };
 
+    /**
+     * Creates a new training split assignment with validation.
+     * If assigning to self, immediately activates it and deactivates current active assignment.
+     * If assigning to another user, creates as PENDING for acceptance.
+     * Validates that no pending or active assignment already exists for this split-trainee pair.
+     *
+     * @param dto Training split assignment creation data (traineeId, trainingSplitId)
+     * @param user The authenticated user making the assignment
+     * @returns Created assignment as response DTO
+     * @throws TrainingSplitAlreadyPendingOrActiveException if assignment already exists
+     */
     async createValidated(
         dto: TrainingSplitAssignmentCreateDto,
         user: JwtAuthenticatedUser,
@@ -147,6 +163,14 @@ export class TrainingSplitAssignmentService extends ValidatedMappedCrudService<
         return this.toResponseDto(createdEntity);
     }
 
+    /**
+     * Retrieves all training split assignments for a trainee from their current active trainer.
+     * Optionally filters by assignment status.
+     *
+     * @param userId The ID of the trainee
+     * @param statuses Optional - filter assignments by specific statuses
+     * @returns Array of assignment response DTOs for assignments from the trainee's active trainer
+     */
     async findAllActiveForUserMapped(
         userId: number,
         statuses?: TrainingSplitAssignmentStatusEnum[],
@@ -177,6 +201,18 @@ export class TrainingSplitAssignmentService extends ValidatedMappedCrudService<
         return result.map((entity) => this.toResponseDto(entity));
     }
 
+    /**
+     * Resolves a pending training split assignment by accepting or declining it.
+     * If accepted, activates the assignment and deactivates the current active assignment.
+     * If declined, marks the assignment as declined.
+     *
+     * @param id The ID of the assignment to resolve
+     * @param accept True to accept the assignment, false to decline it
+     * @param user The authenticated trainee responding to the assignment
+     * @throws NotFoundException if the assignment does not exist
+     * @throws UnauthorizedException if the user is not the target trainee
+     * @throws BadRequestException if the assignment is not in PENDING status
+     */
     async resolveAssignment(
         id: number,
         accept: boolean,

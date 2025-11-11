@@ -2,6 +2,11 @@ import { Injectable, Inject } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Resend } from 'resend';
 
+/**
+ * Mail service for sending transactional emails to users.
+ * Integrates with Resend email provider for reliable email delivery.
+ * Supports email notifications for trainer applications and other events.
+ */
 @Injectable()
 export class MailService {
     private readonly fromEmail: string;

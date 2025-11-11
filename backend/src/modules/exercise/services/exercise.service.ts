@@ -12,6 +12,11 @@ import { PublicAuthorizableCrudService } from 'src/common/services/public-author
 import { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
 import { RoleEnum } from 'src/modules/user/enums/role.enum';
 
+/**
+ * Exercise service for managing exercises with image uploads and public/private visibility.
+ * Handles exercise CRUD operations, image file management, and access control.
+ * Supports exercise categorization and admin approval workflow for public exercises.
+ */
 @Injectable()
 export class ExerciseService extends PublicAuthorizableCrudService<
     ExerciseEntity,

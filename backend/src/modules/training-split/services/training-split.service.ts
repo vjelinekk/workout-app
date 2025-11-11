@@ -11,6 +11,11 @@ import { TrainingSplitAssignmentRepository } from '../repositories/training-spli
 import { TrainingSplitAssignmentStatusEnum } from '../enums/training-split-assignment-status.enum';
 import { NoAssignedTrainingSplitException } from '../exceptions/no-assigned-training-split.exception';
 
+/**
+ * Training split service for managing workout splits and their assignments.
+ * Extends PublicAuthorizableCrudService to handle public/private split visibility.
+ * Manages access to training splits and their associated days and exercises.
+ */
 @Injectable()
 export class TrainingSplitService extends PublicAuthorizableCrudService<
     TrainingSplitEntity,
@@ -72,6 +77,15 @@ export class TrainingSplitService extends PublicAuthorizableCrudService<
         void user;
     }
 
+    /**
+     * Retrieves the currently active training split assigned to a trainee.
+     * Eagerly loads all days and their associated exercises for complete plan information.
+     *
+     * @param id The ID of the trainee
+     * @returns Training split response DTO with all days and exercises loaded
+     * @throws NoAssignedTrainingSplitException if no active assignment exists for the trainee
+     * @throws NotFoundException if the assigned training split record is missing
+     */
     async findAssignedTrainingSplit(
         id: number,
     ): Promise<TrainingSplitResponseDto> {

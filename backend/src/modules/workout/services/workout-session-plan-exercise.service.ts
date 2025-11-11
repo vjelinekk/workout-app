@@ -17,6 +17,11 @@ import { WorkoutSessionPlanRepository } from '../repositories/workout-session-pl
 import { RoleEnum } from 'src/modules/user/enums/role.enum';
 import { DataSource } from 'typeorm';
 
+/**
+ * Workout session plan exercise service for managing exercises within a workout plan.
+ * Handles exercise-level CRUD operations and bulk management for plan exercises.
+ * Validates planned reps per set configuration and access control to parent plans.
+ */
 @Injectable()
 export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudService<
     WorkoutSessionPlanExerciseEntity,
@@ -138,6 +143,12 @@ export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudServic
         }
     }
 
+    /**
+     * Retrieves all active exercises for a workout session plan, ordered by exercise order.
+     *
+     * @param workoutSessionPlanId The ID of the workout session plan
+     * @returns Array of exercise response DTOs ordered by their position in the plan
+     */
     public async findAllActiveByWorkoutSessionPlanIdMapped(
         workoutSessionPlanId: number,
     ): Promise<WorkoutSessionPlanExerciseResponseDto[]> {
@@ -154,6 +165,14 @@ export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudServic
         return entities.map((entity) => this.toResponseDto(entity));
     }
 
+    /**
+     * Bulk inserts multiple exercises for a workout session plan.
+     * Validates that all exercises were successfully inserted.
+     *
+     * @param createDtos Array of exercise creation DTOs
+     * @param user The authenticated user creating the exercises
+     * @throws InternalServerErrorException if not all exercises were successfully inserted
+     */
     public async createBulk(
         createDtos: WorkoutSessionPlanExerciseCreateDto[],
         user: JwtAuthenticatedUser,
@@ -174,6 +193,17 @@ export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudServic
         }
     }
 
+    /**
+     * Bulk updates exercises for a workout session plan within a transaction.
+     * Deletes all existing exercises, then inserts new ones atomically.
+     * Ensures data consistency if any operation fails.
+     *
+     * @param workoutSessionPlanId The ID of the workout session plan to update
+     * @param createDtos Array of new exercise DTOs
+     * @param user The authenticated user performing the update
+     * @throws NotFoundException if no existing exercises found to delete
+     * @throws InternalServerErrorException if not all new exercises were successfully inserted
+     */
     public async updateBulk(
         workoutSessionPlanId: number,
         createDtos: WorkoutSessionPlanExerciseCreateDto[],

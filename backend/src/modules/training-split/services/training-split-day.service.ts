@@ -17,6 +17,11 @@ import { RoleEnum } from 'src/modules/user/enums/role.enum';
 import { WorkoutSessionPlanRepository } from 'src/modules/workout/repositories/workout-session-plan.repository';
 import { DataSource, FindOptionsRelations } from 'typeorm';
 
+/**
+ * Training split day service for managing individual days within a training split.
+ * Handles day-level CRUD operations and bulk operations for training split days.
+ * Manages workout session plans assigned to each day with comprehensive access validation.
+ */
 @Injectable()
 export class TrainingSplitDayService extends ValidatedMappedCrudService<
     TrainingSplitDayEntity,
@@ -127,6 +132,14 @@ export class TrainingSplitDayService extends ValidatedMappedCrudService<
         void user;
     }
 
+    /**
+     * Bulk inserts multiple training split days for a training split.
+     * Validates that all days were successfully inserted.
+     *
+     * @param createDtos Array of training split day creation DTOs
+     * @param user The authenticated user creating the days
+     * @throws InternalServerErrorException if not all days were successfully inserted
+     */
     async createBulk(
         createDtos: TrainingSplitDayCreateDto[],
         user: JwtAuthenticatedUser,
@@ -146,6 +159,17 @@ export class TrainingSplitDayService extends ValidatedMappedCrudService<
         }
     }
 
+    /**
+     * Bulk updates training split days within a transaction.
+     * Deletes all existing days for the split, then inserts new ones atomically.
+     * Ensures data consistency if any operation fails.
+     *
+     * @param trainingSplitId The ID of the training split to update
+     * @param createDtos Array of new training split day DTOs
+     * @param user The authenticated user performing the update
+     * @throws BadRequestException if no existing days found to delete
+     * @throws InternalServerErrorException if not all new days were successfully inserted
+     */
     async updateBulk(
         trainingSplitId: number,
         createDtos: TrainingSplitDayCreateDto[],
@@ -186,6 +210,13 @@ export class TrainingSplitDayService extends ValidatedMappedCrudService<
         });
     }
 
+    /**
+     * Retrieves all active training split days for a specific training split.
+     * Returns days formatted as response DTOs.
+     *
+     * @param trainingSplitId The ID of the training split
+     * @returns Array of training split day response DTOs for the split
+     */
     async findAllByTrainingSplitIdActiveMapped(
         trainingSplitId: number,
     ): Promise<TrainingSplitDayResponseDto[]> {

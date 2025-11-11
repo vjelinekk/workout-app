@@ -7,6 +7,11 @@ import { ExerciseCategoryResponseDto } from '../dtos/exercise-category/exercise-
 import { ExerciseCategoryCreateDto } from '../dtos/exercise-category/exercise-category-create.dto';
 import { Injectable } from '@nestjs/common';
 
+/**
+ * Exercise category service for managing exercise categorization.
+ * Provides CRUD operations for exercise categories used to organize exercises.
+ * Supports category-based filtering and exercise organization.
+ */
 @Injectable()
 export class ExerciseCategoryService extends MappedCrudService<
     ExerciseCategoryEntity,

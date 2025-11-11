@@ -8,6 +8,11 @@ import { Injectable } from '@nestjs/common';
 import { PublicAuthorizableCrudService } from 'src/common/services/public-authorizable-crud.service';
 import { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
 
+/**
+ * Workout session plan service for managing workout plan templates.
+ * Provides CRUD operations for reusable workout plans with public/private visibility.
+ * Manages plan templates that are used to generate actual workout sessions.
+ */
 @Injectable()
 export class WorkoutSessionPlanService extends PublicAuthorizableCrudService<
     WorkoutSessionPlanEntity,

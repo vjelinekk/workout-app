@@ -15,6 +15,11 @@ import { UserResponseDto } from '../dtos/user-response.dto';
 import { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
 import { TrainerTraineeStatusEnum } from '../enums/trainer-trainee-status.enum';
 
+/**
+ * User service for managing user operations and user-related business logic.
+ * Handles user creation, retrieval, role management, and trainer application workflows.
+ * Provides methods for user authentication, profile management, and trainer request handling.
+ */
 @Injectable()
 export class UserService {
     constructor(
@@ -22,6 +27,13 @@ export class UserService {
         private readonly rolesRepository: RoleRepository,
     ) { }
 
+    /**
+     * Finds a user by email address.
+     *
+     * @param email The email address to search for
+     * @returns The user entity with the specified email
+     * @throws NotFoundException if no user with the given email exists
+     */
     async findByEmail(email: string): Promise<UserEntity> {
         const user = await this.userRepository.findByEmail(email);
         if (!user) {
@@ -31,6 +43,12 @@ export class UserService {
         return user;
     }
 
+    /**
+     * Finds a user by their Google OAuth ID.
+     *
+     * @param id The Google OAuth ID to search for
+     * @returns The user entity with the specified Google ID, or null if not found
+     */
     async findByGoogleId(id: string): Promise<UserEntity | null> {
         const user = await this.userRepository.findByGoogleId(id);
         if (!user) {
@@ -40,6 +58,18 @@ export class UserService {
         return user;
     }
 
+    /**
+     * Creates a new user from Google OAuth credentials.
+     * Generates a random hashed password and assigns the default user role.
+     * Derives nickname from email if available, otherwise uses timestamp-based identifier.
+     *
+     * @param googleId The unique Google OAuth ID
+     * @param email The user's email address
+     * @param firstName The user's first name
+     * @param lastName The user's last name
+     * @returns The newly created user entity with default role assigned
+     * @throws NotFoundException if the default role does not exist in the system
+     */
     async createFromGoogle({
         googleId,
         email,
@@ -69,6 +99,13 @@ export class UserService {
         return this.userRepository.save(user);
     }
 
+    /**
+     * Finds an active user by ID and eagerly loads their associated roles.
+     *
+     * @param id The user ID to retrieve
+     * @returns The user entity with all associated roles loaded
+     * @throws NotFoundException if no active user with the given ID exists
+     */
     async findByIdWithRoles(id: number): Promise<UserEntity> {
         const user = await this.userRepository.findByIdActive(id, {
             roles: true,
@@ -80,6 +117,15 @@ export class UserService {
         return user;
     }
 
+    /**
+     * Finds a user by ID and validates they do not already have the trainer role.
+     * Used as a precondition for user trainer application requests.
+     *
+     * @param id The user ID to retrieve
+     * @returns The user entity with roles loaded
+     * @throws NotFoundException if no active user with the given ID exists
+     * @throws BadRequestException if the user already has the trainer role
+     */
     async findByIdForBecomeTrainer(id: number): Promise<UserEntity> {
         const user = await this.findByIdWithRoles(id);
         const hasTrainerRole = user.roles.some(
@@ -92,6 +138,11 @@ export class UserService {
         return user;
     }
 
+    /**
+     * Retrieves all active users with the admin role.
+     *
+     * @returns Array of all admin users
+     */
     async findAllAdmins(): Promise<UserEntity[]> {
         return this.userRepository.findActive({
             where: {
@@ -102,11 +153,28 @@ export class UserService {
         });
     }
 
+    /**
+     * Retrieves all email addresses of users with the admin role.
+     * Useful for sending notifications to administrators.
+     *
+     * @returns Array of email addresses for all admin users
+     */
     async findAllAdminsEmails(): Promise<string[]> {
         const admins = await this.findAllAdmins();
         return admins.map((admin) => admin.email);
     }
 
+    /**
+     * Submits a trainer application request for a user.
+     * Sets the trainer request flag and stores the reason for the application.
+     *
+     * @param userId The ID of the user requesting to become a trainer
+     * @param reason The reason or motivation for becoming a trainer
+     * @returns The updated user entity
+     * @throws NotFoundException if no active user with the given ID exists
+     * @throws BadRequestException if the user already has the trainer role
+     * @throws BadRequestException if the user has already submitted a trainer application
+     */
     async requestBecomeTrainer(
         userId: number,
         reason: string,
@@ -124,6 +192,18 @@ export class UserService {
         return user;
     }
 
+    /**
+     * Retrieves users based on filtering criteria.
+     * Supports filtering by trainer requests, roles, and recruitment status.
+     * When filtering for unrecruitedOrPending trainees, excludes users already assigned to the requesting trainer.
+     * Uses an optimized query builder with LEFT JOIN to avoid N+1 queries.
+     *
+     * @param user The authenticated user making the request
+     * @param trainerRequests Optional - if true, returns only users requesting to become trainers
+     * @param roles Optional - filters users by specific roles (typically TRAINEE)
+     * @param notRecruitedOrPending Optional - if true with TRAINEE role, excludes trainees already assigned to the trainer
+     * @returns Array of user response DTOs matching the filter criteria
+     */
     async getAll(
         user: JwtAuthenticatedUser,
         trainerRequests?: boolean,
@@ -206,7 +286,16 @@ export class UserService {
         });
     }
 
-
+    /**
+     * Resolves a pending trainer application by approving or denying the request.
+     * If approved, assigns the trainer role to the user. Either way, clears the trainer request flag.
+     *
+     * @param userId The ID of the user whose application is being resolved
+     * @param approve True to approve and assign trainer role, false to deny the request
+     * @throws NotFoundException if no active user with the given ID exists
+     * @throws BadRequestException if the user already has the trainer role
+     * @throws NotFoundException if the trainer role does not exist in the system (on approval)
+     */
     async resolveTrainerApplication(userId: number, approve: boolean) {
         const user = await this.findByIdForBecomeTrainer(userId);
         const currentUserRoles = user.roles;
@@ -227,6 +316,14 @@ export class UserService {
         await this.userRepository.save(user);
     }
 
+    /**
+     * Retrieves the public profile of a user by ID.
+     * Returns user information formatted as a response DTO with roles included.
+     *
+     * @param id The user ID to retrieve
+     * @returns User profile as response DTO with excluded sensitive fields
+     * @throws NotFoundException if no active user with the given ID exists
+     */
     async findByIdProfile(id: number): Promise<UserResponseDto> {
         const user = await this.findByIdWithRoles(id);
 

@@ -19,6 +19,7 @@ import { JwtAuthGuard } from '../src/modules/auth/guards/jwt-auth.guard';
 import { ExerciseModule } from '../src/modules/exercise/exercise.module';
 import { WorkoutModule } from '../src/modules/workout/workout.module';
 import { TrainingSplitModule } from '../src/modules/training-split/training-split.module';
+import { RedisModule } from '../src/common/redis/redis.module';
 
 describe('UserController (e2e - Integration Tests)', () => {
     let app: INestApplication;
@@ -40,6 +41,8 @@ describe('UserController (e2e - Integration Tests)', () => {
         process.env.POSTGRES_USER = 'workout_test';
         process.env.POSTGRES_PASSWORD = 'workout_test';
         process.env.POSTGRES_DB = 'workout_test_db';
+        process.env.REDIS_HOST = 'localhost';
+        process.env.REDIS_PORT = '6380';
         process.env.JWT_SECRET = 'test-jwt-secret-key-for-integration-tests';
         process.env.JWT_EXPIRES_IN = '1h';
 
@@ -51,6 +54,7 @@ describe('UserController (e2e - Integration Tests)', () => {
                     ignoreEnvFile: false,
                 }),
                 TypeOrmModule.forRoot(getTestDatabaseConfig()),
+                RedisModule,
                 AuthModule,
                 ExerciseModule,
                 WorkoutModule,

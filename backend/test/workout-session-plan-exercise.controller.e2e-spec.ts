@@ -25,6 +25,7 @@ import { WorkoutSessionPlanExerciseEntity } from '../src/modules/workout/entitie
 import { ExerciseEntity } from '../src/modules/exercise/entities/exercise.entity';
 import { BodyPartEnum } from '../src/modules/exercise/enums/body-part.enum';
 import { WorkoutSessionPlanExerciseCreateDto } from '../src/modules/workout/dtos/workout-session-plan-exercise/workout-session-plan-exercise-create.dto';
+import { RedisModule } from '../src/common/redis/redis.module';
 
 describe('WorkoutSessionPlanExerciseController (e2e - Integration Tests)', () => {
     let app: INestApplication;
@@ -54,6 +55,8 @@ describe('WorkoutSessionPlanExerciseController (e2e - Integration Tests)', () =>
         process.env.POSTGRES_USER = 'workout_test';
         process.env.POSTGRES_PASSWORD = 'workout_test';
         process.env.POSTGRES_DB = 'workout_test_db';
+        process.env.REDIS_HOST = 'localhost';
+        process.env.REDIS_PORT = '6380';
         process.env.JWT_SECRET = 'test-jwt-secret-key-for-integration-tests';
         process.env.JWT_EXPIRES_IN = '1h';
 
@@ -65,6 +68,7 @@ describe('WorkoutSessionPlanExerciseController (e2e - Integration Tests)', () =>
                     ignoreEnvFile: false,
                 }),
                 TypeOrmModule.forRoot(getTestDatabaseConfig()),
+                RedisModule,
                 AuthModule,
                 ExerciseModule,
                 WorkoutModule,

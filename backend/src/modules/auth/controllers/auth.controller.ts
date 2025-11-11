@@ -75,13 +75,13 @@ export class AuthController {
     @Get('google/callback')
     @UseGuards(GoogleAuthGuard)
     @ApiOperation({ summary: 'Google OAuth2 callback' })
-    googleAuthRedirect(
+    async googleAuthRedirect(
         @AuthenticatedUser() user: UserEntity,
         @Res() res: Response,
     ) {
         const loginResponse = this.authService.login(user);
 
-        const authCode = this.authCodeService.generateAuthCode(loginResponse);
+        const authCode = await this.authCodeService.generateAuthCode(loginResponse);
 
         const frontendUrl = this.configService.get<string>('FRONTEND_URL');
         if (!frontendUrl) {
@@ -99,8 +99,8 @@ export class AuthController {
     @Post('exchange-code')
     @ApiOperation({ summary: 'Exchange auth code for login response' })
     @ApiBody({ type: String, description: 'Authorization code' })
-    exchangeAuthCode(@Body('code') code: string) {
-        const loginResponse = this.authCodeService.exchangeAuthCode(code);
+    async exchangeAuthCode(@Body('code') code: string) {
+        const loginResponse = await this.authCodeService.exchangeAuthCode(code);
         if (!loginResponse) {
             throw new UnauthorizedException('Invalid or expired auth code');
         }

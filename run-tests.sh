@@ -26,6 +26,17 @@ check_test_db() {
     fi
 }
 
+# Function to check if test redis is running
+check_test_redis() {
+    if docker ps | grep -q "workout-redis-test"; then
+        echo -e "${GREEN}✓ Test Redis is running${NC}"
+        return 0
+    else
+        echo -e "${RED}✗ Test Redis is not running${NC}"
+        return 1
+    fi
+}
+
 # Function to start test database
 start_test_db() {
     echo -e "${YELLOW}Starting test database...${NC}"
@@ -47,6 +58,19 @@ start_test_db() {
     
     echo -e "${RED}✗ Database failed to start${NC}"
     return 1
+}
+
+# Function to start test redis
+start_test_redis() {
+    echo -e "${YELLOW}Starting test Redis...${NC}"
+    docker-compose up redis-test -d
+    
+    # Wait for Redis to be ready
+    echo -e "${YELLOW}Waiting for Redis to be ready...${NC}"
+    sleep 3
+    
+    echo -e "${GREEN}✓ Redis is ready${NC}"
+    return 0
 }
 
 # Function to run tests
@@ -105,23 +129,29 @@ case "${1:-}" in
         show_usage
         ;;
     "stop")
-        echo -e "${YELLOW}Stopping test database...${NC}"
-        docker-compose stop db-test
-        echo -e "${GREEN}✓ Test database stopped${NC}"
+        echo -e "${YELLOW}Stopping test database and Redis...${NC}"
+        docker-compose stop db-test redis-test
+        echo -e "${GREEN}✓ Test database and Redis stopped${NC}"
         exit 0
         ;;
     "clean")
-        echo -e "${YELLOW}Stopping test database and removing volumes...${NC}"
-        docker-compose stop db-test
-        docker-compose rm -f db-test
+        echo -e "${YELLOW}Stopping test database and Redis, removing volumes...${NC}"
+        docker-compose stop db-test redis-test
+        docker-compose rm -f db-test redis-test
         docker volume rm workout-app_db_test_data 2>/dev/null || true
-        echo -e "${GREEN}✓ Test database cleaned${NC}"
+        docker volume rm workout-app_redis_test_data 2>/dev/null || true
+        echo -e "${GREEN}✓ Test database and Redis cleaned${NC}"
         exit 0
         ;;
     "watch"|"coverage"|"debug"|"")
         # Check if test database is running
         if ! check_test_db; then
             start_test_db || exit 1
+        fi
+        
+        # Check if test Redis is running
+        if ! check_test_redis; then
+            start_test_redis || exit 1
         fi
         
         # Run tests

@@ -127,7 +127,8 @@ export class AuthService {
             // Handle duplicate key violations (PostgreSQL unique constraint error)
             if (
                 this.isDatabaseError(error) &&
-                error.code === PostgresErrorCodes.UNIQUE_VIOLATION
+                (error.code as PostgresErrorCodes) ===
+                    PostgresErrorCodes.UNIQUE_VIOLATION
             ) {
                 const detail = error.detail || '';
                 if (detail.includes('email')) {
@@ -148,7 +149,7 @@ export class AuthService {
                 throw new BadRequestException('User already exists');
             }
             this.logger.error(
-                `Registration failed for ${registerDto.email}: ${error}`,
+                `Registration failed for ${registerDto.email}: ${(error as Error).message}`,
             );
             throw error;
         }

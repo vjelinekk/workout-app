@@ -23,7 +23,7 @@ export class LoggingInterceptor implements NestInterceptor {
         return next.handle().pipe(
             tap(() => {
                 const elapsed = Date.now() - now;
-                this.logger.log(`${method} ${url} - ${elapsed}ms`);
+                this.logger.log({ method, url, elapsed }, 'Request processed');
             }),
         );
     }

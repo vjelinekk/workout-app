@@ -126,8 +126,9 @@ describe('WorkoutSessionPlanController (e2e - Integration Tests)', () => {
 
     const setupTestData = async () => {
         const roleRepository = dataSource.getRepository(RoleEntity);
-        const workoutPlanRepository =
-            dataSource.getRepository(WorkoutSessionPlanEntity);
+        const workoutPlanRepository = dataSource.getRepository(
+            WorkoutSessionPlanEntity,
+        );
 
         // Create roles if they don't exist
         let adminRole = await roleRepository.findOne({
@@ -274,8 +275,9 @@ describe('WorkoutSessionPlanController (e2e - Integration Tests)', () => {
             isApproved: false,
             createdById: trainerId,
         });
-        const savedPublicNotApprovedPlan =
-            await workoutPlanRepository.save(publicNotApprovedPlan);
+        const savedPublicNotApprovedPlan = await workoutPlanRepository.save(
+            publicNotApprovedPlan,
+        );
         publicNotApprovedPlanId = savedPublicNotApprovedPlan.id;
     };
 
@@ -637,8 +639,9 @@ describe('WorkoutSessionPlanController (e2e - Integration Tests)', () => {
 
         it('should delete workout plan for owner', async () => {
             // Create a new plan to delete
-            const workoutPlanRepository =
-                dataSource.getRepository(WorkoutSessionPlanEntity);
+            const workoutPlanRepository = dataSource.getRepository(
+                WorkoutSessionPlanEntity,
+            );
             const toDelete = workoutPlanRepository.create({
                 name: 'Plan to Delete',
                 description: 'Will be deleted',
@@ -665,8 +668,9 @@ describe('WorkoutSessionPlanController (e2e - Integration Tests)', () => {
 
         it('should allow admin to delete any plan', async () => {
             // Create a new plan to delete
-            const workoutPlanRepository =
-                dataSource.getRepository(WorkoutSessionPlanEntity);
+            const workoutPlanRepository = dataSource.getRepository(
+                WorkoutSessionPlanEntity,
+            );
             const toDelete = workoutPlanRepository.create({
                 name: 'Admin Delete Test',
                 description: 'Will be deleted by admin',
@@ -697,8 +701,9 @@ describe('WorkoutSessionPlanController (e2e - Integration Tests)', () => {
 
         beforeAll(async () => {
             // Create and delete a plan for restore tests
-            const workoutPlanRepository =
-                dataSource.getRepository(WorkoutSessionPlanEntity);
+            const workoutPlanRepository = dataSource.getRepository(
+                WorkoutSessionPlanEntity,
+            );
             const toDelete = workoutPlanRepository.create({
                 name: 'Plan to Restore',
                 description: 'Will be restored',
@@ -731,8 +736,9 @@ describe('WorkoutSessionPlanController (e2e - Integration Tests)', () => {
 
         it('should forbid restoring other users plan', async () => {
             // Create and delete a plan by trainer
-            const workoutPlanRepository =
-                dataSource.getRepository(WorkoutSessionPlanEntity);
+            const workoutPlanRepository = dataSource.getRepository(
+                WorkoutSessionPlanEntity,
+            );
             const trainerPlan = workoutPlanRepository.create({
                 name: 'Trainer Plan to Restore',
                 description: 'Trainer plan',
@@ -755,8 +761,9 @@ describe('WorkoutSessionPlanController (e2e - Integration Tests)', () => {
 
         it('should allow admin to restore any plan', async () => {
             // Create and delete a plan
-            const workoutPlanRepository =
-                dataSource.getRepository(WorkoutSessionPlanEntity);
+            const workoutPlanRepository = dataSource.getRepository(
+                WorkoutSessionPlanEntity,
+            );
             const planToRestore = workoutPlanRepository.create({
                 name: 'Admin Restore Test',
                 description: 'Admin restore test',

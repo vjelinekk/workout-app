@@ -29,6 +29,10 @@ import { ExerciseCategoryUpdateDto } from '../dtos/exercise-category/exercise-ca
 import { JwtUser } from 'src/modules/auth/decorators/jwt-user.decorator';
 import type { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
 
+/**
+ * Exercise category controller for managing exercise categorization.
+ * Handles CRUD operations for exercise categories used to organize exercises.
+ */
 @ApiTags('Exercise Categories')
 @Controller('exercise-categories')
 export class ExerciseCategoryController {

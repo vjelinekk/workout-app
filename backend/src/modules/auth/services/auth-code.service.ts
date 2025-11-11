@@ -30,7 +30,9 @@ export class AuthCodeService {
 
         const authCodeData: AuthCodeData = {
             loginResponse,
-            expiresAt: new Date(Date.now() + AUTH_CODE_EXPIRATION_SECONDS * 1000),
+            expiresAt: new Date(
+                Date.now() + AUTH_CODE_EXPIRATION_SECONDS * 1000,
+            ),
         };
 
         // Store in Redis with automatic expiration
@@ -61,12 +63,14 @@ export class AuthCodeService {
         const dataString = await this.redisService.get(key);
 
         if (!dataString) {
-            this.logger.warn(`Auth code exchange failed: Invalid or expired code`);
+            this.logger.warn(
+                `Auth code exchange failed: Invalid or expired code`,
+            );
             return null;
         }
 
         // Parse the stored data
-        const data: AuthCodeData = JSON.parse(dataString);
+        const data: AuthCodeData = JSON.parse(dataString) as AuthCodeData;
 
         // Double-check expiration (Redis should handle this, but extra safety)
         if (data.expiresAt && new Date(data.expiresAt) < new Date()) {

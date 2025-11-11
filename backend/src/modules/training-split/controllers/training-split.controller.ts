@@ -32,6 +32,10 @@ import { JwtUser } from 'src/modules/auth/decorators/jwt-user.decorator';
 import type { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
 import { FindAllScopes } from 'src/common/enums/find-all-scopes.enum';
 
+/**
+ * Training split controller managing weekly workout schedules.
+ * Handles CRUD operations for training splits that define workout routines across different days.
+ */
 @ApiTags('Training Splits')
 @Controller('training-splits')
 export class TrainingSplitController {

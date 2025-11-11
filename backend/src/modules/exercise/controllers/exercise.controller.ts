@@ -27,6 +27,7 @@ import {
     ApiOperation,
     ApiParam,
     ApiQuery,
+    ApiTags,
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { ExerciseService } from '../services/exercise.service';
@@ -40,6 +41,11 @@ import { FindAllScopes } from 'src/common/enums/find-all-scopes.enum';
 import { ConfigService } from '@nestjs/config';
 import { getValidatedUploadDir } from 'src/common/utils/file';
 
+/**
+ * Exercise management controller for creating, updating, and querying exercises.
+ * Handles exercise CRUD operations, image uploads, and scope-based filtering.
+ */
+@ApiTags('Exercises')
 @Controller('exercises')
 export class ExerciseController {
     private readonly uploadDir: string;

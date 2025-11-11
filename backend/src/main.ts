@@ -11,7 +11,7 @@ import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
 import { Logger } from 'nestjs-pino';
 
 async function bootstrap() {
-    const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create(AppModule, { bufferLogs: true });
 
     // CORS configuration
     const corsOrigins = process.env.CORS_ORIGINS?.split(',') ?? [];

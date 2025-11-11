@@ -33,6 +33,10 @@ import { RoleEnum } from 'src/modules/user/enums/role.enum';
 import { JwtUser } from 'src/modules/auth/decorators/jwt-user.decorator';
 import type { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
 
+/**
+ * Workout session plan exercise controller managing exercises within workout plans.
+ * Handles CRUD operations for individual exercises in a workout session plan.
+ */
 @ApiTags('Workout Session Plan Exercises')
 @Controller('workout-session-plan-exercises')
 export class WorkoutSessionPlanExerciseController {

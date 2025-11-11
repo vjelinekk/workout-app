@@ -71,9 +71,7 @@ export class MailService {
             );
             return result;
         } catch (error) {
-            this.logger.error(
-                `Failed to send trainer request email: ${error}`,
-            );
+            this.logger.error(`Failed to send trainer request email: ${error}`);
             throw error;
         }
     }

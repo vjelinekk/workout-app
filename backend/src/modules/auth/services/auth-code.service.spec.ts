@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+
 import { AuthCodeService } from './auth-code.service';
 import {
     mockLoginResponse,
@@ -70,7 +72,9 @@ describe('AuthCodeService', () => {
 
         it('should handle different login responses', async () => {
             const code1 = await service.generateAuthCode(mockLoginResponse);
-            const code2 = await service.generateAuthCode(mockTrainerLoginResponse);
+            const code2 = await service.generateAuthCode(
+                mockTrainerLoginResponse,
+            );
 
             const result1 = await service.exchangeAuthCode(code1);
             const result2 = await service.exchangeAuthCode(code2);
@@ -154,7 +158,9 @@ describe('AuthCodeService', () => {
             jest.useFakeTimers();
             jest.advanceTimersByTime(6 * 60 * 1000);
 
-            const code2 = await service.generateAuthCode(mockTrainerLoginResponse);
+            const code2 = await service.generateAuthCode(
+                mockTrainerLoginResponse,
+            );
 
             // Verify expired code is gone
             const result1 = await service.exchangeAuthCode(code1);
@@ -171,7 +177,9 @@ describe('AuthCodeService', () => {
     describe('multiple codes management', () => {
         it('should manage multiple codes independently', async () => {
             const code1 = await service.generateAuthCode(mockLoginResponse);
-            const code2 = await service.generateAuthCode(mockTrainerLoginResponse);
+            const code2 = await service.generateAuthCode(
+                mockTrainerLoginResponse,
+            );
 
             const result1 = await service.exchangeAuthCode(code1);
             const result2 = await service.exchangeAuthCode(code2);
@@ -187,7 +195,9 @@ describe('AuthCodeService', () => {
 
             jest.advanceTimersByTime(3 * 60 * 1000); // 3 minutes
 
-            const code2 = await service.generateAuthCode(mockTrainerLoginResponse);
+            const code2 = await service.generateAuthCode(
+                mockTrainerLoginResponse,
+            );
 
             jest.advanceTimersByTime(3 * 60 * 1000); // Advance another 3 minutes (6 total)
 
@@ -237,7 +247,9 @@ describe('AuthCodeService', () => {
 
         it('should preserve code order in FIFO manner', async () => {
             const code1 = await service.generateAuthCode(mockLoginResponse);
-            const code2 = await service.generateAuthCode(mockTrainerLoginResponse);
+            const code2 = await service.generateAuthCode(
+                mockTrainerLoginResponse,
+            );
 
             const result1 = await service.exchangeAuthCode(code1);
             const result2 = await service.exchangeAuthCode(code2);

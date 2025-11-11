@@ -92,7 +92,10 @@ export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudServic
             );
         }
 
-        if (!user.roles.includes(RoleEnum.ADMIN) && plan.createdById !== user.id) {
+        if (
+            !user.roles.includes(RoleEnum.ADMIN) &&
+            plan.createdById !== user.id
+        ) {
             throw new ForbiddenException('Access to resource denied');
         }
     }
@@ -189,9 +192,10 @@ export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudServic
         }
 
         // Single DB query to fetch and validate access to the plan
-        const plan = await this.workoutSessionPlanRepository.findByIdActive(
-            workoutSessionPlanId,
-        );
+        const plan =
+            await this.workoutSessionPlanRepository.findByIdActive(
+                workoutSessionPlanId,
+            );
 
         if (!plan) {
             throw new NotFoundException(
@@ -199,13 +203,19 @@ export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudServic
             );
         }
 
-        if (!user.roles.includes(RoleEnum.ADMIN) && plan.createdById !== user.id) {
+        if (
+            !user.roles.includes(RoleEnum.ADMIN) &&
+            plan.createdById !== user.id
+        ) {
             throw new ForbiddenException('Access to resource denied');
         }
 
         // Validate each DTO (in-memory, no DB queries)
         for (const dto of createDtos) {
-            this.validatePlannedRepsPerSet(dto.plannedSets, dto.plannedRepsPerSet);
+            this.validatePlannedRepsPerSet(
+                dto.plannedSets,
+                dto.plannedRepsPerSet,
+            );
         }
     }
 

@@ -19,7 +19,11 @@ export class RedisService implements OnModuleDestroy {
     /**
      * Set a key-value pair with optional expiration
      */
-    async set(key: string, value: string, expirationSeconds?: number): Promise<void> {
+    async set(
+        key: string,
+        value: string,
+        expirationSeconds?: number,
+    ): Promise<void> {
         if (expirationSeconds) {
             await this.redisClient.setex(key, expirationSeconds, value);
         } else {

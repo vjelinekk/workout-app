@@ -31,6 +31,10 @@ import { TrainingSplitDayUpdateDto } from '../dtos/training-split-day/training-s
 import { JwtUser } from 'src/modules/auth/decorators/jwt-user.decorator';
 import type { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
 
+/**
+ * Training split day controller managing individual workout days within a training split.
+ * Handles CRUD operations for specific days (e.g., Monday chest day, Wednesday leg day).
+ */
 @ApiTags('Training Split Days')
 @Controller('training-split-days')
 export class TrainingSplitDayController {

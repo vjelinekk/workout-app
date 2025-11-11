@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
@@ -132,8 +133,9 @@ describe('WorkoutSessionController (e2e - Integration Tests)', () => {
 
     const setupTestData = async () => {
         const roleRepository = dataSource.getRepository(RoleEntity);
-        const workoutPlanRepository =
-            dataSource.getRepository(WorkoutSessionPlanEntity);
+        const workoutPlanRepository = dataSource.getRepository(
+            WorkoutSessionPlanEntity,
+        );
         const trainingSplitRepository =
             dataSource.getRepository(TrainingSplitEntity);
         const exerciseRepository = dataSource.getRepository(ExerciseEntity);
@@ -411,7 +413,9 @@ describe('WorkoutSessionController (e2e - Integration Tests)', () => {
             expect([200, 404, 500]).toContain(response.status);
             if (response.status === 200) {
                 expect(response.body).toHaveProperty('id');
-                expect(response.body.status).toBe(WorkoutSessionStatusEnum.IN_PROGRESS);
+                expect(response.body.status).toBe(
+                    WorkoutSessionStatusEnum.IN_PROGRESS,
+                );
             }
         });
 
@@ -968,7 +972,10 @@ describe('WorkoutSessionController (e2e - Integration Tests)', () => {
                 .set('Authorization', `Bearer ${traineeToken}`)
                 .send(createDto);
 
-            if (createResponse.status === 200 || createResponse.status === 201) {
+            if (
+                createResponse.status === 200 ||
+                createResponse.status === 201
+            ) {
                 const sessionId = createResponse.body.id;
 
                 const getResponse = await request(app.getHttpServer())

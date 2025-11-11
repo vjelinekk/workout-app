@@ -110,7 +110,7 @@ describe('AuthController (e2e - Integration Tests)', () => {
                 await app.close();
             }
         } catch (error) {
-            // console.error('Error closing app:', error);
+            console.error('Error closing app:', error);
         }
     });
 

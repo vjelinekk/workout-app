@@ -9,6 +9,7 @@ import { WorkoutModule } from './modules/workout/workout.module';
 import { TrainingSplitModule } from './modules/training-split/training-split.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { RedisModule } from './common/redis/redis.module';
 
 @Module({
     imports: [
@@ -29,6 +30,7 @@ import { join } from 'path';
                 synchronize: false,
             }),
         }),
+        RedisModule,
         AuthModule,
         ExerciseModule,
         WorkoutModule,

@@ -4,13 +4,13 @@ import {
     ExceptionFilter,
     HttpException,
     HttpStatus,
-    Logger,
 } from '@nestjs/common';
 import { Request, Response } from 'express';
+import { PinoLogger } from 'nestjs-pino';
 
 @Catch()
 export class AllExceptionsFilter implements ExceptionFilter<unknown> {
-    private readonly logger = new Logger(AllExceptionsFilter.name);
+    constructor(private readonly logger: PinoLogger) {}
 
     catch(exception: unknown, host: ArgumentsHost) {
         const ctx = host.switchToHttp();
@@ -36,7 +36,13 @@ export class AllExceptionsFilter implements ExceptionFilter<unknown> {
         }
 
         this.logger.error(
-            `HTTP ${status} Error on ${request.method} ${request.url}: ${JSON.stringify(message)}`,
+            {
+                statusCode: status,
+                method: request.method,
+                url: request.url,
+                message,
+            },
+            `HTTP ${status} Error on ${request.method} ${request.url}`,
         );
 
         response.status(status).json({

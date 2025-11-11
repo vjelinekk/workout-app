@@ -253,9 +253,12 @@ describe('AuthController', () => {
             };
 
             authService.login.mockReturnValue(mockLoginResponse);
-            authCodeService.generateAuthCode.mockReturnValue('auth-code-123');
+            authCodeService.generateAuthCode.mockResolvedValue('auth-code-123');
 
-            controller.googleAuthRedirect(user as any, mockResponse as any);
+            await controller.googleAuthRedirect(
+                user as any,
+                mockResponse as any,
+            );
 
             expect(authService.login).toHaveBeenCalledWith(user);
             expect(authCodeService.generateAuthCode).toHaveBeenCalledWith(
@@ -271,9 +274,12 @@ describe('AuthController', () => {
             };
 
             authService.login.mockReturnValue(mockLoginResponse);
-            authCodeService.generateAuthCode.mockReturnValue('test-code-123');
+            authCodeService.generateAuthCode.mockResolvedValue('test-code-123');
 
-            controller.googleAuthRedirect(user as any, mockResponse as any);
+            await controller.googleAuthRedirect(
+                user as any,
+                mockResponse as any,
+            );
 
             const redirectCall = mockResponse.redirect.mock.calls[0][0];
             expect(redirectCall).toContain(
@@ -289,14 +295,14 @@ describe('AuthController', () => {
             };
 
             authService.login.mockReturnValue(mockLoginResponse);
-            authCodeService.generateAuthCode.mockReturnValue('auth-code');
+            authCodeService.generateAuthCode.mockResolvedValue('auth-code');
 
             // Override configService to return undefined for FRONTEND_URL
-            configService.get.mockReturnValue(undefined);
+            configService.get.mockReturnValueOnce(undefined);
 
-            expect(() =>
+            await expect(
                 controller.googleAuthRedirect(user as any, mockResponse as any),
-            ).toThrow(InternalServerErrorException);
+            ).rejects.toThrow(InternalServerErrorException);
         });
 
         it('should build correct redirect URL with query parameters', async () => {
@@ -307,9 +313,12 @@ describe('AuthController', () => {
             const authCode = 'generated-auth-code-456';
 
             authService.login.mockReturnValue(mockLoginResponse);
-            authCodeService.generateAuthCode.mockReturnValue(authCode);
+            authCodeService.generateAuthCode.mockResolvedValue(authCode);
 
-            controller.googleAuthRedirect(user as any, mockResponse as any);
+            await controller.googleAuthRedirect(
+                user as any,
+                mockResponse as any,
+            );
 
             const redirectUrl = mockResponse.redirect.mock.calls[0][0];
             expect(redirectUrl).toContain(`code=${authCode}`);
@@ -331,9 +340,12 @@ describe('AuthController', () => {
                 };
 
                 authService.login.mockReturnValue(mockLoginResponse);
-                authCodeService.generateAuthCode.mockReturnValue('auth-code');
+                authCodeService.generateAuthCode.mockResolvedValue('auth-code');
 
-                controller.googleAuthRedirect(user as any, mockResponse as any);
+                await controller.googleAuthRedirect(
+                    user as any,
+                    mockResponse as any,
+                );
 
                 expect(authService.login).toHaveBeenCalledWith(user);
             }
@@ -344,9 +356,11 @@ describe('AuthController', () => {
         it('should exchange valid auth code for login response', async () => {
             const code = 'valid-auth-code-123';
 
-            authCodeService.exchangeAuthCode.mockReturnValue(mockLoginResponse);
+            authCodeService.exchangeAuthCode.mockResolvedValue(
+                mockLoginResponse,
+            );
 
-            const result = controller.exchangeAuthCode(code);
+            const result = await controller.exchangeAuthCode(code);
 
             expect(result).toEqual(mockLoginResponse);
             expect(authCodeService.exchangeAuthCode).toHaveBeenCalledWith(code);
@@ -360,9 +374,9 @@ describe('AuthController', () => {
                 userEmail: 'user@example.com',
             };
 
-            authCodeService.exchangeAuthCode.mockReturnValue(response);
+            authCodeService.exchangeAuthCode.mockResolvedValue(response);
 
-            const result = controller.exchangeAuthCode(code);
+            const result = await controller.exchangeAuthCode(code);
 
             expect(result.accessToken).toBe('jwt-token-from-code');
         });
@@ -370,9 +384,9 @@ describe('AuthController', () => {
         it('should throw UnauthorizedException for invalid code', async () => {
             const code = 'invalid-code';
 
-            authCodeService.exchangeAuthCode.mockReturnValue(null);
+            authCodeService.exchangeAuthCode.mockResolvedValue(null);
 
-            expect(() => controller.exchangeAuthCode(code)).toThrow(
+            await expect(controller.exchangeAuthCode(code)).rejects.toThrow(
                 'Invalid or expired auth code',
             );
         });
@@ -380,9 +394,9 @@ describe('AuthController', () => {
         it('should throw UnauthorizedException for expired code', async () => {
             const code = 'expired-code';
 
-            authCodeService.exchangeAuthCode.mockReturnValue(null);
+            authCodeService.exchangeAuthCode.mockResolvedValue(null);
 
-            expect(() => controller.exchangeAuthCode(code)).toThrow(
+            await expect(controller.exchangeAuthCode(code)).rejects.toThrow(
                 'Invalid or expired auth code',
             );
         });
@@ -391,11 +405,11 @@ describe('AuthController', () => {
             const codes = ['code-1', 'code-2', 'code-3'];
 
             for (const code of codes) {
-                authCodeService.exchangeAuthCode.mockReturnValue(
+                authCodeService.exchangeAuthCode.mockResolvedValue(
                     mockLoginResponse,
                 );
 
-                controller.exchangeAuthCode(code);
+                await controller.exchangeAuthCode(code);
 
                 expect(authCodeService.exchangeAuthCode).toHaveBeenCalledWith(
                     code,
@@ -406,9 +420,9 @@ describe('AuthController', () => {
         it('should return null from service for non-existent code', async () => {
             const code = 'non-existent-code';
 
-            authCodeService.exchangeAuthCode.mockReturnValue(null);
+            authCodeService.exchangeAuthCode.mockResolvedValue(null);
 
-            expect(() => controller.exchangeAuthCode(code)).toThrow();
+            await expect(controller.exchangeAuthCode(code)).rejects.toThrow();
         });
     });
 
@@ -432,11 +446,11 @@ describe('AuthController', () => {
         it('should handle auth code service errors', async () => {
             const code = 'test-code';
 
-            authCodeService.exchangeAuthCode.mockImplementation(() => {
-                throw new Error('Code service error');
-            });
+            authCodeService.exchangeAuthCode.mockRejectedValue(
+                new Error('Code service error'),
+            );
 
-            expect(() => controller.exchangeAuthCode(code)).toThrow(
+            await expect(controller.exchangeAuthCode(code)).rejects.toThrow(
                 'Code service error',
             );
         });
@@ -450,9 +464,12 @@ describe('AuthController', () => {
             };
 
             authService.login.mockReturnValue(mockLoginResponse);
-            authCodeService.generateAuthCode.mockReturnValue('auth-code');
+            authCodeService.generateAuthCode.mockResolvedValue('auth-code');
 
-            controller.googleAuthRedirect(user as any, mockResponse as any);
+            await controller.googleAuthRedirect(
+                user as any,
+                mockResponse as any,
+            );
 
             expect(configService.get).toHaveBeenCalledWith('FRONTEND_URL');
         });
@@ -461,7 +478,7 @@ describe('AuthController', () => {
             const user = mockUserEntity;
 
             authService.login.mockReturnValue(mockLoginResponse);
-            authCodeService.generateAuthCode.mockReturnValue('auth-code');
+            authCodeService.generateAuthCode.mockResolvedValue('auth-code');
 
             const urls = [
                 'http://localhost:3000',
@@ -476,7 +493,10 @@ describe('AuthController', () => {
 
                 configService.get.mockReturnValue(url);
 
-                controller.googleAuthRedirect(user as any, mockResponse as any);
+                await controller.googleAuthRedirect(
+                    user as any,
+                    mockResponse as any,
+                );
 
                 expect(mockResponse.redirect).toHaveBeenCalled();
             }
@@ -491,9 +511,12 @@ describe('AuthController', () => {
             };
 
             authService.login.mockReturnValue(mockLoginResponse);
-            authCodeService.generateAuthCode.mockReturnValue('auth-code');
+            authCodeService.generateAuthCode.mockResolvedValue('auth-code');
 
-            controller.googleAuthRedirect(user as any, mockResponse as any);
+            await controller.googleAuthRedirect(
+                user as any,
+                mockResponse as any,
+            );
 
             expect(mockResponse.redirect).toHaveBeenCalledWith(
                 expect.stringContaining('/auth/callback'),

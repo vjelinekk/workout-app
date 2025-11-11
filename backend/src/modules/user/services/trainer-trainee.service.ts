@@ -2,6 +2,7 @@ import {
     BadRequestException,
     Injectable,
     UnauthorizedException,
+    Logger,
 } from '@nestjs/common';
 import { TrainerTraineeRepository } from '../repositories/trainer-trainee.repository';
 import { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
@@ -21,6 +22,8 @@ import { TrainerTraineeTraineeResponseDto } from '../dtos/trainer-trainee-traine
  */
 @Injectable()
 export class TrainerTraineeService {
+    private readonly logger = new Logger(TrainerTraineeService.name);
+
     constructor(
         private readonly trainerTraineeRepository: TrainerTraineeRepository,
         private readonly userRepository: UserRepository,
@@ -89,6 +92,10 @@ export class TrainerTraineeService {
         });
 
         await this.trainerTraineeRepository.save(trainerTrainee);
+
+        this.logger.log(
+            `Trainer ${user.id} sent request to trainee ${traineeId}`,
+        );
     }
 
     /**
@@ -154,8 +161,14 @@ export class TrainerTraineeService {
 
         if (accept) {
             request.status = TrainerTraineeStatusEnum.ACTIVE;
+            this.logger.log(
+                `Trainee ${userId} ACCEPTED trainer request ${id} from trainer ${request.trainee.id}`,
+            );
         } else {
             request.status = TrainerTraineeStatusEnum.REMOVED;
+            this.logger.log(
+                `Trainee ${userId} DECLINED trainer request ${id} from trainer ${request.trainee.id}`,
+            );
         }
 
         await this.trainerTraineeRepository.save(request);

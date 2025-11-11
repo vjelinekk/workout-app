@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication, ValidationPipe } from '@nestjs/common';
@@ -128,8 +129,9 @@ describe('WorkoutSessionPlanExerciseController (e2e - Integration Tests)', () =>
 
     const setupTestData = async () => {
         const roleRepository = dataSource.getRepository(RoleEntity);
-        const workoutPlanRepository =
-            dataSource.getRepository(WorkoutSessionPlanEntity);
+        const workoutPlanRepository = dataSource.getRepository(
+            WorkoutSessionPlanEntity,
+        );
         const exerciseRepository = dataSource.getRepository(ExerciseEntity);
         const planExerciseRepository = dataSource.getRepository(
             WorkoutSessionPlanExerciseEntity,
@@ -292,8 +294,9 @@ describe('WorkoutSessionPlanExerciseController (e2e - Integration Tests)', () =>
             plannedRepsPerSet: [12, 10, 8, 6],
             createdById: trainerId,
         });
-        const savedOtherPlanExercise =
-            await planExerciseRepository.save(otherUserPlanExercise);
+        const savedOtherPlanExercise = await planExerciseRepository.save(
+            otherUserPlanExercise,
+        );
         otherUserPlanExerciseId = savedOtherPlanExercise.id;
     };
 
@@ -825,9 +828,7 @@ describe('WorkoutSessionPlanExerciseController (e2e - Integration Tests)', () =>
             const savedToDelete = await planExerciseRepository.save(toDelete);
 
             const response = await request(app.getHttpServer())
-                .delete(
-                    `/workout-session-plan-exercises/${savedToDelete.id}`,
-                )
+                .delete(`/workout-session-plan-exercises/${savedToDelete.id}`)
                 .set('Authorization', `Bearer ${traineeToken}`);
 
             expect([200, 404, 500]).toContain(response.status);
@@ -859,9 +860,7 @@ describe('WorkoutSessionPlanExerciseController (e2e - Integration Tests)', () =>
             const savedToDelete = await planExerciseRepository.save(toDelete);
 
             const response = await request(app.getHttpServer())
-                .delete(
-                    `/workout-session-plan-exercises/${savedToDelete.id}`,
-                )
+                .delete(`/workout-session-plan-exercises/${savedToDelete.id}`)
                 .set('Authorization', `Bearer ${adminToken}`);
 
             expect([200, 404, 500]).toContain(response.status);

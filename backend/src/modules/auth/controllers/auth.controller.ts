@@ -7,6 +7,7 @@ import {
     InternalServerErrorException,
     Body,
     UnauthorizedException,
+    Logger,
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { GoogleAuthGuard } from '../guards/google-auth.guard';
@@ -16,6 +17,7 @@ import {
     ApiBody,
     ApiOkResponse,
     ApiOperation,
+    ApiTags,
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { LoginDto } from '../dtos/login.dto';
@@ -27,8 +29,15 @@ import { AuthCodeService } from '../services/auth-code.service';
 import { ConfigService } from '@nestjs/config';
 import { RegisterDto } from '../dtos/register.dto';
 
+/**
+ * Authentication controller handling user login, registration, and OAuth flows.
+ * Provides endpoints for username/password authentication and Google OAuth2 integration.
+ */
+@ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
+    private readonly logger = new Logger(AuthController.name);
+
     constructor(
         private authService: AuthService,
         private authCodeService: AuthCodeService,
@@ -79,9 +88,14 @@ export class AuthController {
         @AuthenticatedUser() user: UserEntity,
         @Res() res: Response,
     ) {
+        this.logger.log(
+            `Google OAuth callback for user ${user.id} (${user.email})`,
+        );
+
         const loginResponse = this.authService.login(user);
 
-        const authCode = await this.authCodeService.generateAuthCode(loginResponse);
+        const authCode =
+            await this.authCodeService.generateAuthCode(loginResponse);
 
         const frontendUrl = this.configService.get<string>('FRONTEND_URL');
         if (!frontendUrl) {
@@ -91,6 +105,10 @@ export class AuthController {
         }
         const redirectUrl = new URL('/auth/callback', frontendUrl);
         redirectUrl.searchParams.append('code', authCode);
+
+        this.logger.log(
+            `Redirecting user ${user.id} to frontend with auth code`,
+        );
 
         return res.redirect(redirectUrl.toString());
     }

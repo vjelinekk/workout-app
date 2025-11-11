@@ -3,6 +3,7 @@ import {
     Injectable,
     NotFoundException,
     UnauthorizedException,
+    Logger,
 } from '@nestjs/common';
 import { ValidatedMappedCrudService } from 'src/common/services/validated-mapped-crud.service';
 import { TrainingSplitAssignmentEntity } from '../entities/training-split-assignment.entity';
@@ -32,6 +33,8 @@ export class TrainingSplitAssignmentService extends ValidatedMappedCrudService<
     TrainingSplitAssignmentResponseDto,
     TrainingSplitAssignmentRepository
 > {
+    private readonly logger = new Logger(TrainingSplitAssignmentService.name);
+
     constructor(
         protected readonly trainingSplitAssignmentRepository: TrainingSplitAssignmentRepository,
         protected readonly trainerTraineeRepository: TrainerTraineeRepository,
@@ -151,8 +154,14 @@ export class TrainingSplitAssignmentService extends ValidatedMappedCrudService<
         if (dto.traineeId === user.id) {
             entity.status = TrainingSplitAssignmentStatusEnum.ACTIVE;
             await this.deactivateCurrentActiveAssignmentForUser(user.id);
+            this.logger.log(
+                `User ${user.id} self-assigned training split ${dto.trainingSplitId} (auto-activated)`,
+            );
         } else {
             entity.status = TrainingSplitAssignmentStatusEnum.PENDING;
+            this.logger.log(
+                `User ${user.id} assigned training split ${dto.trainingSplitId} to trainee ${dto.traineeId} (pending acceptance)`,
+            );
         }
 
         entity.createdById = user.id;
@@ -244,6 +253,13 @@ export class TrainingSplitAssignmentService extends ValidatedMappedCrudService<
 
         if (accept) {
             await this.deactivateCurrentActiveAssignmentForUser(user.id);
+            this.logger.log(
+                `Trainee ${user.id} ACCEPTED training split assignment ${id}`,
+            );
+        } else {
+            this.logger.log(
+                `Trainee ${user.id} DECLINED training split assignment ${id}`,
+            );
         }
 
         await this.trainingSplitAssignmentRepository.save(assignment);

@@ -3,6 +3,7 @@ import {
     BadRequestException,
     Injectable,
     NotFoundException,
+    Logger,
 } from '@nestjs/common';
 import { WorkoutSessionCreateDto } from '../dtos/workout-session/workout-session-create.dto';
 import { WorkoutSessionUpdateDto } from '../dtos/workout-session/workout-session-update.dto';
@@ -34,6 +35,8 @@ export class WorkoutSessionService extends ValidatedMappedCrudService<
     WorkoutSessionResponseDto,
     WorkoutSessionRepository
 > {
+    private readonly logger = new Logger(WorkoutSessionService.name);
+
     constructor(
         protected readonly workoutSessionRepository: WorkoutSessionRepository,
         protected readonly workoutSessionExerciseRepository: WorkoutSessionExerciseRepository,
@@ -238,6 +241,10 @@ export class WorkoutSessionService extends ValidatedMappedCrudService<
         dto: WorkoutSessionCreateDto,
         userId: number,
     ): Promise<WorkoutSessionResponseDto> {
+        this.logger.log(
+            `User ${userId} starting workout session for plan ${dto.workoutSessionPlanId}`,
+        );
+
         return await this.dataSource.transaction(async () => {
             const workoutSessionsInProgress =
                 await this.workoutSessionRepository.findOneActive({
@@ -274,6 +281,10 @@ export class WorkoutSessionService extends ValidatedMappedCrudService<
             const responseDto = this.toResponseDto(workoutSession);
 
             await this.addPreviousRepsAndWeightsToExercises(responseDto);
+
+            this.logger.log(
+                `Workout session ${workoutSessionId} started successfully for user ${userId}`,
+            );
 
             return responseDto;
         });
@@ -427,7 +438,11 @@ export class WorkoutSessionService extends ValidatedMappedCrudService<
         id: number,
         userId: number,
     ) {
+        this.logger.log(`User ${userId} finishing workout session ${id}`);
         await this.logWorkoutSessionProgress(finishDto, id, userId, true);
+        this.logger.log(
+            `Workout session ${id} completed successfully for user ${userId}`,
+        );
     }
 
     /**

@@ -1,6 +1,7 @@
 import { Module, Global } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { RedisService } from './redis.service';
+import { Redis } from 'ioredis';
 
 /**
  * Redis module for providing Redis client throughout the application.
@@ -13,7 +14,6 @@ import { RedisService } from './redis.service';
         {
             provide: 'REDIS_CLIENT',
             useFactory: (configService: ConfigService) => {
-                const Redis = require('ioredis');
                 return new Redis({
                     host: configService.get<string>('REDIS_HOST', 'localhost'),
                     port: configService.get<number>('REDIS_PORT', 6379),

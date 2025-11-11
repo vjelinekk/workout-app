@@ -32,6 +32,10 @@ import { WorkoutSessionPlanPatchDto } from '../dtos/workout-session-plan/workout
 import { WorkoutSessionPlanUpdateDto } from '../dtos/workout-session-plan/workout-session-plan-update.dto';
 import { FindAllScopes } from 'src/common/enums/find-all-scopes.enum';
 
+/**
+ * Workout session plan controller managing workout plan templates.
+ * Handles CRUD operations for workout plans containing exercises, sets, and reps.
+ */
 @ApiTags('Workout Session Plans')
 @Controller('workout-session-plans')
 export class WorkoutSessionPlanController {

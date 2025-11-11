@@ -23,12 +23,18 @@ import {
     ApiOperation,
     ApiParam,
     ApiQuery,
+    ApiTags,
     ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { Roles } from 'src/modules/auth/decorators/role.decorator';
 import { RoleEnum } from '../enums/role.enum';
 import { UserResponseDto } from '../dtos/user-response.dto';
 
+/**
+ * User management controller for user profiles, trainer applications, and user queries.
+ * Handles trainer application submissions and approvals (admin only).
+ */
+@ApiTags('Users')
 @Controller('users')
 export class UserController {
     constructor(

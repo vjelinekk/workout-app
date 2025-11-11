@@ -23,6 +23,10 @@ import { TrainerTraineeRequestDto } from '../dtos/trainer-trainee-request.dto';
 import { TrainerTraineeRespondDto } from '../dtos/trainer-trainee-respond.dto';
 import { TrainerTraineeTraineeResponseDto } from '../dtos/trainer-trainee-trainee-response.dto';
 
+/**
+ * Trainer-Trainee relationship controller managing recruitment and assignments.
+ * Handles trainer requests to recruit trainees and trainee responses to those requests.
+ */
 @ApiTags('Trainer-Trainee')
 @Controller('trainer-trainees')
 export class TrainerTraineeController {

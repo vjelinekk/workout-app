@@ -33,6 +33,10 @@ import { JwtUser } from 'src/modules/auth/decorators/jwt-user.decorator';
 import type { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
 import { TrainingSplitAssignmentStatusEnum } from '../enums/training-split-assignment-status.enum';
 
+/**
+ * Training split assignment controller managing assignment of training plans to trainees.
+ * Handles trainer-to-trainee workout plan assignments with status tracking (active/completed).
+ */
 @ApiTags('Training Split Assignments')
 @Controller('training-split-assignments')
 export class TrainingSplitAssignmentController {

@@ -26,6 +26,10 @@ import { WorkoutSessionStartDto } from '../dtos/workout-session/workout-session-
 import { WorkoutSessionResponseDto } from '../dtos/workout-session/workout-session-response.dto';
 import { WorkoutSessionLogProgressDto } from '../dtos/workout-session/workout-session-log-progess.dto';
 
+/**
+ * Workout session controller managing active workout sessions and exercise logging.
+ * Handles session creation, progress tracking, and completion of workout sessions.
+ */
 @ApiTags('Workout Sessions')
 @Controller('workout-sessions')
 export class WorkoutSessionController {

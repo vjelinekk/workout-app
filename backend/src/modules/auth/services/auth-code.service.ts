@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { AuthCodeData } from '../types/auth-code-data.type';
 import { LoginResponseDto } from '../dtos/login-response.dto';
 import { randomBytes } from 'crypto';
@@ -13,6 +13,8 @@ const AUTH_CODE_EXPIRATION_SECONDS = 5 * 60; // 5 minutes in seconds
  */
 @Injectable()
 export class AuthCodeService {
+    private readonly logger = new Logger(AuthCodeService.name);
+
     constructor(private readonly redisService: RedisService) {}
 
     /**
@@ -28,7 +30,9 @@ export class AuthCodeService {
 
         const authCodeData: AuthCodeData = {
             loginResponse,
-            expiresAt: new Date(Date.now() + AUTH_CODE_EXPIRATION_SECONDS * 1000),
+            expiresAt: new Date(
+                Date.now() + AUTH_CODE_EXPIRATION_SECONDS * 1000,
+            ),
         };
 
         // Store in Redis with automatic expiration
@@ -36,6 +40,10 @@ export class AuthCodeService {
             key,
             JSON.stringify(authCodeData),
             AUTH_CODE_EXPIRATION_SECONDS,
+        );
+
+        this.logger.log(
+            `Generated auth code for user ${loginResponse.userId} (expires in ${AUTH_CODE_EXPIRATION_SECONDS}s)`,
         );
 
         return authCode;
@@ -55,20 +63,28 @@ export class AuthCodeService {
         const dataString = await this.redisService.get(key);
 
         if (!dataString) {
+            this.logger.warn(
+                `Auth code exchange failed: Invalid or expired code`,
+            );
             return null;
         }
 
         // Parse the stored data
-        const data: AuthCodeData = JSON.parse(dataString);
+        const data: AuthCodeData = JSON.parse(dataString) as AuthCodeData;
 
         // Double-check expiration (Redis should handle this, but extra safety)
         if (data.expiresAt && new Date(data.expiresAt) < new Date()) {
             await this.redisService.del(key);
+            this.logger.warn(`Auth code exchange failed: Expired code`);
             return null;
         }
 
         // Delete the code immediately to ensure single use
         await this.redisService.del(key);
+
+        this.logger.log(
+            `Auth code successfully exchanged for user ${data.loginResponse.userId}`,
+        );
 
         return data.loginResponse;
     }

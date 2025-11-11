@@ -2,6 +2,7 @@ import {
     Injectable,
     UnauthorizedException,
     BadRequestException,
+    Logger,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
@@ -21,6 +22,8 @@ import { PostgresErrorCodes } from 'src/common/enums/postgres-error-codes.enum';
  */
 @Injectable()
 export class AuthService {
+    private readonly logger = new Logger(AuthService.name);
+
     constructor(
         private readonly userRepository: UserRepository,
         private readonly roleRepository: RoleRepository,
@@ -39,14 +42,19 @@ export class AuthService {
     async validateUser(email: string, pass: string): Promise<UserEntity> {
         const user = await this.userRepository.findByEmail(email);
         if (!user) {
+            this.logger.warn(`Failed login attempt for email: ${email}`);
             throw new UnauthorizedException('Invalid credentials');
         }
 
         const isMatch = await compare(pass, user.password);
         if (!isMatch) {
+            this.logger.warn(
+                `Failed login attempt for user ID: ${user.id} (incorrect password)`,
+            );
             throw new UnauthorizedException('Invalid credentials');
         }
 
+        this.logger.log(`User ${user.id} successfully authenticated`);
         return user;
     }
 
@@ -65,6 +73,10 @@ export class AuthService {
             sub: user.id,
             roles,
         };
+
+        this.logger.log(
+            `User ${user.id} (${user.nickname}) logged in with roles: ${roles.join(', ')}`,
+        );
 
         return {
             accessToken: this.jwtService.sign(payload),
@@ -107,22 +119,38 @@ export class AuthService {
 
         try {
             const savedUser = await this.userRepository.save(user);
+            this.logger.log(
+                `New user registered: ${savedUser.id} (${savedUser.email})`,
+            );
             return this.login(savedUser);
         } catch (error: unknown) {
             // Handle duplicate key violations (PostgreSQL unique constraint error)
             if (
                 this.isDatabaseError(error) &&
-                error.code === PostgresErrorCodes.UNIQUE_VIOLATION
+                (error.code as PostgresErrorCodes) ===
+                    PostgresErrorCodes.UNIQUE_VIOLATION
             ) {
                 const detail = error.detail || '';
                 if (detail.includes('email')) {
+                    this.logger.warn(
+                        `Registration failed: Email already exists - ${registerDto.email}`,
+                    );
                     throw new BadRequestException('Email already exists');
                 }
                 if (detail.includes('nickname')) {
+                    this.logger.warn(
+                        `Registration failed: Nickname already exists - ${registerDto.nickname}`,
+                    );
                     throw new BadRequestException('Nickname already exists');
                 }
+                this.logger.warn(
+                    `Registration failed: User already exists - ${registerDto.email}`,
+                );
                 throw new BadRequestException('User already exists');
             }
+            this.logger.error(
+                `Registration failed for ${registerDto.email}: ${(error as Error).message}`,
+            );
             throw error;
         }
     }

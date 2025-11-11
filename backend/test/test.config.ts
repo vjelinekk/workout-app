@@ -18,3 +18,8 @@ export const getTestDatabaseConfig = (): TypeOrmModuleOptions => ({
     dropSchema: true, // Clean database before each test run
     logging: false, // Set to true for debugging
 });
+
+export const getTestRedisConfig = () => ({
+    host: process.env.REDIS_TEST_HOST || 'localhost',
+    port: Number(process.env.REDIS_TEST_PORT) || 6380,
+});

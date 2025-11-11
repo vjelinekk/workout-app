@@ -75,8 +75,26 @@ export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudServic
         }
     }
 
-    protected beforeCreate(dto: WorkoutSessionPlanExerciseCreateDto): void {
+    protected async beforeCreate(
+        dto: WorkoutSessionPlanExerciseCreateDto,
+        user: JwtAuthenticatedUser,
+    ): Promise<void> {
         this.validatePlannedRepsPerSet(dto.plannedSets, dto.plannedRepsPerSet);
+
+        // Validate access to the parent workout session plan
+        const plan = await this.workoutSessionPlanRepository.findByIdActive(
+            dto.workoutSessionPlanId,
+        );
+
+        if (!plan) {
+            throw new NotFoundException(
+                `Workout session plan with ID ${dto.workoutSessionPlanId} not found`,
+            );
+        }
+
+        if (!user.roles.includes(RoleEnum.ADMIN) && plan.createdById !== user.id) {
+            throw new ForbiddenException('Access to resource denied');
+        }
     }
 
     /**
@@ -144,6 +162,54 @@ export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudServic
     }
 
     /**
+     * Validates access to a workout session plan and all DTOs.
+     * Ensures all DTOs belong to the specified plan and validates data consistency.
+     *
+     * @param workoutSessionPlanId The ID of the workout session plan
+     * @param createDtos Array of exercise DTOs to validate
+     * @param user The authenticated user
+     * @throws NotFoundException if the workout session plan does not exist
+     * @throws ForbiddenException if user doesn't have access to the workout session plan
+     * @throws Error if DTOs contain mismatched workout session plan IDs
+     */
+    private async validateBulkOperationAccess(
+        workoutSessionPlanId: number,
+        createDtos: WorkoutSessionPlanExerciseCreateDto[],
+        user: JwtAuthenticatedUser,
+    ): Promise<void> {
+        // Validate all DTOs match the provided workoutSessionPlanId
+        const allMatchPlan = createDtos.every(
+            (dto) => dto.workoutSessionPlanId === workoutSessionPlanId,
+        );
+
+        if (!allMatchPlan) {
+            throw new Error(
+                `All exercises must belong to workout session plan ID ${workoutSessionPlanId}`,
+            );
+        }
+
+        // Single DB query to fetch and validate access to the plan
+        const plan = await this.workoutSessionPlanRepository.findByIdActive(
+            workoutSessionPlanId,
+        );
+
+        if (!plan) {
+            throw new NotFoundException(
+                `Workout session plan with ID ${workoutSessionPlanId} not found`,
+            );
+        }
+
+        if (!user.roles.includes(RoleEnum.ADMIN) && plan.createdById !== user.id) {
+            throw new ForbiddenException('Access to resource denied');
+        }
+
+        // Validate each DTO (in-memory, no DB queries)
+        for (const dto of createDtos) {
+            this.validatePlannedRepsPerSet(dto.plannedSets, dto.plannedRepsPerSet);
+        }
+    }
+
+    /**
      * Retrieves all active exercises for a workout session plan, ordered by exercise order.
      *
      * @param workoutSessionPlanId The ID of the workout session plan
@@ -168,15 +234,30 @@ export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudServic
     /**
      * Bulk inserts multiple exercises for a workout session plan.
      * Validates that all exercises were successfully inserted.
+     * All DTOs must belong to the same workout session plan.
      *
      * @param createDtos Array of exercise creation DTOs
      * @param user The authenticated user creating the exercises
      * @throws InternalServerErrorException if not all exercises were successfully inserted
+     * @throws NotFoundException if the workout session plan does not exist
+     * @throws ForbiddenException if user doesn't have access to the workout session plan
+     * @throws Error if DTOs contain multiple different workout session plan IDs
      */
     public async createBulk(
         createDtos: WorkoutSessionPlanExerciseCreateDto[],
         user: JwtAuthenticatedUser,
     ): Promise<void> {
+        if (createDtos.length === 0) {
+            return; // Nothing to create
+        }
+
+        // Get the plan ID from the first DTO
+        const planId = createDtos[0].workoutSessionPlanId;
+
+        // Validate access and DTOs
+        await this.validateBulkOperationAccess(planId, createDtos, user);
+
+        // Create entities
         const entities = createDtos.map((dto) => {
             const entity = this.toEntity(dto);
             entity.createdById = user.id;
@@ -197,18 +278,28 @@ export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudServic
      * Bulk updates exercises for a workout session plan within a transaction.
      * Deletes all existing exercises, then inserts new ones atomically.
      * Ensures data consistency if any operation fails.
+     * All DTOs must belong to the same workout session plan.
      *
      * @param workoutSessionPlanId The ID of the workout session plan to update
      * @param createDtos Array of new exercise DTOs
      * @param user The authenticated user performing the update
-     * @throws NotFoundException if no existing exercises found to delete
+     * @throws NotFoundException if the workout session plan does not exist or no existing exercises found to delete
+     * @throws ForbiddenException if user doesn't have access to the workout session plan
      * @throws InternalServerErrorException if not all new exercises were successfully inserted
+     * @throws Error if DTOs contain workout session plan IDs that don't match the provided workoutSessionPlanId
      */
     public async updateBulk(
         workoutSessionPlanId: number,
         createDtos: WorkoutSessionPlanExerciseCreateDto[],
         user: JwtAuthenticatedUser,
     ): Promise<void> {
+        // Validate access and DTOs BEFORE transaction
+        await this.validateBulkOperationAccess(
+            workoutSessionPlanId,
+            createDtos,
+            user,
+        );
+
         // Use a transaction to ensure atomicity
         await this.dataSource.transaction(async (manager) => {
             // Get the repository from the transaction manager

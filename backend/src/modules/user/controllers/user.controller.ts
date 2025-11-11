@@ -5,6 +5,7 @@ import {
     Param,
     ParseArrayPipe,
     ParseBoolPipe,
+    ParseIntPipe,
     Post,
     Query,
 } from '@nestjs/common';
@@ -142,7 +143,9 @@ export class UserController {
         description: 'User not found',
     })
     @ApiBearerAuth()
-    async getOne(@Param('id') id: number): Promise<UserResponseDto> {
+    async getOne(
+        @Param('id', ParseIntPipe) id: number,
+    ): Promise<UserResponseDto> {
         return await this.userService.findByIdProfile(id);
     }
 
@@ -174,8 +177,8 @@ export class UserController {
     })
     @ApiBearerAuth()
     async resolveApplication(
-        @Param('id') id: number,
-        @Query('approve') approve: boolean,
+        @Param('id', ParseIntPipe) id: number,
+        @Query('approve', ParseBoolPipe) approve: boolean,
     ): Promise<void> {
         await this.userService.resolveTrainerApplication(id, approve);
     }

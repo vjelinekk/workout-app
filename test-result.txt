@@ -1,0 +1,244 @@
+🧪 Integration Test Runner
+================================
+✓ Test database is running
+
+Running E2E integration tests...
+
+> backend@0.0.1 test:e2e
+> jest --config ./test/jest-e2e.json --runInBand
+
+[Nest] 74145  - 11/11/2025, 5:40:12 PM   ERROR [ExceptionsHandler] QueryFailedError: duplicate key value violates unique constraint "UQ_e2364281027b926b879fa2fa1e0"
+    at PostgresQueryRunner.query (/Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/src/driver/postgres/PostgresQueryRunner.ts:325:19)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at InsertQueryBuilder.execute (/Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/src/query-builder/InsertQueryBuilder.ts:164:33)
+    at SubjectExecutor.executeInsertOperations (/Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/src/persistence/SubjectExecutor.ts:435:42)
+    at SubjectExecutor.execute (/Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/src/persistence/SubjectExecutor.ts:137:9)
+    at EntityPersistExecutor.execute (/Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/src/persistence/EntityPersistExecutor.ts:182:21)
+    at AuthService.register (/Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/src/modules/auth/services/auth.service.ts:102:27)
+    at AuthController.register (/Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/src/modules/auth/controllers/auth.controller.ts:65:16)
+    at /Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/node_modules/@nestjs/core/router/router-execution-context.js:46:28
+    at /Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/node_modules/@nestjs/core/router/router-proxy.js:9:17 {
+  query: 'INSERT INTO "user"("created_at", "updated_at", "is_deleted", "google_id", "first_name", "last_name", "nickname", "email", "password", "want_to_become_trainer", "become_trainer_reason") VALUES (DEFAULT, DEFAULT, DEFAULT, DEFAULT, $1, $2, $3, $4, $5, DEFAULT, DEFAULT) RETURNING "id", "created_at", "updated_at", "is_deleted", "want_to_become_trainer"',
+  parameters: [
+    'Test',
+    'User',
+    'testuser',
+    'not-an-email',
+    '$2b$10$WNI1TBgDS/JbXACw/561WefRk/dvGyg847ueMPG0WSYMHWOW0HBk6'
+  ],
+  driverError: error: duplicate key value violates unique constraint "UQ_e2364281027b926b879fa2fa1e0"
+      at /Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/node_modules/pg/lib/client.js:545:17
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at PostgresQueryRunner.query (/Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/src/driver/postgres/PostgresQueryRunner.ts:254:25)
+      at InsertQueryBuilder.execute (/Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/src/query-builder/InsertQueryBuilder.ts:164:33)
+      at SubjectExecutor.executeInsertOperations (/Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/src/persistence/SubjectExecutor.ts:435:42)
+      at SubjectExecutor.execute (/Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/src/persistence/SubjectExecutor.ts:137:9)
+      at EntityPersistExecutor.execute (/Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/src/persistence/EntityPersistExecutor.ts:182:21)
+      at AuthService.register (/Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/src/modules/auth/services/auth.service.ts:102:27)
+      at AuthController.register (/Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/src/modules/auth/controllers/auth.controller.ts:65:16)
+      at /Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/node_modules/@nestjs/core/router/router-execution-context.js:46:28
+      at /Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/node_modules/@nestjs/core/router/router-proxy.js:9:17 {
+    length: 232,
+    severity: 'ERROR',
+    code: '23505',
+    detail: 'Key (nickname)=(testuser) already exists.',
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: undefined,
+    schema: 'public',
+    table: 'user',
+    column: undefined,
+    dataType: undefined,
+    constraint: 'UQ_e2364281027b926b879fa2fa1e0',
+    file: 'nbtinsert.c',
+    line: '666',
+    routine: '_bt_check_unique'
+  },
+  length: 232,
+  severity: 'ERROR',
+  code: '23505',
+  detail: 'Key (nickname)=(testuser) already exists.',
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: 'public',
+  table: 'user',
+  column: undefined,
+  dataType: undefined,
+  constraint: 'UQ_e2364281027b926b879fa2fa1e0',
+  file: 'nbtinsert.c',
+  line: '666',
+  routine: '_bt_check_unique'
+}
+[Nest] 74145  - 11/11/2025, 5:40:12 PM   ERROR [ExceptionsHandler] QueryFailedError: duplicate key value violates unique constraint "UQ_e12875dfb3b1d92d7d7c5377e22"
+    at PostgresQueryRunner.query (/Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/src/driver/postgres/PostgresQueryRunner.ts:325:19)
+    at processTicksAndRejections (node:internal/process/task_queues:105:5)
+    at InsertQueryBuilder.execute (/Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/src/query-builder/InsertQueryBuilder.ts:164:33)
+    at SubjectExecutor.executeInsertOperations (/Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/src/persistence/SubjectExecutor.ts:435:42)
+    at SubjectExecutor.execute (/Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/src/persistence/SubjectExecutor.ts:137:9)
+    at EntityPersistExecutor.execute (/Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/src/persistence/EntityPersistExecutor.ts:182:21)
+    at AuthService.register (/Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/src/modules/auth/services/auth.service.ts:102:27)
+    at AuthController.register (/Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/src/modules/auth/controllers/auth.controller.ts:65:16)
+    at /Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/node_modules/@nestjs/core/router/router-execution-context.js:46:28
+    at /Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/node_modules/@nestjs/core/router/router-proxy.js:9:17 {
+  query: 'INSERT INTO "user"("created_at", "updated_at", "is_deleted", "google_id", "first_name", "last_name", "nickname", "email", "password", "want_to_become_trainer", "become_trainer_reason") VALUES (DEFAULT, DEFAULT, DEFAULT, DEFAULT, $1, $2, $3, $4, $5, DEFAULT, DEFAULT) RETURNING "id", "created_at", "updated_at", "is_deleted", "want_to_become_trainer"',
+  parameters: [
+    'Test',
+    'User',
+    'anotheruser',
+    'testuser@example.com',
+    '$2b$10$MYEjU2ysoOLpcHNqnWo6G.eR3XQzaLV4JM64WPuLPYZzPoAl.pxSq'
+  ],
+  driverError: error: duplicate key value violates unique constraint "UQ_e12875dfb3b1d92d7d7c5377e22"
+      at /Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/node_modules/pg/lib/client.js:545:17
+      at processTicksAndRejections (node:internal/process/task_queues:105:5)
+      at PostgresQueryRunner.query (/Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/src/driver/postgres/PostgresQueryRunner.ts:254:25)
+      at InsertQueryBuilder.execute (/Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/src/query-builder/InsertQueryBuilder.ts:164:33)
+      at SubjectExecutor.executeInsertOperations (/Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/src/persistence/SubjectExecutor.ts:435:42)
+      at SubjectExecutor.execute (/Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/src/persistence/SubjectExecutor.ts:137:9)
+      at EntityPersistExecutor.execute (/Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/src/persistence/EntityPersistExecutor.ts:182:21)
+      at AuthService.register (/Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/src/modules/auth/services/auth.service.ts:102:27)
+      at AuthController.register (/Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/src/modules/auth/controllers/auth.controller.ts:65:16)
+      at /Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/node_modules/@nestjs/core/router/router-execution-context.js:46:28
+      at /Users/vojtechjelinek/Documents/School/FAV_ING/3_semestr/PIA-E/semestralni_prace/workout-app/backend/node_modules/@nestjs/core/router/router-proxy.js:9:17 {
+    length: 241,
+    severity: 'ERROR',
+    code: '23505',
+    detail: 'Key (email)=(testuser@example.com) already exists.',
+    hint: undefined,
+    position: undefined,
+    internalPosition: undefined,
+    internalQuery: undefined,
+    where: undefined,
+    schema: 'public',
+    table: 'user',
+    column: undefined,
+    dataType: undefined,
+    constraint: 'UQ_e12875dfb3b1d92d7d7c5377e22',
+    file: 'nbtinsert.c',
+    line: '666',
+    routine: '_bt_check_unique'
+  },
+  length: 241,
+  severity: 'ERROR',
+  code: '23505',
+  detail: 'Key (email)=(testuser@example.com) already exists.',
+  hint: undefined,
+  position: undefined,
+  internalPosition: undefined,
+  internalQuery: undefined,
+  where: undefined,
+  schema: 'public',
+  table: 'user',
+  column: undefined,
+  dataType: undefined,
+  constraint: 'UQ_e12875dfb3b1d92d7d7c5377e22',
+  file: 'nbtinsert.c',
+  line: '666',
+  routine: '_bt_check_unique'
+}
+ FAIL  test/auth.controller.e2e-spec.ts
+  ● Console
+
+    console.log
+      [dotenv@17.2.1] injecting env (16) from .env.test -- tip: ⚙️  specify custom .env file path with { path: '/custom/path/.env' }
+
+      at _log (../node_modules/dotenv/lib/main.js:139:11)
+
+  ● AuthController (e2e - Integration Tests) › POST /auth/register › should return 400 with invalid email format
+
+    expected 400 "Bad Request", got 500 "Internal Server Error"
+
+      693 |                 .post('/auth/register')
+      694 |                 .send(registerDto)
+    > 695 |                 .expect(400);
+          |                  ^
+      696 |         });
+      697 |
+      698 |         it('should return 400 with password shorter than 6 characters', async () => {
+
+      at Object.<anonymous> (auth.controller.e2e-spec.ts:695:18)
+      ----
+      at Test._assertStatus (../node_modules/supertest/lib/test.js:309:14)
+      at ../node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../node_modules/supertest/lib/test.js:152:11)
+
+  ● AuthController (e2e - Integration Tests) › POST /auth/register › should return 400 with duplicate email
+
+    expected 400 "Bad Request", got 500 "Internal Server Error"
+
+      793 |                 .post('/auth/register')
+      794 |                 .send(registerDto)
+    > 795 |                 .expect(400); // Duplicate email should fail
+          |                  ^
+      796 |         });
+      797 |
+      798 |         it('should return valid JWT token after registration', async () => {
+
+      at Object.<anonymous> (auth.controller.e2e-spec.ts:795:18)
+      ----
+      at Test._assertStatus (../node_modules/supertest/lib/test.js:309:14)
+      at ../node_modules/supertest/lib/test.js:365:13
+      at Test._assertFunction (../node_modules/supertest/lib/test.js:342:13)
+      at Test.assert (../node_modules/supertest/lib/test.js:195:23)
+      at localAssert (../node_modules/supertest/lib/test.js:138:14)
+      at Server.<anonymous> (../node_modules/supertest/lib/test.js:152:11)
+
+  ● AuthController (e2e - Integration Tests) › POST /auth/exchange-code › should handle concurrent code exchange attempts
+
+    read ECONNRESET
+
+
+  ● AuthController (e2e - Integration Tests) › OAuth Flow - Complete Workflow › should handle user registration followed by immediate login
+
+    expect(received).not.toBe(expected) // Object.is equality
+
+    Expected: not "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuaWNrbmFtZSI6ImltbWVkaWF0ZWxvZ2luIiwic3ViIjo3LCJyb2xlcyI6WzJdLCJpYXQiOjE3NjI4NzkyMTIsImV4cCI6MTc2Mjg4MjgxMn0.xUETGRq9hspqCB8KO-NAHEdSDttPPl0l9wrTMj9ZXnA"
+
+      1024 |
+      1025 |             // Tokens should be different
+    > 1026 |             expect(registerResponse.body.accessToken).not.toBe(
+           |                                                           ^
+      1027 |                 loginResponse.body.accessToken,
+      1028 |             );
+      1029 |         });
+
+      at Object.<anonymous> (auth.controller.e2e-spec.ts:1026:59)
+
+ FAIL  test/user.controller.e2e-spec.ts
+  ● Console
+
+    console.log
+      [dotenv@17.2.1] injecting env (16) from .env.test -- tip: ⚙️  suppress all logs with { quiet: true }
+
+      at _log (../node_modules/dotenv/lib/main.js:139:11)
+
+  ● UserController (e2e - Integration Tests) › POST /users/trainer-application/:id › should reject non-admin users
+
+    expect(received).toContain(expected) // indexOf
+
+    Expected value: 404
+    Received array: [403, 500]
+
+      339 |                 .query({ approve: true });
+      340 |
+    > 341 |             expect([403, 500]).toContain(response.status);
+          |                                ^
+      342 |         });
+      343 |
+      344 |         it('should allow admin with approve parameter', async () => {
+
+      at Object.<anonymous> (user.controller.e2e-spec.ts:341:32)
+
+Test Suites: 2 failed, 2 total
+Tests:       5 failed, 72 passed, 77 total
+Snapshots:   0 total
+Time:        4.59 s
+Ran all test suites.

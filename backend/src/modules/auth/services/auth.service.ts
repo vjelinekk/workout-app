@@ -1,4 +1,8 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+    Injectable,
+    UnauthorizedException,
+    BadRequestException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { compare } from 'bcrypt';
 import { UserEntity } from 'src/modules/user/entities/user.entity';
@@ -8,6 +12,7 @@ import { UserRepository } from 'src/modules/user/repositories/user.repository';
 import { RegisterDto } from '../dtos/register.dto';
 import { RoleRepository } from 'src/modules/user/repositories/role.repository';
 import { hashPassword } from 'src/common/utils/hash';
+import { PostgresErrorCodes } from 'src/common/enums/postgres-error-codes.enum';
 
 /**
  * Authentication service for handling user login, registration, and credential validation.
@@ -80,6 +85,7 @@ export class AuthService {
      * @param registerDto Registration data containing email, password, firstName, lastName, and nickname
      * @returns Login response with access token and user profile information
      * @throws UnauthorizedException if the default role does not exist in the system
+     * @throws BadRequestException if email or nickname already exists
      */
     async register(registerDto: RegisterDto) {
         const password = registerDto.password;
@@ -99,7 +105,39 @@ export class AuthService {
             roles: [defaultRole],
         });
 
-        const savedUser = await this.userRepository.save(user);
-        return this.login(savedUser);
+        try {
+            const savedUser = await this.userRepository.save(user);
+            return this.login(savedUser);
+        } catch (error: unknown) {
+            // Handle duplicate key violations (PostgreSQL unique constraint error)
+            if (
+                this.isDatabaseError(error) &&
+                error.code === PostgresErrorCodes.UNIQUE_VIOLATION
+            ) {
+                const detail = error.detail || '';
+                if (detail.includes('email')) {
+                    throw new BadRequestException('Email already exists');
+                }
+                if (detail.includes('nickname')) {
+                    throw new BadRequestException('Nickname already exists');
+                }
+                throw new BadRequestException('User already exists');
+            }
+            throw error;
+        }
+    }
+
+    /**
+     * Type guard to check if error is a database error with code and detail properties
+     */
+    private isDatabaseError(
+        error: unknown,
+    ): error is { code: string; detail?: string } {
+        return (
+            typeof error === 'object' &&
+            error !== null &&
+            'code' in error &&
+            typeof (error as { code: unknown }).code === 'string'
+        );
     }
 }

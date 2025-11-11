@@ -1,7 +1,10 @@
 import { DeepPartial, FindOptionsWhere } from 'typeorm';
 import { BaseRepository } from '../repositories/base.repository';
 import { BaseCrudService } from './base-crud.service';
-import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import {
+    InternalServerErrorException,
+    NotFoundException,
+} from '@nestjs/common';
 import { AuditableEntity } from '../entities/auditable.entity';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
 import { plainToInstance } from 'class-transformer';

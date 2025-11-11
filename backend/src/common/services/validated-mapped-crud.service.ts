@@ -40,7 +40,9 @@ export abstract class ValidatedMappedCrudService<
      * }
      * ```
      */
-    protected getValidationRelations(): FindOptionsRelations<Entity> | undefined {
+    protected getValidationRelations():
+        | FindOptionsRelations<Entity>
+        | undefined {
         return undefined; // Default: no relations loaded
     }
 

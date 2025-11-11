@@ -25,7 +25,7 @@ export class UserService {
     constructor(
         private readonly userRepository: UserRepository,
         private readonly rolesRepository: RoleRepository,
-    ) { }
+    ) {}
 
     /**
      * Finds a user by email address.
@@ -234,7 +234,7 @@ export class UserService {
                             TrainerTraineeStatusEnum.ACTIVE,
                             TrainerTraineeStatusEnum.PENDING,
                         ],
-                    }
+                    },
                 )
                 .where('user.isDeleted = false')
                 .andWhere('role.id IN (:...roleIds)', { roleIds: roles })

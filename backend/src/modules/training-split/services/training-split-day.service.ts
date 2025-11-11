@@ -59,10 +59,10 @@ export class TrainingSplitDayService extends ValidatedMappedCrudService<
         };
     }
 
-    protected async validateEntityAccess(
+    protected validateEntityAccess(
         entity: TrainingSplitDayEntity,
         user: JwtAuthenticatedUser,
-    ): Promise<void> {
+    ): void {
         if (user.roles.includes(RoleEnum.ADMIN)) {
             return;
         }
@@ -178,7 +178,9 @@ export class TrainingSplitDayService extends ValidatedMappedCrudService<
         // Use a transaction to ensure atomicity
         await this.dataSource.transaction(async (manager) => {
             // Get the repository from the transaction manager
-            const trainingSplitDayRepo = manager.getRepository(TrainingSplitDayEntity);
+            const trainingSplitDayRepo = manager.getRepository(
+                TrainingSplitDayEntity,
+            );
 
             // 1. Delete existing days for this training split
             const deleteResult = await trainingSplitDayRepo.delete({

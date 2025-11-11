@@ -276,7 +276,7 @@ export class WorkoutSessionService extends ValidatedMappedCrudService<
             await this.addPreviousRepsAndWeightsToExercises(responseDto);
 
             return responseDto;
-        })
+        });
     }
 
     /**
@@ -352,14 +352,18 @@ export class WorkoutSessionService extends ValidatedMappedCrudService<
         // Use transaction for all write operations
         await this.dataSource.transaction(async (manager) => {
             // Get repositories from transaction manager
-            const workoutSessionRepo = manager.getRepository(WorkoutSessionEntity);
-            const workoutSessionExerciseRepo = manager.getRepository(WorkoutSessionExerciseEntity);
+            const workoutSessionRepo =
+                manager.getRepository(WorkoutSessionEntity);
+            const workoutSessionExerciseRepo = manager.getRepository(
+                WorkoutSessionExerciseEntity,
+            );
 
             // 1. Update workout session status and metadata
-            const baseValueUpdate: QueryDeepPartialEntity<WorkoutSessionEntity> = {
-                updatedById: userId,
-                updatedAt: () => 'NOW()', // database-side timestamp
-            };
+            const baseValueUpdate: QueryDeepPartialEntity<WorkoutSessionEntity> =
+                {
+                    updatedById: userId,
+                    updatedAt: () => 'NOW()', // database-side timestamp
+                };
 
             if (finish) {
                 baseValueUpdate.status = WorkoutSessionStatusEnum.COMPLETED;
@@ -367,16 +371,14 @@ export class WorkoutSessionService extends ValidatedMappedCrudService<
                 baseValueUpdate.performedById = userId;
             }
 
-            await workoutSessionRepo.update(
-                workoutSessionId,
-                baseValueUpdate,
-            );
+            await workoutSessionRepo.update(workoutSessionId, baseValueUpdate);
 
             // 2. Update exercise progress
             const workoutSessionExercises = workoutSession.exercises;
 
             for (const exercise of workoutSessionExercises) {
-                const exerciseProgress = logProgressDto.progressData[exercise.id];
+                const exerciseProgress =
+                    logProgressDto.progressData[exercise.id];
 
                 if (exerciseProgress) {
                     const newReps = Object.values(exerciseProgress).map(
@@ -407,9 +409,7 @@ export class WorkoutSessionService extends ValidatedMappedCrudService<
             }
 
             // 3. Save all exercise updates
-            await workoutSessionExerciseRepo.save(
-                workoutSessionExercises,
-            );
+            await workoutSessionExerciseRepo.save(workoutSessionExercises);
         });
     }
 

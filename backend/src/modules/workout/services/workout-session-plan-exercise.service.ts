@@ -189,7 +189,7 @@ export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudServic
         if (result.identifiers.length !== createDtos.length) {
             throw new InternalServerErrorException(
                 `Failed to insert all workout session plan exercises. Expected ${createDtos.length}, inserted ${result.identifiers.length}`,
-            )
+            );
         }
     }
 
@@ -235,7 +235,8 @@ export class WorkoutSessionPlanExerciseService extends ValidatedMappedCrudServic
             });
 
             // 3. Insert new exercises
-            const result = await workoutSessionPlanExerciseRepo.insert(entities);
+            const result =
+                await workoutSessionPlanExerciseRepo.insert(entities);
 
             if (result.identifiers.length !== createDtos.length) {
                 throw new InternalServerErrorException(

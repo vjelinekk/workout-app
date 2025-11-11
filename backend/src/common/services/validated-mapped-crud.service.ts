@@ -232,10 +232,10 @@ export abstract class ValidatedMappedCrudService<
         user: JwtAuthenticatedUser,
     ): Promise<ResponseDto> {
         const relations = this.getValidationRelations();
-        const entity = await this.findOneActive(id, relations);
+        const entityToValidate = await this.findOneActive(id, relations);
 
-        await this.validateEntityAccess(entity, user);
-        await this.beforeDelete(entity, user);
+        await this.validateEntityAccess(entityToValidate, user);
+        await this.beforeDelete(entityToValidate, user);
 
         const updateResult = await this.repository.update(
             { id } as unknown as FindOptionsWhere<Entity>,
@@ -249,11 +249,19 @@ export abstract class ValidatedMappedCrudService<
             throw new NotFoundException(`Entity with ID ${id} not found`);
         }
 
-        // Note: We set isDeleted manually to avoid an additional DB query.
-        // The returned entity won't reflect cascade changes or exact deletion timestamps.
-        entity.isDeleted = true;
+        // Re-fetch the entity to get its updated state
+        const deletedEntity = await this.repository.findOne({
+            where: { id } as FindOptionsWhere<Entity>,
+            relations,
+        });
 
-        return this.toResponseDto(entity);
+        if (!deletedEntity) {
+            throw new NotFoundException(
+                `Could not retrieve entity with ID ${id} after deletion.`,
+            );
+        }
+
+        return this.toResponseDto(deletedEntity);
     }
 
     /**
@@ -271,13 +279,18 @@ export abstract class ValidatedMappedCrudService<
         user: JwtAuthenticatedUser,
     ): Promise<ResponseDto> {
         const relations = this.getValidationRelations();
-        const entity = await this.findOneInDeleted(id, relations);
+        const entityToValidate = await this.findOneInDeleted(id, relations);
 
-        await this.validateEntityAccess(entity, user);
-        await this.beforeRestore(entity, user);
+        await this.validateEntityAccess(entityToValidate, user);
+        await this.beforeRestore(entityToValidate, user);
 
+        // Perform the restore operation
         await this.restore(id);
-        return this.toResponseDto(entity);
+
+        // Re-fetch the now-active entity to get its fresh state
+        const restoredEntity = await this.findOneActive(id, relations);
+
+        return this.toResponseDto(restoredEntity);
     }
 
     /**

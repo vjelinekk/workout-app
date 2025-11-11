@@ -1,7 +1,7 @@
 import { DeepPartial, FindOptionsWhere } from 'typeorm';
 import { BaseRepository } from '../repositories/base.repository';
 import { BaseCrudService } from './base-crud.service';
-import { NotFoundException } from '@nestjs/common';
+import { InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { AuditableEntity } from '../entities/auditable.entity';
 import { QueryDeepPartialEntity } from 'typeorm/query-builder/QueryPartialEntity.js';
 import { plainToInstance } from 'class-transformer';
@@ -156,10 +156,8 @@ export abstract class MappedCrudService<
      * @throws NotFoundException if the entity with the given ID does not exist
      */
     async deleteMapped(id: number, userId: number): Promise<ResponseDto> {
-        const entity = await this.findOneActive(id);
-
         const updateResult = await this.repository.update(
-            { id } as unknown as FindOptionsWhere<Entity>,
+            { id, isDeleted: false } as unknown as FindOptionsWhere<Entity>,
             {
                 isDeleted: true,
                 deletedById: userId,
@@ -167,12 +165,23 @@ export abstract class MappedCrudService<
         );
 
         if (updateResult.affected === 0) {
-            throw new NotFoundException(`Entity with ID ${id} not found`);
+            throw new NotFoundException(
+                `Entity with ID ${id} not found or already deleted`,
+            );
         }
 
-        entity.isDeleted = true;
-        entity.deletedById = userId;
-        return this.toResponseDto(entity);
+        // Re-fetch the entity to get its updated state (including isDeleted flag and timestamps)
+        const deletedEntity = await this.repository.findOne({
+            where: { id } as FindOptionsWhere<Entity>,
+        });
+
+        if (!deletedEntity) {
+            throw new InternalServerErrorException(
+                `Could not retrieve entity with ID ${id} after deletion.`,
+            );
+        }
+
+        return this.toResponseDto(deletedEntity);
     }
 
     /**
@@ -183,9 +192,13 @@ export abstract class MappedCrudService<
      * @throws NotFoundException if the entity with the given ID does not exist
      */
     async restoreMapped(id: number): Promise<ResponseDto> {
-        const entity = await this.findOneInDeleted(id);
+        // Perform the restore operation. The base `restore` method already checks for existence.
         await this.restore(id);
-        return this.toResponseDto(entity);
+
+        // Re-fetch the now-active entity to get its fresh state
+        const restoredEntity = await this.findOneActive(id);
+
+        return this.toResponseDto(restoredEntity);
     }
 
     /**

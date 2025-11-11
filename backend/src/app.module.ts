@@ -10,6 +10,7 @@ import { TrainingSplitModule } from './modules/training-split/training-split.mod
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { RedisModule } from './common/redis/redis.module';
+import { LoggerModule } from 'nestjs-pino';
 
 @Module({
     imports: [
@@ -30,6 +31,7 @@ import { RedisModule } from './common/redis/redis.module';
                 synchronize: false,
             }),
         }),
+        LoggerModule.forRoot(),
         RedisModule,
         AuthModule,
         ExerciseModule,

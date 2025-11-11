@@ -7,6 +7,7 @@ import {
     InternalServerErrorException,
     Body,
     UnauthorizedException,
+    Logger,
 } from '@nestjs/common';
 import { AuthService } from '../services/auth.service';
 import { GoogleAuthGuard } from '../guards/google-auth.guard';
@@ -29,6 +30,8 @@ import { RegisterDto } from '../dtos/register.dto';
 
 @Controller('auth')
 export class AuthController {
+    private readonly logger = new Logger(AuthController.name);
+
     constructor(
         private authService: AuthService,
         private authCodeService: AuthCodeService,
@@ -79,6 +82,10 @@ export class AuthController {
         @AuthenticatedUser() user: UserEntity,
         @Res() res: Response,
     ) {
+        this.logger.log(
+            `Google OAuth callback for user ${user.id} (${user.email})`,
+        );
+
         const loginResponse = this.authService.login(user);
 
         const authCode = await this.authCodeService.generateAuthCode(loginResponse);
@@ -91,6 +98,8 @@ export class AuthController {
         }
         const redirectUrl = new URL('/auth/callback', frontendUrl);
         redirectUrl.searchParams.append('code', authCode);
+
+        this.logger.log(`Redirecting user ${user.id} to frontend with auth code`);
 
         return res.redirect(redirectUrl.toString());
     }

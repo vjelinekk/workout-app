@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import { Injectable, Logger, UnauthorizedException } from '@nestjs/common';
 import { promises as fs } from 'fs';
 import { join } from 'path';
 import { ConfigService } from '@nestjs/config';
@@ -26,9 +26,10 @@ export class ExerciseService extends PublicAuthorizableCrudService<
     ExerciseResponseDto,
     ExerciseRepository
 > {
+    private readonly logger = new Logger(ExerciseService.name);
+
     constructor(
         protected readonly exerciseRepository: ExerciseRepository,
-        private readonly configService: ConfigService,
     ) {
         super(exerciseRepository);
     }
@@ -119,8 +120,7 @@ export class ExerciseService extends PublicAuthorizableCrudService<
                 await fs.unlink(imagePath);
             } catch (error) {
                 // Ignore errors if the file doesn't exist, e.g., was already deleted
-                // Log the error for debugging purposes
-                console.warn(`Failed to delete image at ${imagePath}:`, error);
+                this.logger.warn(`Failed to delete image at ${imagePath}: ${error}`);
             }
         }
 

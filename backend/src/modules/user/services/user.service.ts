@@ -2,6 +2,7 @@ import {
     BadRequestException,
     Injectable,
     NotFoundException,
+    Logger,
 } from '@nestjs/common';
 import { UserEntity } from '../entities/user.entity';
 import { CreateFromGoogle } from '../types/create-from-google.type';
@@ -22,6 +23,8 @@ import { TrainerTraineeStatusEnum } from '../enums/trainer-trainee-status.enum';
  */
 @Injectable()
 export class UserService {
+    private readonly logger = new Logger(UserService.name);
+
     constructor(
         private readonly userRepository: UserRepository,
         private readonly rolesRepository: RoleRepository,
@@ -96,7 +99,12 @@ export class UserService {
             roles: [defaultRole],
         });
 
-        return this.userRepository.save(user);
+        const savedUser = await this.userRepository.save(user);
+        this.logger.log(
+            `New user created from Google OAuth: ${savedUser.id} (${savedUser.email})`,
+        );
+
+        return savedUser;
     }
 
     /**
@@ -189,6 +197,11 @@ export class UserService {
         user.wantToBecomeTrainer = true;
         user.becomeTrainerReason = reason;
         await this.userRepository.save(user);
+
+        this.logger.log(
+            `User ${userId} (${user.nickname}) submitted trainer application`,
+        );
+
         return user;
     }
 
@@ -308,6 +321,13 @@ export class UserService {
                 throw new NotFoundException('Trainer role not found');
             }
             user.roles = [...currentUserRoles, trainerRole];
+            this.logger.log(
+                `Trainer application APPROVED for user ${userId} (${user.nickname})`,
+            );
+        } else {
+            this.logger.log(
+                `Trainer application DENIED for user ${userId} (${user.nickname})`,
+            );
         }
 
         user.wantToBecomeTrainer = false;

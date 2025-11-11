@@ -8,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { AllExceptionsFilter } from './common/filters/all-exceptions.filter';
 import { LoggingInterceptor } from './common/interceptors/logging.interceptor';
+import { Logger } from 'nestjs-pino';
 
 async function bootstrap() {
     const app = await NestFactory.create(AppModule);
@@ -43,7 +44,10 @@ async function bootstrap() {
     );
 
     // Exception Filters
-    app.useGlobalFilters(new AllExceptionsFilter());
+    app.useGlobalFilters(new AllExceptionsFilter(app.get(Logger)));
+
+    // Pino Logger
+    app.useLogger(app.get(Logger));
 
     // Swagger
     const config = new DocumentBuilder()

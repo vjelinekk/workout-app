@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common';
+import { Injectable, Inject, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Resend } from 'resend';
 
@@ -9,6 +9,7 @@ import { Resend } from 'resend';
  */
 @Injectable()
 export class MailService {
+    private readonly logger = new Logger(MailService.name);
     private readonly fromEmail: string;
     private readonly isProduction: boolean;
     private readonly devToEmail: string;
@@ -53,11 +54,27 @@ export class MailService {
     ) {
         const recipients = this.isProduction ? to : [this.devToEmail];
 
-        return this.resend.emails.send({
-            from: this.fromEmail,
-            to: recipients,
-            subject: `New Trainer Request from ${requestingUserNickname}`,
-            html: `<p>${message}</p>`,
-        });
+        this.logger.log(
+            `Sending trainer request email from ${requestingUserNickname} to ${recipients.length} recipient(s)`,
+        );
+
+        try {
+            const result = await this.resend.emails.send({
+                from: this.fromEmail,
+                to: recipients,
+                subject: `New Trainer Request from ${requestingUserNickname}`,
+                html: `<p>${message}</p>`,
+            });
+
+            this.logger.log(
+                `Trainer request email sent successfully (ID: ${result.data?.id})`,
+            );
+            return result;
+        } catch (error) {
+            this.logger.error(
+                `Failed to send trainer request email: ${error}`,
+            );
+            throw error;
+        }
     }
 }

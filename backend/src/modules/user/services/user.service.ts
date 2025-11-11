@@ -9,11 +9,10 @@ import { UserRepository } from '../repositories/user.repository';
 import { RoleRepository } from '../repositories/role.repository';
 import { hashPassword } from 'src/common/utils/hash';
 import { RoleEnum } from '../enums/role.enum';
-import { FindOptionsWhere, In, Not } from 'typeorm';
+import { FindOptionsWhere, In } from 'typeorm';
 import { plainToInstance } from 'class-transformer';
 import { UserResponseDto } from '../dtos/user-response.dto';
 import { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
-import { TrainerTraineeRepository } from '../repositories/trainer-trainee.repository';
 import { TrainerTraineeStatusEnum } from '../enums/trainer-trainee-status.enum';
 
 @Injectable()
@@ -21,8 +20,7 @@ export class UserService {
     constructor(
         private readonly userRepository: UserRepository,
         private readonly rolesRepository: RoleRepository,
-        private readonly trainerTraineeRepository: TrainerTraineeRepository,
-    ) {}
+    ) { }
 
     async findByEmail(email: string): Promise<UserEntity> {
         const user = await this.userRepository.findByEmail(email);
@@ -132,6 +130,53 @@ export class UserService {
         roles?: RoleEnum[],
         notRecruitedOrPending?: boolean,
     ): Promise<UserResponseDto[]> {
+        const isAdminOrTrainer =
+            user.roles.includes(RoleEnum.ADMIN) ||
+            user.roles.includes(RoleEnum.TRAINER);
+
+        // Use query builder when we need to exclude trainees
+        if (
+            notRecruitedOrPending &&
+            roles &&
+            roles.includes(RoleEnum.TRAINEE) &&
+            isAdminOrTrainer
+        ) {
+            const queryBuilder = this.userRepository
+                .createQueryBuilder('user')
+                .leftJoin('user.roles', 'role')
+                .leftJoin(
+                    'trainer_trainee',
+                    'tt',
+                    'tt.traineeId = user.id AND tt.trainerId = :trainerId AND tt.isDeleted = false AND tt.status IN (:...statuses)',
+                    {
+                        trainerId: user.id,
+                        statuses: [
+                            TrainerTraineeStatusEnum.ACTIVE,
+                            TrainerTraineeStatusEnum.PENDING,
+                        ],
+                    }
+                )
+                .where('user.isDeleted = false')
+                .andWhere('role.id IN (:...roleIds)', { roleIds: roles })
+                .andWhere('tt.id IS NULL'); // Exclude users with existing relationships
+
+            if (trainerRequests) {
+                queryBuilder.andWhere('user.wantToBecomeTrainer = true');
+            }
+
+            const users = await queryBuilder
+                .leftJoinAndSelect('user.roles', 'userRoles')
+                .getMany();
+
+            return users.map((u) => {
+                const userDto = plainToInstance(UserResponseDto, u, {
+                    excludeExtraneousValues: true,
+                });
+                userDto.roles = u.roles.map((role) => role.id as RoleEnum);
+                return userDto;
+            });
+        }
+
         const where: FindOptionsWhere<UserEntity> = {};
 
         if (trainerRequests) {
@@ -144,38 +189,6 @@ export class UserService {
             };
         }
 
-        const isAdminOrTrainer =
-            user.roles.includes(RoleEnum.ADMIN) ||
-            user.roles.includes(RoleEnum.TRAINER);
-        if (
-            notRecruitedOrPending &&
-            roles &&
-            roles.includes(RoleEnum.TRAINEE) &&
-            isAdminOrTrainer
-        ) {
-            const existingTrainerTraineeRelations =
-                await this.trainerTraineeRepository.findActive({
-                    where: {
-                        trainerId: user.id,
-                        status: In([
-                            TrainerTraineeStatusEnum.ACTIVE,
-                            TrainerTraineeStatusEnum.PENDING,
-                        ]),
-                    },
-                    select: {
-                        traineeId: true,
-                    },
-                });
-
-            const excludedTraineeIds = existingTrainerTraineeRelations.map(
-                (relation) => relation.traineeId,
-            );
-
-            if (excludedTraineeIds.length > 0) {
-                where.id = Not(In(excludedTraineeIds));
-            }
-        }
-
         const users = await this.userRepository.findActive({
             where,
             relations: {
@@ -183,15 +196,16 @@ export class UserService {
             },
         });
 
-        return users.map((user) => {
-            const userDto = plainToInstance(UserResponseDto, user, {
+        return users.map((u) => {
+            const userDto = plainToInstance(UserResponseDto, u, {
                 excludeExtraneousValues: true,
             });
-            const roles = user.roles.map((role) => role.id as RoleEnum);
+            const roles = u.roles.map((role) => role.id as RoleEnum);
             userDto.roles = roles;
             return userDto;
         });
     }
+
 
     async resolveTrainerApplication(userId: number, approve: boolean) {
         const user = await this.findByIdForBecomeTrainer(userId);

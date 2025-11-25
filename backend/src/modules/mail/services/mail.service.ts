@@ -1,5 +1,6 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import escapeHtml from 'escape-html';
 import type { IEmailProvider } from '../interfaces/email-provider.interface';
 
 /**
@@ -59,7 +60,7 @@ export class MailService {
             from: this.fromEmail,
             to: recipients,
             subject: `New Trainer Request from ${requestingUserNickname}`,
-            html: `<p>${message}</p>`,
+            html: `<p>${escapeHtml(message)}</p>`,
         });
 
         if (!result.success) {

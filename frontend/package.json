@@ -40,7 +40,6 @@
         "@eslint/eslintrc": "^3.3.1",
         "@eslint/js": "^9.34.0",
         "@tailwindcss/postcss": "^4",
-        "@types/jwt-decode": "^2.2.1",
         "@types/node": "^20",
         "@types/react": "^19",
         "@types/react-dom": "^19",

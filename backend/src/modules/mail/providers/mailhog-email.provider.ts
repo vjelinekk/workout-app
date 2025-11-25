@@ -10,6 +10,7 @@ import {
     ENV_MAILHOG_HOST,
     ENV_MAILHOG_PORT,
 } from '../../../common/constants/env-keys';
+import { NodemailerResponse } from '../types/nodemailer';
 
 /**
  * MailHog email provider implementation for development
@@ -21,7 +22,8 @@ export class MailHogEmailProvider implements IEmailProvider {
     private readonly transporter: nodemailer.Transporter;
 
     constructor(private readonly configService: ConfigService) {
-        const host = this.configService.get<string>(ENV_MAILHOG_HOST) || 'localhost';
+        const host =
+            this.configService.get<string>(ENV_MAILHOG_HOST) || 'localhost';
         const port = this.configService.get<number>(ENV_MAILHOG_PORT) || 1025;
 
         this.transporter = nodemailer.createTransport({
@@ -31,9 +33,7 @@ export class MailHogEmailProvider implements IEmailProvider {
             secure: false,
         });
 
-        this.logger.log(
-            `MailHog email provider initialized (${host}:${port})`,
-        );
+        this.logger.log(`MailHog email provider initialized (${host}:${port})`);
     }
 
     async sendEmail(emailData: EmailData): Promise<EmailResult> {
@@ -43,13 +43,13 @@ export class MailHogEmailProvider implements IEmailProvider {
         this.logger.debug(`Email subject: ${emailData.subject}`);
 
         try {
-            const info = await this.transporter.sendMail({
+            const info = (await this.transporter.sendMail({
                 from: emailData.from,
                 to: emailData.to.join(', '),
                 subject: emailData.subject,
                 html: emailData.html,
                 text: emailData.text,
-            });
+            })) as NodemailerResponse;
 
             this.logger.log(
                 `Email sent to MailHog successfully (Message ID: ${info.messageId})`,

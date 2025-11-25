@@ -1,12 +1,13 @@
 import { ConfigService } from '@nestjs/config';
 import { resolve } from 'path';
+import { ENV_IMAGE_UPLOAD_PATH } from '../constants/env-keys';
 
 /**
  * Validates and gets the upload directory path.
  * Ensures the path is within the ./public directory to prevent path traversal.
  */
 export function getValidatedUploadDir(configService: ConfigService): string {
-    const configPath = configService.get<string>('IMAGE_UPLOAD_PATH');
+    const configPath = configService.get<string>(ENV_IMAGE_UPLOAD_PATH);
     const basePath = configPath || './public/uploads/exercises';
     const uploadDir = resolve(basePath);
 

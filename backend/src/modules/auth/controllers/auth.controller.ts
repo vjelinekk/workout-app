@@ -13,6 +13,7 @@ import { AuthService } from '../services/auth.service';
 import { GoogleAuthGuard } from '../guards/google-auth.guard';
 import { LocalAuthGuard } from '../guards/local-auth.guard';
 import { Public } from 'src/common/decorators/public.decorator';
+import { ENV_FRONTEND_URL } from '../../../common/constants/env-keys';
 import {
     ApiBody,
     ApiOkResponse,
@@ -97,7 +98,7 @@ export class AuthController {
         const authCode =
             await this.authCodeService.generateAuthCode(loginResponse);
 
-        const frontendUrl = this.configService.get<string>('FRONTEND_URL');
+        const frontendUrl = this.configService.get<string>(ENV_FRONTEND_URL);
         if (!frontendUrl) {
             throw new InternalServerErrorException(
                 'FRONTEND_URL is not defined',

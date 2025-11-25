@@ -37,6 +37,17 @@ check_test_redis() {
     fi
 }
 
+# Function to check if mailhog is running
+check_mailhog() {
+    if docker ps | grep -q "workout-mailhog"; then
+        echo -e "${GREEN}✓ MailHog is running${NC}"
+        return 0
+    else
+        echo -e "${RED}✗ MailHog is not running${NC}"
+        return 1
+    fi
+}
+
 # Function to start test database
 start_test_db() {
     echo -e "${YELLOW}Starting test database...${NC}"
@@ -70,6 +81,19 @@ start_test_redis() {
     sleep 3
     
     echo -e "${GREEN}✓ Redis is ready${NC}"
+    return 0
+}
+
+# Function to start mailhog
+start_mailhog() {
+    echo -e "${YELLOW}Starting MailHog...${NC}"
+    docker-compose up mailhog -d
+    
+    # Wait for MailHog to be ready
+    echo -e "${YELLOW}Waiting for MailHog to be ready...${NC}"
+    sleep 2
+    
+    echo -e "${GREEN}✓ MailHog is ready${NC}"
     return 0
 }
 
@@ -129,18 +153,18 @@ case "${1:-}" in
         show_usage
         ;;
     "stop")
-        echo -e "${YELLOW}Stopping test database and Redis...${NC}"
-        docker-compose stop db-test redis-test
-        echo -e "${GREEN}✓ Test database and Redis stopped${NC}"
+        echo -e "${YELLOW}Stopping test database, Redis, and MailHog...${NC}"
+        docker-compose stop db-test redis-test mailhog
+        echo -e "${GREEN}✓ Test database, Redis, and MailHog stopped${NC}"
         exit 0
         ;;
     "clean")
-        echo -e "${YELLOW}Stopping test database and Redis, removing volumes...${NC}"
-        docker-compose stop db-test redis-test
-        docker-compose rm -f db-test redis-test
+        echo -e "${YELLOW}Stopping test database, Redis, and MailHog, removing volumes...${NC}"
+        docker-compose stop db-test redis-test mailhog
+        docker-compose rm -f db-test redis-test mailhog
         docker volume rm workout-app_db_test_data 2>/dev/null || true
         docker volume rm workout-app_redis_test_data 2>/dev/null || true
-        echo -e "${GREEN}✓ Test database and Redis cleaned${NC}"
+        echo -e "${GREEN}✓ Test database, Redis, and MailHog cleaned${NC}"
         exit 0
         ;;
     "watch"|"coverage"|"debug"|"")
@@ -152,6 +176,11 @@ case "${1:-}" in
         # Check if test Redis is running
         if ! check_test_redis; then
             start_test_redis || exit 1
+        fi
+        
+        # Check if MailHog is running
+        if ! check_mailhog; then
+            start_mailhog || exit 1
         fi
         
         # Run tests

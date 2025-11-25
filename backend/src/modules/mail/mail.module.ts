@@ -1,9 +1,10 @@
 import { Module } from '@nestjs/common';
 import { MailService } from './services/mail.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { IEmailProvider } from './interfaces/email-provider.interface';
+import type { IEmailProvider } from './interfaces/email-provider.interface';
 import { ResendEmailProvider } from './providers/resend-email.provider';
 import { MailHogEmailProvider } from './providers/mailhog-email.provider';
+import { EMAIL_PROVIDER_TOKEN } from './constants/injection-tokens';
 
 @Module({
     imports: [ConfigModule],
@@ -12,7 +13,7 @@ import { MailHogEmailProvider } from './providers/mailhog-email.provider';
         ResendEmailProvider,
         MailHogEmailProvider,
         {
-            provide: 'EMAIL_PROVIDER',
+            provide: EMAIL_PROVIDER_TOKEN,
             useFactory: (
                 configService: ConfigService,
                 resendProvider: ResendEmailProvider,
@@ -30,19 +31,6 @@ import { MailHogEmailProvider } from './providers/mailhog-email.provider';
                 }
             },
             inject: [ConfigService, ResendEmailProvider, MailHogEmailProvider],
-        },
-        {
-            provide: 'EMAIL_FROM',
-            useFactory: (configService: ConfigService) => {
-                const email = configService.get<string>('EMAIL_FROM');
-                if (!email) {
-                    throw new Error(
-                        'EMAIL_FROM is not defined in environment variables',
-                    );
-                }
-                return email;
-            },
-            inject: [ConfigService],
         },
     ],
     controllers: [],

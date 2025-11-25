@@ -2,6 +2,7 @@ import { Injectable, Inject, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import escapeHtml from 'escape-html';
 import type { IEmailProvider } from '../interfaces/email-provider.interface';
+import { EMAIL_PROVIDER_TOKEN } from '../constants/injection-tokens';
 
 /**
  * Mail service for sending transactional emails to users.
@@ -16,12 +17,16 @@ export class MailService {
     private readonly devToEmail: string;
 
     constructor(
-        @Inject('EMAIL_PROVIDER')
+        @Inject(EMAIL_PROVIDER_TOKEN)
         private readonly emailProvider: IEmailProvider,
         private readonly configService: ConfigService,
-        @Inject('EMAIL_FROM')
-        fromEmail: string,
     ) {
+        const fromEmail = this.configService.get<string>('EMAIL_FROM');
+        if (!fromEmail) {
+            throw new Error(
+                'EMAIL_FROM is not defined in environment variables',
+            );
+        }
         this.fromEmail = fromEmail;
 
         const nodeEnv = this.configService.get<string>('NODE_ENV');

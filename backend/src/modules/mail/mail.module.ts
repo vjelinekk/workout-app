@@ -1,25 +1,37 @@
 import { Module } from '@nestjs/common';
 import { MailService } from './services/mail.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Resend } from 'resend';
+import type { IEmailProvider } from './interfaces/email-provider.interface';
+import { ResendEmailProvider } from './providers/resend-email.provider';
+import { MailHogEmailProvider } from './providers/mailhog-email.provider';
+import { EMAIL_PROVIDER_TOKEN } from './constants/injection-tokens';
+import { ENV_EMAIL_PROVIDER } from '../../common/constants/env-keys';
 
 @Module({
     imports: [ConfigModule],
     providers: [
         MailService,
-        Resend,
+        ResendEmailProvider,
+        MailHogEmailProvider,
         {
-            provide: 'RESEND_FROM_EMAIL',
-            useFactory: (configService: ConfigService) => {
-                const email = configService.get<string>('RESEND_FROM');
-                if (!email) {
-                    throw new Error(
-                        'RESEND_FROM is not defined in environment variables',
-                    );
+            provide: EMAIL_PROVIDER_TOKEN,
+            useFactory: (
+                configService: ConfigService,
+                resendProvider: ResendEmailProvider,
+                mailhogProvider: MailHogEmailProvider,
+            ): IEmailProvider => {
+                const emailProvider =
+                    configService.get<string>(ENV_EMAIL_PROVIDER) || 'resend';
+
+                switch (emailProvider.toLowerCase()) {
+                    case 'mailhog':
+                        return mailhogProvider;
+                    case 'resend':
+                    default:
+                        return resendProvider;
                 }
-                return email;
             },
-            inject: [ConfigService],
+            inject: [ConfigService, ResendEmailProvider, MailHogEmailProvider],
         },
     ],
     controllers: [],

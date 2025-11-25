@@ -8,6 +8,11 @@ import { AuthState, LoginCredentials, User, LoginResponse } from "@/types/auth";
 import { storage } from "@/utils/storage";
 import { useRouter } from "next/navigation";
 import { createContext, useCallback, useContext, useEffect, useRef, useState } from "react";
+import { jwtDecode } from "jwt-decode";
+
+interface JwtPayload {
+    exp: number;
+}
 
 interface AuthContextType extends AuthState {
     login: (credentials: LoginCredentials) => Promise<void>;
@@ -28,19 +33,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     // Flag to prevent race conditions in 401 interceptor
     // Ensures logout only happens once even if multiple requests fail simultaneously
     const isLoggingOutRef = useRef<boolean>(false);
-
-    useEffect(() => {
-        const storedToken = storage.getToken();
-        const storedUser = storage.getUser();
-
-        if (storedToken && storedUser) {
-            setAuthData({ user: storedUser, token: storedToken });
-
-        }
-
-        setIsLoading(false);
-    }, [setAuthData, setIsLoading])
-
+    
+    // Counter for consecutive 401 errors
+    const unauthorized401CountRef = useRef<number>(0);
 
     const handleLogout = useCallback(() => {
         // Prevent multiple concurrent logouts (race condition)
@@ -49,21 +44,69 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         }
         isLoggingOutRef.current = true;
 
+        // Clear local state first
         setAuthData({ user: null, token: null });
+        
+        // Clear storage
         logout();
+        
+        // Reset the logout flag after a brief delay to prevent race conditions
+        // but allow future logout calls if needed
+        setTimeout(() => {
+            isLoggingOutRef.current = false;
+        }, 1000);
+        
+        // Navigate to login page
         router.push('/login');
     }, [router]);
 
     useEffect(() => {
-        // Setup response interceptor to handle 401 (unauthorized) errors
-        // The handleLogout function includes a guard to prevent race conditions
-        const interceptor = api.interceptors.response.use(
-            response => response,
-            error => {
-                // When token expires, backend returns 401
-                // handleLogout will only execute once due to isLoggingOutRef guard
-                if (error.response?.status === 401) {
+        const storedToken = storage.getToken();
+        const storedUser = storage.getUser();
+
+        if (storedToken && storedUser) {
+            try {
+                const decoded = jwtDecode<JwtPayload>(storedToken);
+                const currentTime = Date.now() / 1000; // Convert to seconds
+                
+                if (decoded.exp && decoded.exp < currentTime) {
+                    // Token has expired
                     handleLogout();
+                } else {
+                    setAuthData({ user: storedUser, token: storedToken });
+                }
+            } catch (error) {
+                // Invalid token format
+                handleLogout();
+            }
+        }
+
+        setIsLoading(false);
+    }, [handleLogout]);
+
+    useEffect(() => {
+        // Setup response interceptor to handle 401 (unauthorized) errors
+        // This interceptor is added AFTER the axios.ts interceptor, so it runs BEFORE
+        // the error transformation in the error chain (interceptors run in reverse for errors)
+        const interceptor = api.interceptors.response.use(
+            response => {
+                // Reset counter on successful response
+                unauthorized401CountRef.current = 0;
+                return response;
+            },
+            error => {
+                // Check for 401 status
+                // The error may already be transformed to ApiError by axios.ts interceptor
+                const status = error.response?.status || error.statusCode;
+                
+                if (status === 401) {
+                    unauthorized401CountRef.current += 1;
+                    
+                    // Log out after 3 consecutive 401 errors
+                    if (unauthorized401CountRef.current >= 3) {
+                        unauthorized401CountRef.current = 0;
+                        handleLogout();
+                    }
                 }
                 return Promise.reject(error);
             }

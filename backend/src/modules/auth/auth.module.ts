@@ -10,6 +10,10 @@ import { GoogleStrategy } from './strategies/google.strategy';
 import { UserModule } from '../user/user.module';
 import { RoleGuard } from './guards/role.guard';
 import { AuthCodeService } from './services/auth-code.service';
+import {
+    ENV_JWT_SECRET,
+    ENV_JWT_EXPIRES_IN,
+} from '../../common/constants/env-keys';
 
 @Module({
     imports: [
@@ -19,9 +23,9 @@ import { AuthCodeService } from './services/auth-code.service';
             imports: [ConfigModule],
             inject: [ConfigService],
             useFactory: (config: ConfigService) => ({
-                secret: config.get<string>('JWT_SECRET'),
+                secret: config.get<string>(ENV_JWT_SECRET),
                 signOptions: {
-                    expiresIn: config.get<string>('JWT_EXPIRES_IN') || '60m',
+                    expiresIn: config.get<string>(ENV_JWT_EXPIRES_IN) || '60m',
                 },
             }),
         }),

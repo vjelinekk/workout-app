@@ -5,6 +5,7 @@ import { ExtractJwt, Strategy } from 'passport-jwt';
 import { JwtPayload } from '../types/jwt-payload.type';
 import { JwtAuthenticatedUser } from '../types/jwt-authenticated-user.type';
 import { UserRepository } from 'src/modules/user/repositories/user.repository';
+import { ENV_JWT_SECRET } from '../../../common/constants/env-keys';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -12,7 +13,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         config: ConfigService,
         private userRepository: UserRepository,
     ) {
-        const secret = config.get<string>('JWT_SECRET');
+        const secret = config.get<string>(ENV_JWT_SECRET);
         if (!secret) {
             throw new Error('JWT_SECRET must be configured');
         }

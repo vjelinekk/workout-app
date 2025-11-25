@@ -6,6 +6,10 @@ import {
     EmailData,
     EmailResult,
 } from '../interfaces/email-provider.interface';
+import {
+    ENV_MAILHOG_HOST,
+    ENV_MAILHOG_PORT,
+} from '../../../common/constants/env-keys';
 
 /**
  * MailHog email provider implementation for development
@@ -17,8 +21,8 @@ export class MailHogEmailProvider implements IEmailProvider {
     private readonly transporter: nodemailer.Transporter;
 
     constructor(private readonly configService: ConfigService) {
-        const host = this.configService.get<string>('MAILHOG_HOST') || 'localhost';
-        const port = this.configService.get<number>('MAILHOG_PORT') || 1025;
+        const host = this.configService.get<string>(ENV_MAILHOG_HOST) || 'localhost';
+        const port = this.configService.get<number>(ENV_MAILHOG_PORT) || 1025;
 
         this.transporter = nodemailer.createTransport({
             host,

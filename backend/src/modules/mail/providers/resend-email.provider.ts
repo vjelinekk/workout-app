@@ -6,6 +6,7 @@ import {
     EmailData,
     EmailResult,
 } from '../interfaces/email-provider.interface';
+import { ENV_RESEND_API_KEY } from '../../../common/constants/env-keys';
 
 /**
  * Resend email provider implementation
@@ -17,7 +18,7 @@ export class ResendEmailProvider implements IEmailProvider {
     private readonly resend: Resend;
 
     constructor(private readonly configService: ConfigService) {
-        const apiKey = this.configService.get<string>('RESEND_API_KEY');
+        const apiKey = this.configService.get<string>(ENV_RESEND_API_KEY);
         if (!apiKey) {
             throw new Error(
                 'RESEND_API_KEY is not defined in environment variables',

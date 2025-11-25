@@ -5,6 +5,7 @@ import type { IEmailProvider } from './interfaces/email-provider.interface';
 import { ResendEmailProvider } from './providers/resend-email.provider';
 import { MailHogEmailProvider } from './providers/mailhog-email.provider';
 import { EMAIL_PROVIDER_TOKEN } from './constants/injection-tokens';
+import { ENV_EMAIL_PROVIDER } from '../../common/constants/env-keys';
 
 @Module({
     imports: [ConfigModule],
@@ -20,7 +21,7 @@ import { EMAIL_PROVIDER_TOKEN } from './constants/injection-tokens';
                 mailhogProvider: MailHogEmailProvider,
             ): IEmailProvider => {
                 const emailProvider =
-                    configService.get<string>('EMAIL_PROVIDER') || 'resend';
+                    configService.get<string>(ENV_EMAIL_PROVIDER) || 'resend';
 
                 switch (emailProvider.toLowerCase()) {
                     case 'mailhog':

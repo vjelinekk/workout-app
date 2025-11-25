@@ -3,6 +3,11 @@ import { ConfigService } from '@nestjs/config';
 import escapeHtml from 'escape-html';
 import type { IEmailProvider } from '../interfaces/email-provider.interface';
 import { EMAIL_PROVIDER_TOKEN } from '../constants/injection-tokens';
+import {
+    ENV_EMAIL_FROM,
+    ENV_NODE_ENV,
+    ENV_EMAIL_DEV_TO,
+} from '../../../common/constants/env-keys';
 
 /**
  * Mail service for sending transactional emails to users.
@@ -21,7 +26,7 @@ export class MailService {
         private readonly emailProvider: IEmailProvider,
         private readonly configService: ConfigService,
     ) {
-        const fromEmail = this.configService.get<string>('EMAIL_FROM');
+        const fromEmail = this.configService.get<string>(ENV_EMAIL_FROM);
         if (!fromEmail) {
             throw new Error(
                 'EMAIL_FROM is not defined in environment variables',
@@ -29,10 +34,10 @@ export class MailService {
         }
         this.fromEmail = fromEmail;
 
-        const nodeEnv = this.configService.get<string>('NODE_ENV');
+        const nodeEnv = this.configService.get<string>(ENV_NODE_ENV);
         this.isProduction = nodeEnv === 'production';
 
-        const devEmail = this.configService.get<string>('EMAIL_DEV_TO');
+        const devEmail = this.configService.get<string>(ENV_EMAIL_DEV_TO);
         if (!devEmail && !this.isProduction) {
             this.logger.warn(
                 'EMAIL_DEV_TO is not defined - will use actual recipients in development',

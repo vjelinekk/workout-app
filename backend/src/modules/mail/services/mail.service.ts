@@ -1,10 +1,10 @@
 import { Injectable, Inject, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { Resend } from 'resend';
+import type { IEmailProvider } from '../interfaces/email-provider.interface';
 
 /**
  * Mail service for sending transactional emails to users.
- * Integrates with Resend email provider for reliable email delivery.
+ * Uses abstracted email provider (Resend, MailHog, etc.) for flexible email delivery.
  * Supports email notifications for trainer applications and other events.
  */
 @Injectable()
@@ -15,64 +15,65 @@ export class MailService {
     private readonly devToEmail: string;
 
     constructor(
-        private readonly resend: Resend,
+        @Inject('EMAIL_PROVIDER')
+        private readonly emailProvider: IEmailProvider,
         private readonly configService: ConfigService,
-        @Inject('RESEND_FROM_EMAIL')
+        @Inject('EMAIL_FROM')
         fromEmail: string,
     ) {
-        const apiKey = this.configService.get<string>('RESEND_API_KEY');
-        if (!apiKey) {
-            throw new Error(
-                'RESEND_API_KEY is not defined in environment variables',
-            );
-        }
-
-        this.resend = new Resend(apiKey);
         this.fromEmail = fromEmail;
 
         const nodeEnv = this.configService.get<string>('NODE_ENV');
-        if (!nodeEnv || nodeEnv === 'development') {
-            this.isProduction = false;
-        } else {
-            this.isProduction = true;
-        }
+        this.isProduction = nodeEnv === 'production';
 
-        const devEmail = this.configService.get<string>('RESEND_DEV_TO');
+        const devEmail = this.configService.get<string>('EMAIL_DEV_TO');
         if (!devEmail && !this.isProduction) {
-            throw new Error(
-                'DEV_TO_EMAIL is not defined in environment variables',
+            this.logger.warn(
+                'EMAIL_DEV_TO is not defined - will use actual recipients in development',
             );
         }
 
         this.devToEmail = devEmail || '';
     }
 
+    /**
+     * Send trainer application email to admins/superadmins
+     * @param to Array of recipient email addresses (admins)
+     * @param requestingUserNickname Nickname of user requesting trainer status
+     * @param message Application message from the user
+     */
     async becomeATrainer(
         to: string[],
         requestingUserNickname: string,
         message: string,
     ) {
-        const recipients = this.isProduction ? to : [this.devToEmail];
+        // In development, override recipients to dev email if configured
+        const recipients =
+            this.isProduction || !this.devToEmail ? to : [this.devToEmail];
 
         this.logger.log(
             `Sending trainer request email from ${requestingUserNickname} to ${recipients.length} recipient(s)`,
         );
 
-        try {
-            const result = await this.resend.emails.send({
-                from: this.fromEmail,
-                to: recipients,
-                subject: `New Trainer Request from ${requestingUserNickname}`,
-                html: `<p>${message}</p>`,
-            });
+        const result = await this.emailProvider.sendEmail({
+            from: this.fromEmail,
+            to: recipients,
+            subject: `New Trainer Request from ${requestingUserNickname}`,
+            html: `<p>${message}</p>`,
+        });
 
-            this.logger.log(
-                `Trainer request email sent successfully (ID: ${result.data?.id})`,
+        if (!result.success) {
+            this.logger.error(
+                `Failed to send trainer request email: ${result.error}`,
             );
-            return result;
-        } catch (error) {
-            this.logger.error(`Failed to send trainer request email: ${error}`);
-            throw error;
+            throw new Error(
+                result.error || 'Failed to send trainer request email',
+            );
         }
+
+        this.logger.log(
+            `Trainer request email sent successfully (ID: ${result.id})`,
+        );
+        return result;
     }
 }

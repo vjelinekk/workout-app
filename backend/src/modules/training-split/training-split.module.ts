@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { TrainingSplitEntity } from './entities/training-split.entity';
 import { TrainingSplitAssignmentEntity } from './entities/training-split-assignment.entity';
@@ -16,6 +16,7 @@ import { WorkoutSessionPlanRepository } from '../workout/repositories/workout-se
 import { WorkoutSessionPlanEntity } from '../workout/entities/workout-session-plan.entity';
 import { UserEntity } from '../user/entities/user.entity';
 import { UserModule } from '../user/user.module';
+import { WorkoutModule } from '../workout/workout.module';
 
 @Module({
     imports: [
@@ -27,6 +28,7 @@ import { UserModule } from '../user/user.module';
             UserEntity,
         ]),
         UserModule,
+        forwardRef(() => WorkoutModule),
     ],
     controllers: [
         TrainingSplitController,

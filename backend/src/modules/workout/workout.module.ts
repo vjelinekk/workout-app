@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { WorkoutSessionEntity } from './entities/workout-session.entity';
 import { WorkoutSessionExerciseEntity } from './entities/workout-session-exercise.entity';
@@ -14,6 +14,7 @@ import { WorkoutSessionController } from './controllers/workout-session.controll
 import { WorkoutSessionRepository } from './repositories/workout-session.respository';
 import { WorkoutSessionService } from './services/workout-session.service';
 import { WorkoutSessionExerciseRepository } from './repositories/workout-session-exercise.respository';
+import { ExerciseModule } from '../exercise/exercise.module';
 
 @Module({
     imports: [
@@ -23,6 +24,7 @@ import { WorkoutSessionExerciseRepository } from './repositories/workout-session
             WorkoutSessionPlanEntity,
             WorkoutSessionPlanExerciseEntity,
         ]),
+        forwardRef(() => ExerciseModule),
     ],
     controllers: [
         WorkoutSessionPlanController,
@@ -38,6 +40,6 @@ import { WorkoutSessionExerciseRepository } from './repositories/workout-session
         WorkoutSessionService,
         WorkoutSessionExerciseRepository,
     ],
-    exports: [WorkoutSessionPlanRepository],
+    exports: [WorkoutSessionPlanRepository, WorkoutSessionPlanService],
 })
 export class WorkoutModule {}

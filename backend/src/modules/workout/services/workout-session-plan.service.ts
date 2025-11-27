@@ -7,6 +7,8 @@ import { WorkoutSessionPlanRepository } from '../repositories/workout-session-pl
 import { Injectable } from '@nestjs/common';
 import { PublicAuthorizableCrudService } from 'src/common/services/public-authorizable-crud.service';
 import { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
+import { ExerciseService } from 'src/modules/exercise/services/exercise.service';
+import { In } from 'typeorm';
 
 /**
  * Workout session plan service for managing workout plan templates.
@@ -24,6 +26,7 @@ export class WorkoutSessionPlanService extends PublicAuthorizableCrudService<
 > {
     constructor(
         protected readonly workoutSessionPlanRepository: WorkoutSessionPlanRepository,
+        private readonly exerciseService: ExerciseService,
     ) {
         super(workoutSessionPlanRepository);
     }
@@ -71,5 +74,81 @@ export class WorkoutSessionPlanService extends PublicAuthorizableCrudService<
     ): void {
         void entity;
         void user;
+    }
+
+    /**
+     * After updating a workout session plan, if it was just approved (isApproved changed to true),
+     * cascade the approval to all related exercises.
+     */
+    protected async afterUpdate(
+        entity: WorkoutSessionPlanEntity,
+        user: JwtAuthenticatedUser,
+    ): Promise<void> {
+        void user;
+
+        // Check if the workout session plan is now approved
+        if (entity.isApproved) {
+            // Load the workout session plan with all exercises to get exercise IDs
+            const planWithExercises = await this.workoutSessionPlanRepository.findByIdActive(
+                entity.id,
+                { exercises: true },
+            );
+
+            if (planWithExercises && planWithExercises.exercises.length > 0) {
+                // Extract unique exercise IDs
+                const exerciseIds = Array.from(
+                    new Set(
+                        planWithExercises.exercises
+                            .filter(ex => ex.exerciseId)
+                            .map(ex => ex.exerciseId)
+                    )
+                );
+
+                // Approve all related exercises
+                if (exerciseIds.length > 0) {
+                    await this.exerciseService.approveMultiple(exerciseIds);
+                }
+            }
+        }
+    }
+
+    /**
+     * Approves multiple workout session plans by their IDs.
+     * This is used for cascading approval from training splits.
+     *
+     * @param ids Array of workout session plan IDs to approve
+     */
+    async approveMultiple(ids: number[]): Promise<void> {
+        if (ids.length === 0) {
+            return;
+        }
+
+        // Update all workout session plans to set isApproved = true
+        await this.workoutSessionPlanRepository.update(
+            { id: In(ids) } as any,
+            { isApproved: true } as any,
+        );
+
+        // For each approved plan, cascade approval to exercises
+        for (const id of ids) {
+            const planWithExercises = await this.workoutSessionPlanRepository.findByIdActive(
+                id,
+                { exercises: true },
+            );
+
+            if (planWithExercises && planWithExercises.exercises.length > 0) {
+                const exerciseIds = Array.from(
+                    new Set(
+                        planWithExercises.exercises
+                            .filter(ex => ex.exerciseId)
+                            .map(ex => ex.exerciseId)
+                    )
+                );
+
+                if (exerciseIds.length > 0) {
+                    await this.exerciseService.approveMultiple(exerciseIds);
+                }
+            }
+        }
     }
 }

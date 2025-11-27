@@ -53,7 +53,8 @@
         "settings": "Nastavení",
         "trainerApprovals": "Schválení trenérů",
         "assignTrainingSplit": "Přiřadit tréninkový split",
-        "recruitTrainees": "Nábor cvičenců"
+        "recruitTrainees": "Nábor cvičenců",
+        "approvals": "Schvalování"
     },
     "BecomeTrainerPage": {
         "title": "Stát se trenérem",
@@ -377,5 +378,19 @@
             "noTrainers": "Nebyly nalezeny žádní trenéři.",
             "errorLoading": "Chyba při načítání trenérů:"
         }
+    },
+    "ApprovalsPage": {
+        "title": "Schvalování",
+        "description": "Popis",
+        "exercises": "Cviky",
+        "exercisesDescription": "Zkontrolujte cviky čekající na schválení",
+        "workoutSessionPlans": "Tréninkové plány",
+        "workoutSessionPlansDescription": "Zkontrolujte tréninkové plány čekající na schválení",
+        "trainingSplits": "Tréninkové splity",
+        "trainingSplitsDescription": "Zkontrolujte tréninkové splity čekající na schválení",
+        "pending": "Čekající",
+        "noPendingItems": "Žádné čekající položky",
+        "errorLoading": "Chyba při načítání",
+        "backToCategories": "Zpět na kategorie"
     }
 }

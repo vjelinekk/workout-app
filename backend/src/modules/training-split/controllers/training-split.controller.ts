@@ -236,7 +236,6 @@ export class TrainingSplitController {
     })
     async get(
         @Param('id', ParseIntPipe) id: number,
-        @Query('scope') scope: FindAllScopes = FindAllScopes.AVAILABLE,
         @Query('withAllRelations') withAllRelations: boolean = false,
         @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<TrainingSplitResponseDto> {
@@ -244,7 +243,6 @@ export class TrainingSplitController {
             return await this.trainingSplitService.findOneAvailableAuthorized(
                 user.id,
                 user.roles,
-                scope,
                 id,
                 {
                     days: {
@@ -261,7 +259,6 @@ export class TrainingSplitController {
         return await this.trainingSplitService.findOneAvailableAuthorized(
             user.id,
             user.roles,
-            scope,
             id,
             {
                 days: true,

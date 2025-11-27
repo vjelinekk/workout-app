@@ -4,4 +4,5 @@ export enum Scope {
     PUBLIC = 'public',
     AVAILABLE = 'available',
     DELETED = 'deleted',
+    WAITING_FOR_APPROVAL = 'waiting_for_approval',
 }

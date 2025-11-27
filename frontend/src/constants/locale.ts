@@ -27,4 +27,5 @@ export const TRANSLATION_SECTION_KEYS = {
 	settingsPage: "SettingsPage",
 	assignTrainingSplitPage: "AssignTrainingSplitPage",
 	recruitTraineesPage: "RecruitTraineesPage",
+	approvalsPage: "ApprovalsPage",
 }

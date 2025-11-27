@@ -106,75 +106,13 @@ export abstract class PublicAuthorizableCrudService<
             case FindAllScopes.DELETED:
                 return this.repository.findAllDeletedAvailable(userId, isAdmin);
 
+            case FindAllScopes.WAITING_FOR_APPROVAL:
+                return this.repository.findAllWaitingForApproval();
+
             default:
                 return this.repository.findAllAvailableIncludingDeleted(
                     userId,
                     isAdmin,
-                );
-        }
-    }
-
-    /**
-     * Finds a single entity based on the specified scope.
-     *
-     * @param userId ID of the user making the request
-     * @param userRoles Array of roles the user has
-     * @param scope The scope of access being requested
-     * @param id ID of the entity to retrieve
-     * @param relations Optional relations to eagerly load
-     * @returns The entity if found, null otherwise
-     */
-    private async findOneByScope(
-        userId: number,
-        userRoles: RoleEnum[],
-        scope: FindAllScopes,
-        id: number,
-        relations?: FindOptionsRelations<Entity>,
-    ): Promise<Entity | null> {
-        const isAdmin = this.isAdmin(userRoles);
-
-        switch (scope) {
-            case FindAllScopes.AVAILABLE:
-                return this.repository.findOneAvailable(
-                    userId,
-                    id,
-                    isAdmin,
-                    relations,
-                );
-
-            case FindAllScopes.MY:
-                return this.repository.findOnePrivate(
-                    userId,
-                    id,
-                    isAdmin,
-                    relations,
-                );
-
-            case FindAllScopes.PUBLIC:
-                return this.repository.findOnePublicAndApproved(id, relations);
-
-            case FindAllScopes.ALL:
-                return this.repository.findOneAvailableIncludingDeleted(
-                    userId,
-                    id,
-                    isAdmin,
-                    relations,
-                );
-
-            case FindAllScopes.DELETED:
-                return this.repository.findOneDeletedAvailable(
-                    userId,
-                    id,
-                    isAdmin,
-                    relations,
-                );
-
-            default:
-                return this.repository.findOneAvailableIncludingDeleted(
-                    userId,
-                    id,
-                    isAdmin,
-                    relations,
                 );
         }
     }
@@ -256,34 +194,30 @@ export abstract class PublicAuthorizableCrudService<
     }
 
     /**
-     * Finds a single entity based on the user's role, the specified scope, and the entity ID.
+     * Finds a single entity by ID and validates user access.
      *
      * @param userId The ID of the user making the request
      * @param userRoles The roles of the user making the request
-     * @param scope The scope of the request (e.g., ALL, AVAILABLE, MY, PUBLIC)
      * @param id The ID of the entity to retrieve
      * @param relations Optional relations to eagerly load
      * @returns The entity as a response DTO
-     * @throws NotFoundException if the entity is not found or the user does not have permission to access it
+     * @throws NotFoundException if the entity is not found
+     * @throws UnauthorizedException if the user doesn't have permission to access the entity
+     * @throws ForbiddenException if trying to modify a publicly approved entity without admin role
      */
     async findOneAvailableAuthorized(
         userId: number,
         userRoles: RoleEnum[],
-        scope: FindAllScopes,
         id: number,
         relations?: FindOptionsRelations<Entity>,
     ): Promise<ResponseDto> {
-        const entity = await this.findOneByScope(
-            userId,
-            userRoles,
-            scope,
-            id,
-            relations,
-        );
+        const entity = await this.repository.findByIdActive(id, relations);
 
         if (!entity) {
             throw new NotFoundException(`${this.getEntityName()} not found`);
         }
+
+        this.validateEntityAccess(entity, { id: userId, roles: userRoles } as JwtAuthenticatedUser);
 
         return this.toResponseDto(entity);
     }

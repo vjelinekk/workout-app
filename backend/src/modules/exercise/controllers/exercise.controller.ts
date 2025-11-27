@@ -244,13 +244,11 @@ export class ExerciseController {
     })
     async getExerciseById(
         @Param('id', ParseIntPipe) id: number,
-        @Query('scope') scope: FindAllScopes = FindAllScopes.AVAILABLE,
         @JwtUser() user: JwtAuthenticatedUser,
     ): Promise<ExerciseResponseDto> {
         return await this.exerciseService.findOneAvailableAuthorized(
             user.id,
             user.roles,
-            scope,
             id,
         );
     }

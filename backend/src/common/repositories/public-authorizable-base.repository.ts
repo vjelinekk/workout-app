@@ -3,7 +3,7 @@ import {
     PublicAuthorizableEntity,
     PublicAuthorizableRepository,
 } from '../interfaces/public-authorizable-repository.interface';
-import { FindManyOptions, FindOptionsRelations } from 'typeorm';
+import { FindManyOptions } from 'typeorm';
 
 export abstract class PublicAuthorizableBaseRepository<
         T extends PublicAuthorizableEntity,
@@ -11,8 +11,8 @@ export abstract class PublicAuthorizableBaseRepository<
     extends BaseRepository<T>
     implements PublicAuthorizableRepository<T>
 {
-    async findAllPrivate(userId: number, isAdmin: boolean): Promise<T[]> {
-        let where = { createdById: userId } as FindManyOptions<T>['where'];
+    async findAllPrivate(userId: number): Promise<T[]> {
+        const where = { createdById: userId } as FindManyOptions<T>['where'];
 
         return this.findActive({
             where,
@@ -35,8 +35,8 @@ export abstract class PublicAuthorizableBaseRepository<
         });
     }
 
-    async findAllAvailable(userId: number, isAdmin: boolean): Promise<T[]> {
-        let where = [
+    async findAllAvailable(userId: number): Promise<T[]> {
+        const where = [
             { isPublic: true, isApproved: true } as Partial<T>,
             { createdById: userId } as Partial<T>,
         ] as FindManyOptions<T>['where'];
@@ -125,5 +125,4 @@ export abstract class PublicAuthorizableBaseRepository<
             } as FindManyOptions<T>['where'],
         });
     }
-
 }

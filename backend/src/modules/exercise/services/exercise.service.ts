@@ -59,6 +59,8 @@ export class ExerciseService extends PublicAuthorizableCrudService<
         entity: ExerciseEntity,
         user: JwtAuthenticatedUser,
     ): void {
+        super.beforeUpdate(dto, entity, user);
+
         // Only admins can change the approval status
         if (
             'isApproved' in dto &&
@@ -82,22 +84,6 @@ export class ExerciseService extends PublicAuthorizableCrudService<
                 'Only admins can change the public visibility of exercises.',
             );
         }
-    }
-
-    protected beforeDelete(
-        entity: ExerciseEntity,
-        user: JwtAuthenticatedUser,
-    ): void {
-        void entity;
-        void user;
-    }
-
-    protected beforeRestore(
-        entity: ExerciseEntity,
-        user: JwtAuthenticatedUser,
-    ): void {
-        void entity;
-        void user;
     }
 
     async deleteValidated(
@@ -163,8 +149,10 @@ export class ExerciseService extends PublicAuthorizableCrudService<
 
         // Update all exercises to set isApproved = true
         await this.exerciseRepository.update(
-            { id: In(ids) } as any,
-            { isApproved: true } as any,
+            { id: In(ids) },
+            {
+                isApproved: true,
+            },
         );
     }
 }

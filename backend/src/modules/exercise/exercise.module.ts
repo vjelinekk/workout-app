@@ -14,7 +14,7 @@ import { ExerciseCategoryRepository } from './repositories/exercise-category.rep
         TypeOrmModule.forFeature([ExerciseEntity, ExerciseCategoryEntity]),
     ],
     controllers: [ExerciseController, ExerciseCategoryController],
-    exports: [],
+    exports: [ExerciseService],
     providers: [
         ExerciseService,
         ExerciseCategoryService,

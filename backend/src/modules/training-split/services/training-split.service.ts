@@ -106,6 +106,13 @@ export class TrainingSplitService extends PublicAuthorizableCrudService<
                         },
                     },
                 },
+                order: {
+                    trainingSplit: {
+                        days: {
+                            dayOfWeek: 'ASC',
+                        }
+                    }
+                }
             });
 
         if (!trainingSplitAssignment) {

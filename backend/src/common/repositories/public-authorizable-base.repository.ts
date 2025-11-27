@@ -13,10 +13,6 @@ export abstract class PublicAuthorizableBaseRepository<
 {
     async findAllPrivate(userId: number, isAdmin: boolean): Promise<T[]> {
         let where = { createdById: userId } as FindManyOptions<T>['where'];
-        if (isAdmin) {
-            // Admin can see all private entities (from all users)
-            where = undefined; // No filtering by createdById
-        }
 
         return this.findActive({
             where,
@@ -46,10 +42,6 @@ export abstract class PublicAuthorizableBaseRepository<
         relations?: FindOptionsRelations<T>,
     ): Promise<T | null> {
         let where = { createdById: userId, id } as FindManyOptions<T>['where'];
-        if (isAdmin) {
-            // Admin can access any entity by ID (regardless of creator)
-            where = { id } as FindManyOptions<T>['where'];
-        }
 
         return this.findOneActive({
             where,
@@ -62,11 +54,6 @@ export abstract class PublicAuthorizableBaseRepository<
             { isPublic: true, isApproved: true } as Partial<T>,
             { createdById: userId } as Partial<T>,
         ] as FindManyOptions<T>['where'];
-
-        if (isAdmin) {
-            // To admin are all workout plans available (no additional filtering)
-            where = undefined; // Let withActiveWhere handle isDeleted: false only
-        }
 
         return this.findActive({
             where,
@@ -103,10 +90,6 @@ export abstract class PublicAuthorizableBaseRepository<
             { isPublic: true, isApproved: true, id } as Partial<T>,
             { createdById: userId, id } as Partial<T>,
         ] as FindManyOptions<T>['where'];
-
-        if (isAdmin) {
-            where = [{ id } as Partial<T>] as FindManyOptions<T>['where'];
-        }
 
         return this.findOneActive({
             where,

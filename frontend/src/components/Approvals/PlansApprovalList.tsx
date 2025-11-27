@@ -15,9 +15,11 @@ import { ChevronLeft } from 'lucide-react';
 export const PlansApprovalList = () => {
     const t = useTranslations(TRANSLATION_SECTION_KEYS.approvalsPage);
     const router = useRouter();
-    const { data: plans, isLoading, error } = useWorkoutSessionPlans(
-        Scope.WAITING_FOR_APPROVAL,
-    );
+    const {
+        data: plans,
+        isLoading,
+        error,
+    } = useWorkoutSessionPlans(Scope.WAITING_FOR_APPROVAL);
 
     const handleBack = () => {
         router.push('/admin/approvals');

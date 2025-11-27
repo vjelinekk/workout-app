@@ -18,19 +18,17 @@ export interface PublicAuthorizableRepository<
      * - Private entities created by the user
      *
      * @param userId The ID of the user requesting access
-     * @param isAdmin Whether the user has admin privileges
      * @returns Promise resolving to array of entities available to the user
      */
-    findAllAvailable(userId: number, isAdmin: boolean): Promise<T[]>;
+    findAllAvailable(userId: number): Promise<T[]>;
 
     /**
      * Finds all entities created by a specific user (private entities owned by the user).
      *
      * @param userId The ID of the user who created the entities
-     * @param isAdmin Whether the user has admin privileges
      * @returns Promise resolving to array of entities created by the user
      */
-    findAllPrivate(userId: number, isAdmin: boolean): Promise<T[]>;
+    findAllPrivate(userId: number): Promise<T[]>;
 
     /**
      * Finds all entities that are public and approved.

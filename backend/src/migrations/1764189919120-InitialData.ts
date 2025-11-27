@@ -315,16 +315,30 @@ export class InitialData1764189919120 implements MigrationInterface {
 
     public async down(queryRunner: QueryRunner): Promise<void> {
         // Delete in reverse order to respect foreign key constraints
-        await queryRunner.query(`DELETE FROM "training_split_day" WHERE training_split_id BETWEEN 1 AND 10;`);
-        await queryRunner.query(`DELETE FROM "training_split" WHERE id BETWEEN 1 AND 10;`);
+        await queryRunner.query(
+            `DELETE FROM "training_split_day" WHERE training_split_id BETWEEN 1 AND 10;`,
+        );
+        await queryRunner.query(
+            `DELETE FROM "training_split" WHERE id BETWEEN 1 AND 10;`,
+        );
 
-        await queryRunner.query(`DELETE FROM "workout_session_plan_exercise" WHERE workout_session_plan_id BETWEEN 1 AND 10;`);
-        await queryRunner.query(`DELETE FROM "workout_session_plan" WHERE id BETWEEN 1 AND 10;`);
+        await queryRunner.query(
+            `DELETE FROM "workout_session_plan_exercise" WHERE workout_session_plan_id BETWEEN 1 AND 10;`,
+        );
+        await queryRunner.query(
+            `DELETE FROM "workout_session_plan" WHERE id BETWEEN 1 AND 10;`,
+        );
 
-        await queryRunner.query(`DELETE FROM "exercise" WHERE id BETWEEN 1 AND 10;`);
-        await queryRunner.query(`DELETE FROM "exercise_category" WHERE id BETWEEN 1 AND 5;`);
+        await queryRunner.query(
+            `DELETE FROM "exercise" WHERE id BETWEEN 1 AND 10;`,
+        );
+        await queryRunner.query(
+            `DELETE FROM "exercise_category" WHERE id BETWEEN 1 AND 5;`,
+        );
 
-        await queryRunner.query(`DELETE FROM "user_roles" WHERE user_id IN (2, 3);`);
+        await queryRunner.query(
+            `DELETE FROM "user_roles" WHERE user_id IN (2, 3);`,
+        );
         await queryRunner.query(`DELETE FROM "user" WHERE id IN (2, 3);`);
     }
 }

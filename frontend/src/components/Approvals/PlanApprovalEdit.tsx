@@ -62,7 +62,11 @@ export const PlanApprovalEdit = ({ id }: Props) => {
             )}
 
             {!isLoading && !error && plan && (
-                <WorkoutSessionPlanForm mode="edit" id={id} initialData={plan} />
+                <WorkoutSessionPlanForm
+                    mode="edit"
+                    id={id}
+                    initialData={plan}
+                />
             )}
         </div>
     );

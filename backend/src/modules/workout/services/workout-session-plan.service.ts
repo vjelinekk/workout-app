@@ -50,32 +50,6 @@ export class WorkoutSessionPlanService extends PublicAuthorizableCrudService<
         void user;
     }
 
-    protected beforeUpdate(
-        dto: WorkoutSessionPlanUpdateDto | WorkoutSessionPlanPatchDto,
-        entity: WorkoutSessionPlanEntity,
-        user: JwtAuthenticatedUser,
-    ): void {
-        void dto;
-        void entity;
-        void user;
-    }
-
-    protected beforeDelete(
-        entity: WorkoutSessionPlanEntity,
-        user: JwtAuthenticatedUser,
-    ): void {
-        void entity;
-        void user;
-    }
-
-    protected beforeRestore(
-        entity: WorkoutSessionPlanEntity,
-        user: JwtAuthenticatedUser,
-    ): void {
-        void entity;
-        void user;
-    }
-
     /**
      * After updating a workout session plan, if it was just approved (isApproved changed to true),
      * cascade the approval to all related exercises.
@@ -89,19 +63,20 @@ export class WorkoutSessionPlanService extends PublicAuthorizableCrudService<
         // Check if the workout session plan is now approved
         if (entity.isApproved) {
             // Load the workout session plan with all exercises to get exercise IDs
-            const planWithExercises = await this.workoutSessionPlanRepository.findByIdActive(
-                entity.id,
-                { exercises: true },
-            );
+            const planWithExercises =
+                await this.workoutSessionPlanRepository.findByIdActive(
+                    entity.id,
+                    { exercises: true },
+                );
 
             if (planWithExercises && planWithExercises.exercises.length > 0) {
                 // Extract unique exercise IDs
                 const exerciseIds = Array.from(
                     new Set(
                         planWithExercises.exercises
-                            .filter(ex => ex.exerciseId)
-                            .map(ex => ex.exerciseId)
-                    )
+                            .filter((ex) => ex.exerciseId)
+                            .map((ex) => ex.exerciseId),
+                    ),
                 );
 
                 // Approve all related exercises
@@ -125,24 +100,24 @@ export class WorkoutSessionPlanService extends PublicAuthorizableCrudService<
 
         // Update all workout session plans to set isApproved = true
         await this.workoutSessionPlanRepository.update(
-            { id: In(ids) } as any,
-            { isApproved: true } as any,
+            { id: In(ids) },
+            { isApproved: true },
         );
 
         // For each approved plan, cascade approval to exercises
         for (const id of ids) {
-            const planWithExercises = await this.workoutSessionPlanRepository.findByIdActive(
-                id,
-                { exercises: true },
-            );
+            const planWithExercises =
+                await this.workoutSessionPlanRepository.findByIdActive(id, {
+                    exercises: true,
+                });
 
             if (planWithExercises && planWithExercises.exercises.length > 0) {
                 const exerciseIds = Array.from(
                     new Set(
                         planWithExercises.exercises
-                            .filter(ex => ex.exerciseId)
-                            .map(ex => ex.exerciseId)
-                    )
+                            .filter((ex) => ex.exerciseId)
+                            .map((ex) => ex.exerciseId),
+                    ),
                 );
 
                 if (exerciseIds.length > 0) {

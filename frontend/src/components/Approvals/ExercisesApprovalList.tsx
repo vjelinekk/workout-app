@@ -15,9 +15,11 @@ import { ChevronLeft } from 'lucide-react';
 export const ExercisesApprovalList = () => {
     const t = useTranslations(TRANSLATION_SECTION_KEYS.approvalsPage);
     const router = useRouter();
-    const { data: exercises, isLoading, error } = useExercises(
-        Scope.WAITING_FOR_APPROVAL,
-    );
+    const {
+        data: exercises,
+        isLoading,
+        error,
+    } = useExercises(Scope.WAITING_FOR_APPROVAL);
 
     const handleBack = () => {
         router.push('/admin/approvals');

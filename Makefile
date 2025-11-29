@@ -6,26 +6,20 @@ all: up
 .PHONY: up
 up:
 	docker-compose up -d --build
+	@echo "⏳ Waiting for backend to be ready..."
+	@sleep 5
+	@echo "🔄 Running migrations..."
+	docker-compose exec backend npm run migration:run
+	@echo "✅ Migrations complete!"
 	@echo ""
 	@echo "🎉 Docker containers are up! They are running in detached mode."
 	@echo "Frontend: http://localhost:3000"
 	@echo "Backend:  http://localhost:3001"
 	@echo "MailHog UI (for email testing - if enabled): http://localhost:8025"
 	@echo ""
-	@echo "⚠️  Don't forget to run migrations: make migrate"
-	@echo ""
 	@echo "To view logs, run: make logs"
 	@echo "To stop containers, run: make down"
 	@echo ""
-
-# Start containers and run migrations
-.PHONY: up-migrate
-up-migrate: up
-	@echo "⏳ Waiting for backend to be ready..."
-	@sleep 5
-	@echo "🔄 Running migrations..."
-	docker-compose exec backend npm run migration:run
-	@echo "✅ Migrations complete!"
 
 # Stop and remove containers
 .PHONY: down

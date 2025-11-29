@@ -44,7 +44,12 @@
         "continueWithGoogle": "Or continue with Google",
         "signInWithGoogle": "Sign in with Google",
         "loginFailed": "Login failed. Please check your credentials.",
-        "unexpectedError": "An unexpected error occurred. Please try again."
+        "unexpectedError": "An unexpected error occurred. Please try again.",
+        "googleLoginCancelled": "Google login was cancelled. Please try again.",
+        "googleConsentRequired": "Google consent is required to sign in.",
+        "googleServerError": "Google authentication service is temporarily unavailable.",
+        "googleLoginError": "Google login failed. Please try again.",
+        "googleUnknownError": "An error occurred during Google sign-in."
     },
     "TopBar": {
         "logout": "Logout",

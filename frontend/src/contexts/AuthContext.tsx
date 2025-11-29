@@ -20,6 +20,8 @@ interface AuthContextType extends AuthState {
     loginWithGoogle: () => void;
     isGoogleLoading: boolean;
     signUp: (data: LoginResponse) => Promise<void>;
+    googleLoginError: string | null;
+    clearGoogleLoginError: () => void;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -28,6 +30,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [authData, setAuthData] = useState<{ user: User | null; token: string | null }>({ user: null, token: null });
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isGoogleLoading, setIsGoogleLoading] = useState<boolean>(false);
+    const [googleLoginError, setGoogleLoginError] = useState<string | null>(null);
     const router = useRouter();
 
     // Flag to prevent race conditions in 401 interceptor
@@ -145,6 +148,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         router.push('/dashboard');
     }
 
+    const clearGoogleLoginError = useCallback(() => {
+        setGoogleLoginError(null);
+    }, []);
+
     const handleGoogleLoginSuccess = useCallback(async (response: LoginResponse) => {
         const token = response.accessToken;
         const user: User = {
@@ -213,8 +220,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 handleGoogleLoginSuccess(event.data.payload);
             } else if (event.data.type === AUTH_MESSAGE_TYPES.GOOGLE_LOGIN_ERROR) {
                 window.removeEventListener('message', handleMessage);
-                // Don't close popup on error - let it show the error message
+                popup.close();
                 setIsGoogleLoading(false);
+
+                // Store error message for display on login page
+                const errorMessage = event.data.error || 'unknown_error';
+                setGoogleLoginError(errorMessage);
             }
         };
 
@@ -245,6 +256,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         signUp: handleSignUp,
         logout: handleLogout,
         loginWithGoogle: handleLoginWithGoogle,
+        googleLoginError,
+        clearGoogleLoginError,
     }
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -33,7 +33,7 @@ export default function AuthCallback() {
                 // Close the popup after showing error message
                 setTimeout(() => {
                     window.close();
-                }, 3000);
+                }, 1500);
                 return;
             }
 

@@ -14,9 +14,30 @@ import { TRANSLATION_SECTION_KEYS } from '@/constants/locale';
 
 export default function LoginPage() {
     const t = useTranslations(TRANSLATION_SECTION_KEYS.loginPage);
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, googleLoginError, clearGoogleLoginError } =
+        useAuth();
     const router = useRouter();
     const [error, setError] = useState('');
+
+    // Map error codes to translated messages
+    const getGoogleErrorMessage = (errorCode: string): string => {
+        const errorMap: Record<string, string> = {
+            cancelled: t('googleLoginCancelled'),
+            consent_required: t('googleConsentRequired'),
+            server_error: t('googleServerError'),
+            invalid_request: t('googleLoginError'),
+            unknown_error: t('googleUnknownError'),
+        };
+        return errorMap[errorCode] || t('googleUnknownError');
+    };
+
+    // Display Google login error when it exists
+    useEffect(() => {
+        if (googleLoginError) {
+            setError(getGoogleErrorMessage(googleLoginError));
+            clearGoogleLoginError();
+        }
+    }, [googleLoginError, clearGoogleLoginError]);
 
     // Redirect if already authenticated
     useEffect(() => {

@@ -44,7 +44,12 @@
         "continueWithGoogle": "Nebo pokračovat s Googlem",
         "signInWithGoogle": "Přihlásit se pomocí Google",
         "loginFailed": "Přihlášení se nezdařilo. Zkontrolujte prosím své přihlašovací údaje.",
-        "unexpectedError": "Došlo k neočekávané chybě. Zkuste to prosím znovu."
+        "unexpectedError": "Došlo k neočekávané chybě. Zkuste to prosím znovu.",
+        "googleLoginCancelled": "Přihlášení přes Google bylo zrušeno. Zkuste to prosím znovu.",
+        "googleConsentRequired": "Pro přihlášení je vyžadován souhlas Google.",
+        "googleServerError": "Autentizační služba Google je dočasně nedostupná.",
+        "googleLoginError": "Přihlášení přes Google se nezdařilo. Zkuste to prosím znovu.",
+        "googleUnknownError": "Při přihlášení přes Google došlo k chybě."
     },
     "TopBar": {
         "logout": "Odhlásit se",

@@ -55,21 +55,66 @@ export abstract class PublicAuthorizableCrudService<
         return entity.createdById === userId;
     }
 
-    protected validateEntityAccess(
+    /**
+     * Validates if a user can modify (update/delete/restore) an entity.
+     * Prevents non-admins from modifying public approved entities.
+     * Only owners or admins can modify non-public entities.
+     *
+     * @param entity The entity to validate modification access for
+     * @param user The authenticated user attempting the modification
+     * @throws ForbiddenException if trying to modify a public approved entity without admin role
+     * @throws UnauthorizedException if user is neither owner nor admin
+     */
+    protected validateEntityModification(
         entity: PublicAuthorizableEntity,
         user: JwtAuthenticatedUser,
     ): void {
         if (entity.isPublic && entity.isApproved && !this.isAdmin(user.roles)) {
             throw new ForbiddenException(
-                `Cannot access ${this.getEntityName()} that is publicly visible to other users`,
+                `Cannot modify ${this.getEntityName()} that is publicly approved`,
             );
         }
 
         if (!this.isOwner(entity, user.id) && !this.isAdmin(user.roles)) {
             throw new UnauthorizedException(
-                `Only the owner or an admin can access this ${this.getEntityName()}.`,
+                `Only the owner or an admin can modify this ${this.getEntityName()}.`,
             );
         }
+    }
+
+    /**
+     * Validates if a user can access (read) an entity.
+     * Allows access if:
+     * - User is the owner, OR
+     * - Entity is public AND approved, OR
+     * - User is an admin
+     *
+     * @param entity The entity to validate access for
+     * @param user The authenticated user attempting access
+     * @throws UnauthorizedException if user cannot access the entity
+     */
+    protected validateEntityAccess(
+        entity: PublicAuthorizableEntity,
+        user: JwtAuthenticatedUser,
+    ): void {
+        // Owner can always access their own entities
+        if (this.isOwner(entity, user.id)) {
+            return;
+        }
+
+        // Anyone can access public approved entities
+        if (entity.isPublic && entity.isApproved) {
+            return;
+        }
+
+        // Admin can access anything
+        if (this.isAdmin(user.roles)) {
+            return;
+        }
+
+        throw new UnauthorizedException(
+            `You do not have permission to access this ${this.getEntityName()}.`,
+        );
     }
 
     /**
@@ -89,10 +134,10 @@ export abstract class PublicAuthorizableCrudService<
 
         switch (scope) {
             case FindAllScopes.AVAILABLE:
-                return this.repository.findAllAvailable(userId, isAdmin);
+                return this.repository.findAllAvailable(userId);
 
             case FindAllScopes.MY:
-                return this.repository.findAllPrivate(userId, isAdmin);
+                return this.repository.findAllPrivate(userId);
 
             case FindAllScopes.PUBLIC:
                 return this.repository.findAllPublicAndApproved();
@@ -106,75 +151,13 @@ export abstract class PublicAuthorizableCrudService<
             case FindAllScopes.DELETED:
                 return this.repository.findAllDeletedAvailable(userId, isAdmin);
 
+            case FindAllScopes.WAITING_FOR_APPROVAL:
+                return this.repository.findAllWaitingForApproval();
+
             default:
                 return this.repository.findAllAvailableIncludingDeleted(
                     userId,
                     isAdmin,
-                );
-        }
-    }
-
-    /**
-     * Finds a single entity based on the specified scope.
-     *
-     * @param userId ID of the user making the request
-     * @param userRoles Array of roles the user has
-     * @param scope The scope of access being requested
-     * @param id ID of the entity to retrieve
-     * @param relations Optional relations to eagerly load
-     * @returns The entity if found, null otherwise
-     */
-    private async findOneByScope(
-        userId: number,
-        userRoles: RoleEnum[],
-        scope: FindAllScopes,
-        id: number,
-        relations?: FindOptionsRelations<Entity>,
-    ): Promise<Entity | null> {
-        const isAdmin = this.isAdmin(userRoles);
-
-        switch (scope) {
-            case FindAllScopes.AVAILABLE:
-                return this.repository.findOneAvailable(
-                    userId,
-                    id,
-                    isAdmin,
-                    relations,
-                );
-
-            case FindAllScopes.MY:
-                return this.repository.findOnePrivate(
-                    userId,
-                    id,
-                    isAdmin,
-                    relations,
-                );
-
-            case FindAllScopes.PUBLIC:
-                return this.repository.findOnePublicAndApproved(id, relations);
-
-            case FindAllScopes.ALL:
-                return this.repository.findOneAvailableIncludingDeleted(
-                    userId,
-                    id,
-                    isAdmin,
-                    relations,
-                );
-
-            case FindAllScopes.DELETED:
-                return this.repository.findOneDeletedAvailable(
-                    userId,
-                    id,
-                    isAdmin,
-                    relations,
-                );
-
-            default:
-                return this.repository.findOneAvailableIncludingDeleted(
-                    userId,
-                    id,
-                    isAdmin,
-                    relations,
                 );
         }
     }
@@ -256,35 +239,62 @@ export abstract class PublicAuthorizableCrudService<
     }
 
     /**
-     * Finds a single entity based on the user's role, the specified scope, and the entity ID.
+     * Finds a single entity by ID and validates user access.
      *
      * @param userId The ID of the user making the request
      * @param userRoles The roles of the user making the request
-     * @param scope The scope of the request (e.g., ALL, AVAILABLE, MY, PUBLIC)
      * @param id The ID of the entity to retrieve
      * @param relations Optional relations to eagerly load
      * @returns The entity as a response DTO
-     * @throws NotFoundException if the entity is not found or the user does not have permission to access it
+     * @throws NotFoundException if the entity is not found
+     * @throws UnauthorizedException if the user doesn't have permission to access the entity
      */
     async findOneAvailableAuthorized(
         userId: number,
         userRoles: RoleEnum[],
-        scope: FindAllScopes,
         id: number,
         relations?: FindOptionsRelations<Entity>,
     ): Promise<ResponseDto> {
-        const entity = await this.findOneByScope(
-            userId,
-            userRoles,
-            scope,
-            id,
-            relations,
-        );
+        const entity = await this.repository.findByIdActive(id, relations);
 
         if (!entity) {
             throw new NotFoundException(`${this.getEntityName()} not found`);
         }
 
+        this.validateEntityAccess(entity, {
+            id: userId,
+            roles: userRoles,
+        } as JwtAuthenticatedUser);
+
         return this.toResponseDto(entity);
+    }
+
+    /**
+     * Hook called before updating an entity.
+     * Validates that user has permission to modify the entity.
+     */
+    protected beforeUpdate(
+        dto: UpdateDto | PatchDto,
+        entity: Entity,
+        user: JwtAuthenticatedUser,
+    ): void {
+        this.validateEntityModification(entity, user);
+        void dto;
+    }
+
+    /**
+     * Hook called before deleting an entity.
+     * Validates that user has permission to modify the entity.
+     */
+    protected beforeDelete(entity: Entity, user: JwtAuthenticatedUser): void {
+        this.validateEntityModification(entity, user);
+    }
+
+    /**
+     * Hook called before restoring a deleted entity.
+     * Validates that user has permission to modify the entity.
+     */
+    protected beforeRestore(entity: Entity, user: JwtAuthenticatedUser): void {
+        this.validateEntityModification(entity, user);
     }
 }

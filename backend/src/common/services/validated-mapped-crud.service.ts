@@ -137,6 +137,25 @@ export abstract class ValidatedMappedCrudService<
     ): Promise<void> | void;
 
     /**
+     * Hook called after an entity has been successfully updated.
+     * Can be used to perform cascading operations, send notifications, or update related entities.
+     *
+     * Override this method to define custom post-update logic.
+     * Leave empty if no post-update actions are needed.
+     *
+     * @param entity The entity that was just updated
+     * @param user Authenticated user who performed the update
+     */
+    protected afterUpdate(
+        entity: Entity,
+        user: JwtAuthenticatedUser,
+    ): Promise<void> | void {
+        // Default: no-op
+        void entity;
+        void user;
+    }
+
+    /**
      * Creates a new entity with validation and access control.
      * This method enforces authentication and runs all validation hooks.
      *
@@ -178,7 +197,13 @@ export abstract class ValidatedMappedCrudService<
         await this.validateEntityAccess(entity, user);
         await this.beforeUpdate(dto, entity, user);
 
-        return this.updateMapped(id, dto, user.id);
+        const updatedEntity = await this.updateMapped(id, dto, user.id);
+
+        // Call afterUpdate hook with the updated entity
+        const updatedEntityInstance = await this.findOneActive(id);
+        await this.afterUpdate(updatedEntityInstance, user);
+
+        return updatedEntity;
     }
 
     /**

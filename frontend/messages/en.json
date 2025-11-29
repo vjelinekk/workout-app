@@ -53,7 +53,8 @@
         "settings": "Settings",
         "trainerApprovals": "Trainer Approvals",
         "assignTrainingSplit": "Assign Training Split",
-        "recruitTrainees": "Recruit Trainees"
+        "recruitTrainees": "Recruit Trainees",
+        "approvals": "Approvals"
     },
     "BecomeTrainerPage": {
         "title": "Become a Trainer",
@@ -377,5 +378,19 @@
             "noTrainers": "No trainers found.",
             "errorLoading": "Error loading trainers:"
         }
+    },
+    "ApprovalsPage": {
+        "title": "Approvals",
+        "description": "Review and approve pending content",
+        "exercises": "Exercises",
+        "exercisesDescription": "Review exercises waiting for approval",
+        "workoutSessionPlans": "Workout Session Plans",
+        "workoutSessionPlansDescription": "Review workout session plans waiting for approval",
+        "trainingSplits": "Training Splits",
+        "trainingSplitsDescription": "Review training splits waiting for approval",
+        "pending": "Pending",
+        "noPendingItems": "No items waiting for approval",
+        "errorLoading": "Error loading approval items",
+        "backToCategories": "Back to Categories"
     }
 }

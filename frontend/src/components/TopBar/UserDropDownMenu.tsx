@@ -37,6 +37,10 @@ export const UserDropDownMenu = () => {
         router.push('/admin/trainer-approvals');
     };
 
+    const handleApprovals = () => {
+        router.push('/admin/approvals');
+    };
+
     const handleAssignTrainingSplit = () => {
         router.push('/assign-training-split');
     };
@@ -78,6 +82,11 @@ export const UserDropDownMenu = () => {
                 {isAdmin && (
                     <DropdownMenuItem onClick={handleTrainerApprovals}>
                         {t('trainerApprovals')}
+                    </DropdownMenuItem>
+                )}
+                {isAdmin && (
+                    <DropdownMenuItem onClick={handleApprovals}>
+                        {t('approvals')}
                     </DropdownMenuItem>
                 )}
                 {isTrainerOrAdmin && (

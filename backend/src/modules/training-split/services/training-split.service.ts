@@ -10,6 +10,7 @@ import { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-u
 import { TrainingSplitAssignmentRepository } from '../repositories/training-split-assignment.repository';
 import { TrainingSplitAssignmentStatusEnum } from '../enums/training-split-assignment-status.enum';
 import { NoAssignedTrainingSplitException } from '../exceptions/no-assigned-training-split.exception';
+import { WorkoutSessionPlanService } from 'src/modules/workout/services/workout-session-plan.service';
 
 /**
  * Training split service for managing workout splits and their assignments.
@@ -28,6 +29,7 @@ export class TrainingSplitService extends PublicAuthorizableCrudService<
     constructor(
         protected readonly trainingSplitRepository: TrainingSplitRepository,
         protected readonly trainingSplitAssignmentRepository: TrainingSplitAssignmentRepository,
+        private readonly workoutSessionPlanService: WorkoutSessionPlanService,
     ) {
         super(trainingSplitRepository);
     }
@@ -51,30 +53,45 @@ export class TrainingSplitService extends PublicAuthorizableCrudService<
         void user;
     }
 
-    protected beforeUpdate(
-        dto: TrainingSplitUpdateDto | TrainingSplitPatchDto,
+    /**
+     * After updating a training split, if it was just approved (isApproved changed to true),
+     * cascade the approval to all related workout session plans.
+     */
+    protected async afterUpdate(
         entity: TrainingSplitEntity,
         user: JwtAuthenticatedUser,
-    ): Promise<void> | void {
-        void dto;
-        void entity;
+    ): Promise<void> {
         void user;
-    }
 
-    protected beforeDelete(
-        entity: TrainingSplitEntity,
-        user: JwtAuthenticatedUser,
-    ): Promise<void> | void {
-        void entity;
-        void user;
-    }
+        // Check if the training split is now approved
+        if (entity.isApproved) {
+            // Load the training split with all days to get workout session plan IDs
+            const trainingSplitWithDays =
+                await this.trainingSplitRepository.findByIdActive(entity.id, {
+                    days: true,
+                });
 
-    protected beforeRestore(
-        entity: TrainingSplitEntity,
-        user: JwtAuthenticatedUser,
-    ): Promise<void> | void {
-        void entity;
-        void user;
+            if (
+                trainingSplitWithDays &&
+                trainingSplitWithDays.days.length > 0
+            ) {
+                // Extract unique workout session plan IDs
+                const workoutSessionPlanIds = Array.from(
+                    new Set(
+                        trainingSplitWithDays.days
+                            .filter((day) => day.workoutSessionPlanId)
+                            .map((day) => day.workoutSessionPlanId),
+                    ),
+                );
+
+                // Approve all related workout session plans (which will cascade to exercises)
+                if (workoutSessionPlanIds.length > 0) {
+                    await this.workoutSessionPlanService.approveMultiple(
+                        workoutSessionPlanIds,
+                    );
+                }
+            }
+        }
     }
 
     /**
@@ -110,9 +127,9 @@ export class TrainingSplitService extends PublicAuthorizableCrudService<
                     trainingSplit: {
                         days: {
                             dayOfWeek: 'ASC',
-                        }
-                    }
-                }
+                        },
+                    },
+                },
             });
 
         if (!trainingSplitAssignment) {

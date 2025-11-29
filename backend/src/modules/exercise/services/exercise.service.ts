@@ -10,6 +10,7 @@ import { ExerciseUpdateDto } from '../dtos/exercise/exercise-update.dto';
 import { PublicAuthorizableCrudService } from 'src/common/services/public-authorizable-crud.service';
 import { JwtAuthenticatedUser } from 'src/modules/auth/types/jwt-authenticated-user.type';
 import { RoleEnum } from 'src/modules/user/enums/role.enum';
+import { In } from 'typeorm';
 
 /**
  * Exercise service for managing exercises with image uploads and public/private visibility.
@@ -58,6 +59,8 @@ export class ExerciseService extends PublicAuthorizableCrudService<
         entity: ExerciseEntity,
         user: JwtAuthenticatedUser,
     ): void {
+        super.beforeUpdate(dto, entity, user);
+
         // Only admins can change the approval status
         if (
             'isApproved' in dto &&
@@ -81,22 +84,6 @@ export class ExerciseService extends PublicAuthorizableCrudService<
                 'Only admins can change the public visibility of exercises.',
             );
         }
-    }
-
-    protected beforeDelete(
-        entity: ExerciseEntity,
-        user: JwtAuthenticatedUser,
-    ): void {
-        void entity;
-        void user;
-    }
-
-    protected beforeRestore(
-        entity: ExerciseEntity,
-        user: JwtAuthenticatedUser,
-    ): void {
-        void entity;
-        void user;
     }
 
     async deleteValidated(
@@ -147,5 +134,25 @@ export class ExerciseService extends PublicAuthorizableCrudService<
         }
 
         return updatedExercise;
+    }
+
+    /**
+     * Approves multiple exercises by their IDs.
+     * This is used for cascading approval from workout session plans.
+     *
+     * @param ids Array of exercise IDs to approve
+     */
+    async approveMultiple(ids: number[]): Promise<void> {
+        if (ids.length === 0) {
+            return;
+        }
+
+        // Update all exercises to set isApproved = true
+        await this.exerciseRepository.update(
+            { id: In(ids) },
+            {
+                isApproved: true,
+            },
+        );
     }
 }

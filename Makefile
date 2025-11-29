@@ -75,34 +75,6 @@ migrate-create:
 migrate-revert:
 	docker-compose exec backend npm run migration:revert
 
-# Test commands
-.PHONY: test-db-up test-db-down test-e2e test-e2e-watch test-e2e-cov
-
-# Start only test database
-test-db-up:
-	docker-compose up db-test -d
-	@echo "✅ Test database is running on port 5433"
-
-# Stop test database
-test-db-down:
-	docker-compose stop db-test
-	@echo "🛑 Test database stopped"
-
-# Run E2E integration tests
-test-e2e: test-db-up
-	@echo "🧪 Running E2E integration tests..."
-	cd backend && npm run test:e2e
-
-# Run E2E tests in watch mode
-test-e2e-watch: test-db-up
-	@echo "🧪 Running E2E integration tests in watch mode..."
-	cd backend && npm run test:e2e:watch
-
-# Run E2E tests with coverage
-test-e2e-cov: test-db-up
-	@echo "🧪 Running E2E integration tests with coverage..."
-	cd backend && npm run test:e2e:cov
-
 # shadcn/ui commands
 .PHONY: ui-add ui-install
 
